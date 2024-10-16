@@ -52,6 +52,8 @@ class Back_ground_swamp:
 class Knight:
     def __init__(self):
         self.x, self.y = 400,200
+        self.hp_max, self.stamina_max, self.power = 1000, 100, 100
+        self.hp_now, self.stamina_now = 1000, 100
         self.frame_Idle = 0
         self.frame_Idle_timer = 0
         self.frame_Run = 0
