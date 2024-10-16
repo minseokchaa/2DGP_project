@@ -41,7 +41,7 @@ class Back_ground_swamp:
 
         self.x = WIDTH
         self.Back_ground_swamp = load_image('bg_tile_chapter_02_02x2.png')
-        self.scroll_speed = 5
+        self.scroll_speed = 2
     def update(self):
         self.x += self.scroll_speed * move_x
 
@@ -51,12 +51,32 @@ class Back_ground_swamp:
     def draw(self):
         self.Back_ground_swamp.draw(self.x, HEIGHT // 2)
 
+class Tile_swamp:
+    global move_x
+    i =0
+
+    def __init__(self):
+        self.x = 0
+        self.tile_swamp = load_image('tile_chapter_0000_tile1_.png')
+        self.scroll_speed = 5
+
+    def update(self):
+        self.x += self.scroll_speed * move_x
+
+    def handle_event(self):
+        pass
+
+    def draw(self):
+        for i in range(37):
+            self.tile_swamp.draw(self.x - 640 + 128 * i, 50,192,136)
+
+
 
 class Knight:
     global is_running
     global direction
     def __init__(self):
-        self.x, self.y = 400, 200
+        self.x, self.y = WIDTH//2, 168
         self.hp_max, self.stamina_max, self.power = 1000, 100, 100
         self.hp_now, self.stamina_now = 1000, 100
         self.frame_Idle = 0
@@ -102,6 +122,7 @@ def reset_world():
     global world
     global knight
     global bg_swamp
+    global tile_swamp
 
     alive = True
     world = []
@@ -109,17 +130,20 @@ def reset_world():
     bg_swamp = Back_ground_swamp()
     world.append(bg_swamp)
 
+
+    tile_swamp = Tile_swamp()
+    world.append(tile_swamp)
+
+
     knight = Knight()
     world.append(knight)
-
-
 
 
 def update_world():
 
     bg_swamp.update()  # 배경 업데이트
+    tile_swamp.update() #타일 업데이트
     knight.update()  # 기사 업데이트
-
 
 def render_world():
     clear_canvas()
