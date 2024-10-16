@@ -35,35 +35,51 @@ def handle_events():
 
 class Back_ground_swamp:
     def __init__(self):
+
+        self.x = WIDTH
         self.Back_ground_swamp = load_image('bg_tile_chapter_02_02x2.png')
         pass
     def update(self):
+
+        self.x -= 1
         pass
-    def hanndle_update(self):
+    def handle_event(self):
         pass
     def draw(self):
-        self.Back_ground_swamp.draw(0, HEIGHT // 2)
+        self.Back_ground_swamp.draw(self.x, HEIGHT // 2)
 
 
 class Knight:
     def __init__(self):
         self.x, self.y = 400,200
         self.frame_Idle = 0
+        self.frame_Idle_timer = 0
         self.frame_Run = 0
+        self.frame_Run_timer = 0
         self.dir_x =0
         self.image_Idle = load_image('Knight_Idle.png')
         self.image_Run = load_image('Knight_Run.png')
         self.image_Dead = load_image('Knight_Dead.png')
 
     def update(self):
-        self.frame_Idle = (self.frame_Idle + 1) % 4
-        self.frame_Run = (self.frame_Run + 1) % 7
+        if self.frame_Idle_timer == 15:
+            self.frame_Idle = (self.frame_Idle + 1) % 4
+            self.frame_Idle_timer = 0
+        else:
+            self.frame_Idle_timer += 1
+
+        if self.frame_Run_timer == 10:
+            self.frame_Run = (self.frame_Run + 1) % 7
+            self.frame_Run_timer = 0
+        else:
+           self.frame_Run_timer += 1
 
     def handle_event(self, event):
-         pass
+        pass
 
     def draw(self):
-        self.image_Idle.clip_draw(self.frame_Idle * 128, 0, 128, 128, self.x, self.y,200,200)
+        self.image_Idle.clip_draw(self.frame_Idle * 128, 0, 128, 128, 400, 200,170,170)
+        self.image_Run.clip_draw(self.frame_Run * 128, 0, 128, 128, 400, 400,170,170)
 
 
 def reset_world():
@@ -106,6 +122,6 @@ while alive:
     handle_events()
     update_world()
     render_world()
-    delay(0.15)
+    delay(0.01)
 # finalization code
 close_canvas()
