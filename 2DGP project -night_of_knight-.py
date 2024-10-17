@@ -2,13 +2,15 @@ from pico2d import *
 
 WIDTH, HEIGHT = 960, 800
 move_x = 0
-direction = 1
+direction = 1           # 1==오른쪽, 0 == 왼쪽
 is_running = False
+is_attacking = False
+background_move = True
 
 # Game object class here
 
 def handle_events():
-    global alive, is_running, move_x, direction
+    global alive, is_running, is_attacking, move_x, direction
 
     events = get_events()
     for event in events:
@@ -22,18 +24,21 @@ def handle_events():
                 is_running = True
                 move_x = -1
                 direction = 1
+                # 오른쪽 이동 방향키
             elif event.key == SDLK_LEFT:
                 is_running = True
                 move_x = +1
                 direction = 0
-
+                # 왼쪽 이동 방향키
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 is_running = False
                 move_x = 0
+                # 오른쪽 이동 멈춤
             elif event.key == SDLK_LEFT:
                 is_running = False
                 move_x = 0
+                # 왼쪽 이동 멈춤
 
 class Back_ground_swamp:
     global move_x
@@ -43,7 +48,11 @@ class Back_ground_swamp:
         self.Back_ground_swamp = load_image('bg_tile_chapter_02_02x2.png')
         self.scroll_speed = 2
     def update(self):
-        self.x += self.scroll_speed * move_x
+        global background_move
+        if self.x + self.scroll_speed * move_x < WIDTH and background_move:
+            self.x += self.scroll_speed * move_x
+        elif self.x + self.scroll_speed * move_x >= WIDTH:
+            background_move = False
 
     def handle_event(self):
         pass
@@ -61,35 +70,53 @@ class Tile_swamp:
         self.scroll_speed = 5
 
     def update(self):
-        self.x += self.scroll_speed * move_x
+        global background_move
+        if self.x + self.scroll_speed * move_x < 0 and background_move:
+            self.x += self.scroll_speed * move_x
+        elif self.x + self.scroll_speed * move_x >= 0:
+            background_move = False
 
     def handle_event(self):
         pass
 
     def draw(self):
         for i in range(37):
-            self.tile_swamp.draw(self.x - 640 + 128 * i, 50,192,136)
+            self.tile_swamp.draw(self.x + 128 * i, 50,192,136)
 
 
 
 class Knight:
-    global is_running
+    global is_running, is_attacking
     global direction
     def __init__(self):
         self.x, self.y = WIDTH//2, 168
         self.hp_max, self.stamina_max, self.power = 1000, 100, 100
         self.hp_now, self.stamina_now = 1000, 100
-        self.frame_Idle = 0
-        self.frame_Idle_timer = 0
-        self.frame_Run = 0
-        self.frame_Run_timer = 0
+        self.frame_Idle, self.frame_Idle_timer = 0, 0
+        self.frame_Run, self.frame_Run_timer = 0, 0
+        self.frame_Attack1, self.frame_attack_timer = 0, 0
+
         self.image_Idle = load_image('Knight_Idle.png')
         self.image_Run = load_image('Knight_Run.png')
 
 
     def update(self):
+        global background_move
+
+        if background_move == False:
+            if self.x - 5 * move_x > 10:
+                self.x -= 5 * move_x
+        if self.x == WIDTH//2:
+            background_move = True
+
         if is_running:
             if self.frame_Run_timer >= 10:  # run 애니메이션
+                self.frame_Run = (self.frame_Run + 1) % 7
+                self.frame_Run_timer = 0
+            else:
+                self.frame_Run_timer += 1
+        if is_attacking:
+            if self.frame_Run_timer >= 10:  # attack 애니메이션
                 self.frame_Run = (self.frame_Run + 1) % 7
                 self.frame_Run_timer = 0
             else:
