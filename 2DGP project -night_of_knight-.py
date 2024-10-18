@@ -6,12 +6,13 @@ direction = 1           # 1==오른쪽, 0 == 왼쪽
 stage = 1               # 1== 늪지역, 2==용암지역
 is_running = False
 is_attacking = False
+is_jumping = False
 background_move = True
 
 # Game object class here
 
 def handle_events():
-    global alive, is_running, is_attacking, move_x, move_y, direction
+    global alive, is_running, is_attacking, is_jumping, move_x, move_y, direction
 
     events = get_events()
     for event in events:
@@ -34,6 +35,7 @@ def handle_events():
             elif event.key == SDLK_SPACE:
                 if move_y == 0:
                     move_y = +18
+                    is_jumping = True
                 pass
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
@@ -137,22 +139,25 @@ class Knight:
         self.hp_now, self.stamina_now = 1000, 100
         self.frame_Idle, self.frame_Idle_timer = 0, 0
         self.frame_Run, self.frame_Run_timer = 0, 0
+        self.frame_Jump, self.frame_Jump_timer = 0, 0
         self.frame_Attack1, self.frame_attack_timer = 0, 0
 
         self.image_Idle = load_image('Knight_Idle.png')
         self.image_Run = load_image('Knight_Run.png')
+        self.image_Jump = load_image('Knight_Jump.png')
 
 
     def update(self):
         global background_move
         global stage
-        global move_y
+        global move_y, is_jumping
 
         self.y += move_y
         move_y -=1
 
         if self.y <= 168:
             move_y = 0
+            is_jumping = False
 
 
         if background_move == False:
@@ -172,11 +177,17 @@ class Knight:
 
 
         if is_running:
-            if self.frame_Run_timer >= 10:  # run 애니메이션
+            if self.frame_Run_timer >= 8:  # run 애니메이션
                 self.frame_Run = (self.frame_Run + 1) % 7
                 self.frame_Run_timer = 0
             else:
                 self.frame_Run_timer += 1
+        elif is_jumping:
+            if self.frame_Jump_timer >= 15:  # jump 애니메이션
+                self.frame_Jump = (self.frame_Jump + 1) % 6
+                self.frame_Jump_timer = 0
+            else:
+                self.frame_Jump_timer += 1
         # if is_attacking:
         #     if self.frame_Run_timer >= 10:  # attack 애니메이션
         #         self.frame_Run = (self.frame_Run + 1) % 7
@@ -194,11 +205,16 @@ class Knight:
         pass
 
     def draw(self):
-        if is_running:
+        if is_running and self.y == 168:
             if direction:
                 self.image_Run.clip_draw(self.frame_Run * 128, 0, 70, 70, self.x, self.y,105,105)
             else:
                 self.image_Run.clip_composite_draw(self.frame_Run * 128, 0, 70, 70, 0, 'h', self.x, self.y, 105, 105)
+        elif is_jumping:
+            if direction:
+                self.image_Jump.clip_draw(self.frame_Jump * 128, 0, 70, 70, self.x, self.y,105,105)
+            else:
+                self.image_Jump.clip_composite_draw(self.frame_Jump * 128, 0, 70, 70, 0, 'h', self.x, self.y, 105, 105)
         else:
             if direction:
               self.image_Idle.clip_draw(self.frame_Idle * 128, 0, 55, 70, self.x, self.y,83,105)
