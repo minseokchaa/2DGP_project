@@ -6,13 +6,16 @@ direction = 1           # 1==오른쪽, 0 == 왼쪽
 stage = 1               # 1== 늪지역, 2==용암지역
 is_running = False
 is_attacking = False
+is_defending = False
+is_protecting = False
 is_jumping = False
 background_move = True
+attack_count = 0
 
 # Game object class here
 
 def handle_events():
-    global alive, is_running, is_attacking, is_jumping, move_x, move_y, direction
+    global alive, is_running, is_attacking, is_jumping, is_protecting, move_x, move_y, direction, attack_count
 
     events = get_events()
     for event in events:
@@ -24,11 +27,15 @@ def handle_events():
                 alive = False
             elif event.key == SDLK_RIGHT:
                 is_running = True
+                is_attacking = False
+                attack_count = 0
                 move_x = -1
                 direction = 1
                 # 오른쪽 이동 방향키
             elif event.key == SDLK_LEFT:
                 is_running = True
+                is_attacking = False
+                attack_count = 0
                 move_x = +1
                 direction = 0
                 # 왼쪽 이동 방향키
@@ -36,6 +43,22 @@ def handle_events():
                 if move_y == 0:
                     move_y = +18
                     is_jumping = True
+
+            elif event.key == SDLK_a and attack_count + 1 <= 3:   #공격
+                if not is_jumping:
+                     is_attacking = True
+                     is_running = False
+                     move_x = 0
+                     attack_count += 1
+                     if attack_count == 1:
+                        print('a')
+                     if attack_count == 2:
+                        print('b')
+                     if attack_count == 3:
+                        print('c')
+                pass
+            elif event.key == SDLK_d:   #방어
+                is_protecting = True
                 pass
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
@@ -131,7 +154,7 @@ class Tile_lava:
 
 
 class Knight:
-    global is_running, is_attacking
+    global is_running
     global direction
     def __init__(self):
         self.x, self.y = WIDTH//2, 168
@@ -140,17 +163,21 @@ class Knight:
         self.frame_Idle, self.frame_Idle_timer = 0, 0
         self.frame_Run, self.frame_Run_timer = 0, 0
         self.frame_Jump, self.frame_Jump_timer = 0, 0
-        self.frame_Attack1, self.frame_attack_timer = 0, 0
+        self.frame_Attack, self.frame_Attack_timer = 0, 0
+        self.attack_motion = 1
 
         self.image_Idle = load_image('Knight_Idle.png')
         self.image_Run = load_image('Knight_Run.png')
         self.image_Jump = load_image('Knight_Jump.png')
+        self.image_Attack1 = load_image('Knight_Attack 1.png')
+        self.image_Attack2 = load_image('Knight_Attack 2.png')
+        self.image_Attack3 = load_image('Knight_Attack 3.png')
 
 
     def update(self):
         global background_move
         global stage
-        global move_y, is_jumping
+        global move_y, is_jumping, is_attacking, attack_count
 
         self.y += move_y
         move_y -=1
@@ -167,10 +194,8 @@ class Knight:
             elif stage == 2:
                 if self.x - 5 * move_x > 10 and self.x - 5 * move_x < 950:
                     self.x -= 5 * move_x
-
         if self.x == WIDTH//2:
             background_move = True
-
         if self.x > WIDTH:
             stage = 2
             self.x = WIDTH // 2
@@ -188,12 +213,25 @@ class Knight:
                 self.frame_Jump_timer = 0
             else:
                 self.frame_Jump_timer += 1
-        # if is_attacking:
-        #     if self.frame_Run_timer >= 10:  # attack 애니메이션
-        #         self.frame_Run = (self.frame_Run + 1) % 7
-        #         self.frame_Run_timer = 0
-        #     else:
-        #         self.frame_Run_timer += 1
+
+        elif is_attacking:
+            if self.frame_Attack_timer >= 6:  # attack 애니메이션
+                self.frame_Attack = (self.frame_Attack + 1) % 5
+                self.frame_Attack_timer = 0
+            else:
+                self.frame_Attack_timer += 1
+
+            if self.attack_motion <= attack_count and self.frame_Attack == 4:
+                self.attack_motion +=1
+                self.frame_Attack = 0
+            elif self.attack_motion > attack_count:
+                is_attacking = False
+                self.attack_motion = 1
+                self.frame_Attack = 0
+                attack_count = 0
+
+
+
         else:
             if self.frame_Idle_timer >= 15:  # idle 애니메이션
                 self.frame_Idle = (self.frame_Idle + 1) % 4
@@ -205,17 +243,36 @@ class Knight:
         pass
 
     def draw(self):
-        if is_running and self.y == 168:
+        if is_running and self.y == 168 :
             if direction:
                 self.image_Run.clip_draw(self.frame_Run * 128, 0, 70, 70, self.x, self.y,105,105)
             else:
                 self.image_Run.clip_composite_draw(self.frame_Run * 128, 0, 70, 70, 0, 'h', self.x, self.y, 105, 105)
+
+        elif is_attacking and self.y == 168:
+            if direction:
+                if self.attack_motion == 1:
+                    self.image_Attack1.clip_draw(self.frame_Attack * 128, 0, 100, 70, self.x + 10, self.y, 150, 105)
+                if self.attack_motion == 2:
+                    self.image_Attack2.clip_draw(self.frame_Attack * 128, 0, 120, 70, self.x + 20, self.y, 180, 105)
+                if self.attack_motion == 3:
+                    self.image_Attack3.clip_draw(self.frame_Attack * 128, 0, 100, 70, self.x + 10, self.y, 150, 105)
+                pass
+            else:
+                if self.attack_motion == 1:
+                    self.image_Attack1.clip_composite_draw(self.frame_Attack * 128, 0, 100, 70, 0, 'h', self.x - 10, self.y, 150, 105)
+                if self.attack_motion == 2:
+                    self.image_Attack2.clip_composite_draw(self.frame_Attack * 128, 0, 120, 70, 0, 'h', self.x - 20,self.y, 180, 105)
+                if self.attack_motion == 3:
+                    self.image_Attack3.clip_composite_draw(self.frame_Attack * 128, 0, 100, 70, 0, 'h', self.x - 10,self.y, 150, 105)
+
         elif is_jumping:
             if direction:
                 self.image_Jump.clip_draw(self.frame_Jump * 128, 0, 70, 70, self.x, self.y,105,105)
             else:
                 self.image_Jump.clip_composite_draw(self.frame_Jump * 128, 0, 70, 70, 0, 'h', self.x, self.y, 105, 105)
-        else:
+
+        else: #idle
             if direction:
               self.image_Idle.clip_draw(self.frame_Idle * 128, 0, 55, 70, self.x, self.y,83,105)
             else:
