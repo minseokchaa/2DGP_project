@@ -15,7 +15,7 @@ attack_count = 0
 # Game object class here
 
 def handle_events():
-    global alive, is_running, is_attacking, is_jumping, is_protecting, move_x, move_y, direction, attack_count
+    global alive, is_running, is_attacking, is_jumping, is_protecting, move_x, move_y, direction, attack_count, stage
 
     events = get_events()
     for event in events:
@@ -51,14 +51,15 @@ def handle_events():
                      is_running = False
                      move_x = 0         #움직임 초기화
                      attack_count += 1
-            elif event.key == SDLK_d:   #방어
 
+            elif event.key == SDLK_d:   #방어
                 is_protecting = True
                 is_running = False
                 is_attacking = False
                 attack_count = 0  # 공격 초기화
                 move_x = 0      #이동 초기화
-
+            elif event.key == SDLK_2:   #스테이지 스킵
+                stage =2
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 is_running = False
@@ -199,11 +200,14 @@ class Knight:
             elif stage == 2:
                 if  10 < self.x - 5 * move_x < 950:
                     self.x -= 5 * move_x
+
         if self.x == WIDTH//2:
             background_move = True
         if self.x > WIDTH:
             stage = 2
             self.x = WIDTH // 2
+            background_move = True
+
 
 
         if is_running:
