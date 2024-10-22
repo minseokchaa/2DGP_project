@@ -27,13 +27,15 @@ def handle_events():
                 alive = False
             elif event.key == SDLK_RIGHT:
                 is_running = True
+                is_protecting = False
                 is_attacking = False
-                attack_count = 0
+                attack_count = 0        #공격 초기화
                 move_x = -1
                 direction = 1
                 # 오른쪽 이동 방향키
             elif event.key == SDLK_LEFT:
                 is_running = True
+                is_protecting = False
                 is_attacking = False
                 attack_count = 0
                 move_x = +1
@@ -43,23 +45,20 @@ def handle_events():
                 if move_y == 0:
                     move_y = +18
                     is_jumping = True
-
             elif event.key == SDLK_a and attack_count + 1 <= 3:   #공격
                 if not is_jumping:
                      is_attacking = True
                      is_running = False
-                     move_x = 0
+                     move_x = 0         #움직임 초기화
                      attack_count += 1
-                     if attack_count == 1:
-                        print('a')
-                     if attack_count == 2:
-                        print('b')
-                     if attack_count == 3:
-                        print('c')
-                pass
             elif event.key == SDLK_d:   #방어
+
                 is_protecting = True
-                pass
+                is_running = False
+                is_attacking = False
+                attack_count = 0  # 공격 초기화
+                move_x = 0      #이동 초기화
+
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 is_running = False
@@ -69,6 +68,8 @@ def handle_events():
                 is_running = False
                 move_x = 0
                 # 왼쪽 이동 멈춤
+            elif event.key == SDLK_d:  # 방어
+                is_protecting = False
 
 class Back_ground_swamp:
     global move_x
@@ -172,27 +173,31 @@ class Knight:
         self.image_Attack1 = load_image('Knight_Attack 1.png')
         self.image_Attack2 = load_image('Knight_Attack 2.png')
         self.image_Attack3 = load_image('Knight_Attack 3.png')
+        self.image_Protect = load_image('Knight_Protect.png')
 
 
     def update(self):
         global background_move
         global stage
-        global move_y, is_jumping, is_attacking, attack_count
+        global move_y, is_jumping, is_attacking, is_protecting, attack_count
 
         self.y += move_y
         move_y -=1
 
-        if self.y <= 168:
+        if self.y == 168:
             move_y = 0
             is_jumping = False
 
+        if self.stamina_now < self.stamina_max:
+            self.stamina_now += 0.1         #1초에 10씩 스테미나 회복
 
-        if background_move == False:
+
+        if not background_move:
             if stage == 1:
                 if self.x - 5 * move_x > 10:
                     self.x -= 5 * move_x
             elif stage == 2:
-                if self.x - 5 * move_x > 10 and self.x - 5 * move_x < 950:
+                if  10 < self.x - 5 * move_x < 950:
                     self.x -= 5 * move_x
         if self.x == WIDTH//2:
             background_move = True
@@ -213,15 +218,14 @@ class Knight:
                 self.frame_Jump_timer = 0
             else:
                 self.frame_Jump_timer += 1
-
         elif is_attacking:
             if self.frame_Attack_timer >= 6:  # attack 애니메이션
-                self.frame_Attack = (self.frame_Attack + 1) % 5
+                self.frame_Attack = (self.frame_Attack + 1) % 5     #0.06초에 1프레임, 총 4프레임 있음
                 self.frame_Attack_timer = 0
             else:
                 self.frame_Attack_timer += 1
 
-            if self.attack_motion <= attack_count and self.frame_Attack == 4:
+            if self.attack_motion <= attack_count and self.frame_Attack == 4:   #4프레임이 다 그려졌을 때 다음 모션, 프레임 초기화
                 self.attack_motion +=1
                 self.frame_Attack = 0
             elif self.attack_motion > attack_count:
@@ -230,6 +234,12 @@ class Knight:
                 self.frame_Attack = 0
                 attack_count = 0
 
+        elif is_protecting:
+            self.stamina_now -= 0.5     #방어중이면 스테미나 감소
+            print(self.stamina_now)
+
+            if self.stamina_now <0:
+                is_protecting = False
 
 
         else:
@@ -271,6 +281,12 @@ class Knight:
                 self.image_Jump.clip_draw(self.frame_Jump * 128, 0, 70, 70, self.x, self.y,105,105)
             else:
                 self.image_Jump.clip_composite_draw(self.frame_Jump * 128, 0, 70, 70, 0, 'h', self.x, self.y, 105, 105)
+
+        elif is_protecting:
+            if direction:
+                self.image_Protect.clip_draw(0, 0, 70, 70, self.x, self.y,105,105)
+            else:
+                self.image_Protect.clip_composite_draw(0, 0, 70, 70, 0, 'h', self.x, self.y, 105, 105)
 
         else: #idle
             if direction:
