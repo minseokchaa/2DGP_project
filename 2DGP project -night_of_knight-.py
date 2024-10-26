@@ -91,28 +91,6 @@ class Back_ground_swamp:
 
     def draw(self):
         self.Back_ground_swamp.draw(self.x, HEIGHT // 2)
-
-class Tile_swamp:
-    global move_x
-    i =0
-
-    def __init__(self):
-        self.x = 0
-        self.tile_swamp = load_image('tile_chapter_0000_tile1_.png')
-        self.scroll_speed = 5
-
-    def update(self):
-        global background_move
-        if background_move:
-            self.x += self.scroll_speed * move_x
-
-    def handle_event(self):
-        pass
-
-    def draw(self):
-        for i in range(37):
-            self.tile_swamp.draw(self.x + 128 * i, 50,192,136)
-
 class Back_ground_lava:
     global move_x
     def __init__(self):
@@ -133,12 +111,13 @@ class Back_ground_lava:
     def draw(self):
         self.Back_ground_lava.draw(self.x, HEIGHT // 2)
 
-class Tile_lava:
+class Tile:
     global move_x
     i =0
 
     def __init__(self):
         self.x = 0
+        self.tile_swamp = load_image('tile_chapter_0000_tile1_.png')
         self.tile_lava = load_image('tile_chapter_0004_tile2.png')
         self.scroll_speed = 5
 
@@ -152,7 +131,12 @@ class Tile_lava:
 
     def draw(self):
         for i in range(37):
-            self.tile_lava.draw(self.x + 128 * i, 50,192,136)
+            if stage == 1:
+                self.tile_swamp.draw(self.x + 128 * i, 50,192,136)
+            elif stage == 2:
+                self.tile_lava.draw(self.x + 128 * i, 50, 192, 136)
+
+
 
 
 class Knight:
@@ -160,6 +144,7 @@ class Knight:
     global direction
     def __init__(self):
         self.x, self.y = WIDTH//2, 168
+        self.y_foot = self.y -35
         self.hp_max, self.stamina_max, self.power = 1000, 100, 100
         self.hp_now, self.stamina_now = 1000, 100
         self.frame_Idle, self.frame_Idle_timer = 0, 0
@@ -182,11 +167,11 @@ class Knight:
         global stage
         global move_y, is_jumping, is_attacking, is_protecting, attack_count
 
-        self.y += move_y
+        self.y += move_y        #기사는 중력(move_y)에 의해 항상 y값이 줄어든다.
         move_y -=1
 
-        if self.y == 168:
-            move_y = 0
+        if self.y == 168:       # 기사는 '타일을 밟고 있을 땐' y값이 줄어들지 않고, 점프를 하고 있는게 아니다.
+            move_y = 0          # 타일을 밟다 == self.x와 self.y_foot의 값이 tile_top과 같다...? tile_top은 x,y좌표료 이루어져 있음
             is_jumping = False
 
         if self.stamina_now < self.stamina_max:
@@ -303,43 +288,46 @@ def reset_world():
     global world
     global knight
     global bg_swamp, tile_swamp
-    global bg_lava, tile_lava
+    global bg_lava, tile
     global stage
 
     alive = True
     world = []
 
     bg_swamp = Back_ground_swamp()
-    tile_swamp = Tile_swamp()
+    tile = Tile()
 
     bg_lava = Back_ground_lava()
-    tile_lava = Tile_lava()
 
     knight = Knight()
 
     world.append(knight)    #기사를 월드에 추가
+    world.append(tile)
 
 
 def update_world():
     global stage
     if stage ==1:
         bg_swamp.update()   # 늪배경 업데이트
-        tile_swamp.update() # 늪타일 업데이트
     if stage == 2:
         bg_lava.update()    # 용암배경 업데이트
-        tile_lava.update()  # 용암타일 업데이트
 
+
+    tile.update()
     knight.update()  # 기사 업데이트
+    #몬스터 업데이트
+    #보스 업데이트
+    #엘릭서 업데이트
+
+    # 충돌처리 추가(몬스터, 보스, 타일)
 
 def render_world():
     global stage
     clear_canvas()
     if stage == 1:
         bg_swamp.draw()
-        tile_swamp.draw()
     elif stage == 2:
         bg_lava.draw()
-        tile_lava.draw()
 
     for o in world:
         o.draw()
