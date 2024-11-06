@@ -74,7 +74,6 @@ def handle_events():
                 is_protecting = False
 
 class Background_swamp:
-    global move_x
     def __init__(self):
 
         self.x = WIDTH
@@ -232,22 +231,18 @@ class Knight:
                 self.attack_motion = 1
                 self.frame_Attack = 0
                 attack_count = 0
-
         elif is_jumping:
             if (self.frame_Jump_timer >= 15):  # jump 애니메이션
                 self.frame_Jump = (self.frame_Jump + 1) % 6
                 self.frame_Jump_timer = 0
             else:
                 self.frame_Jump_timer += 1
-
         elif is_protecting:
             self.stamina_now -= 0.5  # 방어중이면 스테미나 감소
             print(self.stamina_now)
 
             if self.stamina_now < 0:
                 is_protecting = False
-
-
         else:
             if self.frame_Idle_timer >= 15:  # idle 애니메이션
                 self.frame_Idle = (self.frame_Idle + 1) % 4
