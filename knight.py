@@ -243,7 +243,7 @@ class Protect:
 
 class Knight:
     def __init__(self):
-        self.x, self.y, self.world = 11, 168, 11
+        self.x, self.y, self.world = 480, 170, 480
         self.y_foot = self.y - 35
         self.gravity = 0
         self.face_dir, self.move, self.speed = 1, 0, 5
@@ -275,8 +275,6 @@ class Knight:
                 Protect: {right_down: Run, left_down: Run, space_down: Jump, d_up: Idle, no_stamina: Idle}
             }
         )
-
-
 
     def update(self):
         self.y += self.gravity  # 기사는 중력(gravity)에 의해 항상 y값이 줄어든다.
@@ -320,6 +318,9 @@ class Knight:
         else:
             if self.state_machine.cur_state == Idle:
                 return self.x - 25, self.y - 53, self.x + 20, self.y + 43
+
+    def get_bottom(self):
+        return self.x - 20, self.y-53, self.x+25, self.y-53,
 
 
 

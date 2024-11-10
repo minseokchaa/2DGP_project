@@ -1,10 +1,10 @@
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 from state_machine import StateMachine, right_down, left_down, left_up, right_up, d_down, a_down, out_of_width
 
 WIDTH =960
 HEIGHT = 800
 
-class Idle:
+class bg_Idle:
 
     @staticmethod
     def enter(Bg_swamp, e):
@@ -23,7 +23,7 @@ class Idle:
         Bg_swamp.Back_ground_swamp.draw(Bg_swamp.x, HEIGHT // 2)
         pass
 
-class background_move:
+class bg_move:
 
     @staticmethod
     def enter(Bg_swamp, e):
@@ -63,11 +63,11 @@ class Bg_swamp:
         self.scroll_speed = 2
         self.move_x = 0
         self.state_machine = StateMachine(self)  # 늪배경 객체의 state machine 생성
-        self.state_machine.start(Idle)
+        self.state_machine.start(bg_Idle)
         self.state_machine.set_transitions(
-            { Idle: {right_down: background_move, left_down:background_move},
-              background_move: {right_up: Idle, left_up: Idle, a_down: Idle, d_down: Idle, out_of_width: Idle}
-            }
+            {bg_Idle: {right_down: bg_move, left_down:bg_move},
+             bg_move: {right_up: bg_Idle, left_up: bg_Idle, a_down: bg_Idle, d_down: bg_Idle, out_of_width: bg_Idle}
+             }
         )
         pass
     def update(self):
@@ -98,7 +98,7 @@ class Tile_Idle:
     @staticmethod
     def draw(tile_ground_swamp):
         for i in range(37):
-            tile_ground_swamp.tile_swamp.draw(tile_ground_swamp.x + 128 * i, 50, 192, 136)
+            tile_ground_swamp.tile_swamp.draw(tile_ground_swamp.x + 128 * i-480, 50, 192, 136)
         pass
 
 class Tile_move:
@@ -131,16 +131,16 @@ class Tile_move:
     @staticmethod
     def draw(tile_ground_swamp):
         for i in range(37):
-            tile_ground_swamp.tile_swamp.draw(tile_ground_swamp.x + 128 * i, 50, 192, 136)
+            tile_ground_swamp.tile_swamp.draw(tile_ground_swamp.x + 128 * i - 480, 50, 192, 136)
         pass
 
 class Tile_ground_swamp:
     i =0
     def __init__(self):
-        self.x = 11
+        self.x, self.y, self.world  = 480, 50, 480
         self.tile_swamp = load_image('tile_chapter_0000_tile1_.png')
         self.scroll_speed = 5
-        self.move_x, self.world = 0, 11
+        self.move_x = 0
         self.state_machine = StateMachine(self)  # 늪배경 객체의 state machine 생성
         self.state_machine.start(Tile_Idle)
         self.state_machine.set_transitions(
@@ -158,3 +158,9 @@ class Tile_ground_swamp:
 
     def draw(self):
         self.state_machine.draw()
+        bb = self.get_bb()
+        if bb:
+            draw_rectangle(*bb)
+
+    def get_bb(self):
+        return self.x-96, self.y-68, self.x+96,self.y+68

@@ -2,8 +2,9 @@ from pico2d import *
 from pygame.event import event_name
 import game_world
 from knight import Knight
-from backgorund_swamp import Bg_swamp
-from backgorund_swamp import Tile_ground_swamp
+from swamp import Bg_swamp
+from swamp import Tile_ground_swamp
+from monster import Small_slime1
 
 
 # Game object class here
@@ -23,12 +24,14 @@ def handle_events():
                 knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
                 background_swamp.handle_event(event)  # input 이벤트를 background에 전달하고 있다.
                 tile_ground_swamp.handle_event(event)  # input 이벤트를 tile_ground_swamp에 전달하고 있다.
+                small_slime1.handle_event(event)
 
 def reset_world():
     global running
     global knight
     global background_swamp
     global tile_ground_swamp
+    global small_slime1
 
     running = True
 
@@ -41,10 +44,17 @@ def reset_world():
     knight = Knight()
     game_world.add_object(knight, 1)
 
+    small_slime1 = Small_slime1()
+    game_world.add_object(small_slime1, 1)
 
+    #tree = Tree()
+    #game_world.add_object(tree, 1)
 
 def update_world():
     game_world.update()
+    # if game_world.collide(knight, tile_ground_swamp):
+    #     print('COLLISION knight:tile_ground_swamp')
+
     pass
 
 

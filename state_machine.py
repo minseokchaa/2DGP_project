@@ -1,8 +1,7 @@
 #이벤트 체크 함수를 정의
 # 상태이벤트 e = (종류, 실제 값) 튜플로 정의
 from tabnanny import check
-
-from sdl2 import SDL_KEYDOWN, SDLK_SPACE, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_a, SDLK_d
+from pico2d import *
 
 
 def start_event(e):
@@ -52,7 +51,8 @@ def no_stamina(e):         #e가 time out인지 판단
 def out_of_width(e):         #e가 time out인지 판단
     return e[0] == 'OUT_OF_WIDTH'
 
-
+def too_far_to_first(e):         #e가 time out인지 판단
+    return e[0] == 'Too_far_to_first'
 
 
 class StateMachine:
