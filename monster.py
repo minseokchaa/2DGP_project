@@ -1,5 +1,5 @@
 from pico2d import load_image, get_time, draw_rectangle
-from state_machine import StateMachine, too_far_to_first
+from state_machine import StateMachine, too_far_to_first, right_up, right_down, left_down, left_up
 
 def find_knight(monster): #knight를 찾았을 때  state machine에 이벤트 생성
 
@@ -14,6 +14,13 @@ class Idle:
 
     @staticmethod
     def exit(small_slime1, e):
+        if right_up(e) or left_up(e):
+            small_slime1.move = 0
+        elif right_down(e):
+            small_slime1.move =-5
+        elif left_down(e):
+            small_slime1.move = 5
+            pass
         pass
 
     @staticmethod
@@ -24,7 +31,7 @@ class Idle:
         else:
             small_slime1.frame_Idle_timer += 1
 
-        if small_slime1.timer > 200:     #3초마다 방향전환
+        if small_slime1.timer > 200:     #2초마다 방향전환
             if small_slime1.face_dir == 1:
                 small_slime1.face_dir = -1
                 small_slime1.timer = 0
@@ -84,7 +91,7 @@ class Small_slime1:
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
-                Idle: {}, #슬라임이 보는 시선의 방향에서 일정거리 안에 knight가 있으면 attack으로 전환
+                Idle: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle,}, #슬라임이 보는 시선의 방향에서 일정거리 안에 knight가 있으면 attack으로 전환
                 Attack: {too_far_to_first: Idle} #초기 슬라임 위치에서 일정거리 이상 벗어나면 idle로 전환
             }
         )
@@ -92,7 +99,7 @@ class Small_slime1:
 
     def update(self):
         self.state_machine.update()
-        self.x += self.speed * self.face_dir
+        self.x = self.x+ self.speed * self.face_dir + self.move
         self.world += self.speed * self.face_dir
         pass
 
