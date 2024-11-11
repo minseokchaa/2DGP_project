@@ -249,6 +249,8 @@ class Knight:
         self.face_dir, self.move, self.speed = 1, 0, 5
         self.hp_max, self.stamina_max, self.power = 1000, 100, 100
         self.hp_now, self.stamina_now = 1000, 100
+        self.hp_draw = 150 - (self.hp_max-self.hp_now)//2
+        self.stamina_draw = 150 - (self.stamina_max - self.stamina_now) // 2
         self.frame_Idle, self.frame_Idle_timer = 0, 0
         self.frame_Run, self.frame_Run_timer = 0, 0
         self.frame_Jump, self.frame_Jump_timer = 0, 0
@@ -262,8 +264,10 @@ class Knight:
         self.image_Attack2 = load_image('Knight_Attack 2.png')
         self.image_Attack3 = load_image('Knight_Attack 3.png')
         self.image_Protect = load_image('Knight_Protect.png')
-        self.hp_bar = load_image('hp_bar.png')
-        self.stamina_bar = load_image('stamina_bar.png')
+        self.image_hp_bar = load_image('hp_bar.png')
+        self.image_stamina_bar = load_image('stamina_bar.png')
+        self.image_max_hp_bar = load_image('max_hp_bar.png')
+        self.image_max_stamina_bar = load_image('max_stamina_bar.png')
         self.start_time = get_time()
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
         self.state_machine.start(Idle)      #초기 상태 -- Idle
@@ -308,6 +312,13 @@ class Knight:
 
     def draw(self):
         self.state_machine.draw()
+
+        self.image_max_hp_bar.clip_draw(0, 0, 50, 50, 0, 90, self.hp_max/2, 20)
+        self.image_hp_bar.clip_draw(0, 0, 50, 50, 0, 90, self.hp_now/2, 20)
+
+        self.image_max_stamina_bar.clip_draw(0, 0, 50, 50, 0, 50, self.stamina_max*3, 20)
+        self.image_stamina_bar.clip_draw(0, 0, 50, 50, 0, 50, self.stamina_now*3, 20)
+
         bb = self.get_bb()
         if bb:
             draw_rectangle(*bb)

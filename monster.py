@@ -158,14 +158,16 @@ class Small_slime1:
         if 0 <= self.knight_x_location - self.speed*self.move <= 1920:
             self.knight_x_location -= self.speed * self.move
 
-        if 481 <= self.knight_x_location <= 1439:
+        if 480 < self.knight_x_location:
             self.x += self.move
+        else:
+            self.x = self.world
 
         self.world += self.speed * self.face_dir
         self.x += self.speed * self.face_dir
 
+        print(self.world, self.x)
         pass
-        print(self.knight_x_location)
 
     def handle_event(self, event):
         self.state_machine.add_event(('INPUT', event))
