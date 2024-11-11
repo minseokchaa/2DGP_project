@@ -4,8 +4,8 @@ import game_world
 from knight import Knight
 from swamp import Bg_swamp
 from swamp import Tile_ground_swamp
-from monster import Small_slime1
-
+from small_slime1 import Small_slime1
+from big_slime1 import Big_slime1
 
 # Game object class here
 running = True
@@ -25,6 +25,7 @@ def handle_events():
                 background_swamp.handle_event(event)  # input 이벤트를 background에 전달하고 있다.
                 tile_ground_swamp.handle_event(event)  # input 이벤트를 tile_ground_swamp에 전달하고 있다.
                 small_slime1.handle_event(event)
+                big_slime1.handle_event(event)
 
 def reset_world():
     global running
@@ -32,6 +33,7 @@ def reset_world():
     global background_swamp
     global tile_ground_swamp
     global small_slime1
+    global big_slime1
 
     running = True
 
@@ -46,6 +48,9 @@ def reset_world():
 
     small_slime1 = Small_slime1()
     game_world.add_object(small_slime1, 0)
+
+    big_slime1 = Big_slime1()
+    game_world.add_object(big_slime1, 0)
 
     #tree = Tree()
     #game_world.add_object(tree, 1)
