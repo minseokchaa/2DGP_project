@@ -45,7 +45,7 @@ def reset_world():
     game_world.add_object(knight, 1)
 
     small_slime1 = Small_slime1()
-    game_world.add_object(small_slime1, 1)
+    game_world.add_object(small_slime1, 0)
 
     #tree = Tree()
     #game_world.add_object(tree, 1)

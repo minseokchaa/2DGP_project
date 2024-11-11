@@ -262,6 +262,8 @@ class Knight:
         self.image_Attack2 = load_image('Knight_Attack 2.png')
         self.image_Attack3 = load_image('Knight_Attack 3.png')
         self.image_Protect = load_image('Knight_Protect.png')
+        self.hp_bar = load_image('hp_bar.png')
+        self.stamina_bar = load_image('stamina_bar.png')
         self.start_time = get_time()
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
         self.state_machine.start(Idle)      #초기 상태 -- Idle
