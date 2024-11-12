@@ -57,8 +57,9 @@ def reset_world():
 
 def update_world():
     game_world.update()
-    # if game_world.collide(knight, tile_ground_swamp):
-    #     print('COLLISION knight:tile_ground_swamp')
+    if game_world.collide(knight, small_slime1):
+        print('knight:small_slime1 COLLIDE')
+        knight.take_damage(small_slime1.power)
 
     pass
 

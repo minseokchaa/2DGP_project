@@ -40,8 +40,15 @@ class Idle:
             knight.image_Idle.clip_draw(knight.frame_Idle * 128, 0, 55, 70, knight.x, knight.y, 83, 105)
         else:
             knight.image_Idle.clip_composite_draw(knight.frame_Idle * 128, 0, 55, 70, 0, 'h', knight.x, knight.y, 83, 105)
+        draw_rectangle(*knight.get_bb())
 
         pass
+
+    def get_bb(self):
+        if self.face_dir == 1:
+            return self.x - 20, self.y - 53, self.x + 25, self.y + 43
+        else:
+            return self.x - 25, self.y - 53, self.x + 20, self.y + 43
 
 class Run:
     @staticmethod
@@ -256,6 +263,7 @@ class Knight:
         self.frame_Jump, self.frame_Jump_timer = 0, 0
         self.frame_Attack, self.frame_Attack_timer = 0, 0
         self.attack_motion, self.attack_count = 1, 0
+        self.invincible, self.invincible_timer = False,  0
 
         self.image_Idle = load_image('Knight_Idle.png')
         self.image_Run = load_image('Knight_Run.png')
@@ -301,8 +309,17 @@ class Knight:
                 self.x += self.speed * self.move
                 self.world += 5* self.move
 
+        if self.invincible:
+            self.invincible_timer += 1
+
+        # 3초 후 무적 상태를 해제하는 타이머 시작
+        if self.invincible_timer == 300:
+            self.invincible = False
+
         self.state_machine.update()
         #print('world:', self.world)
+
+
 
     def handle_event(self, event):
         #event: 입력 이벤트 key mouse
@@ -319,21 +336,26 @@ class Knight:
         self.image_max_stamina_bar.clip_draw(0, 0, 50, 50, 0, 50, self.stamina_max*3, 20)
         self.image_stamina_bar.clip_draw(0, 0, 50, 50, 0, 50, self.stamina_now*3, 20)
 
-        bb = self.get_bb()
-        if bb:
-            draw_rectangle(*bb)
+
+        #draw_rectangle(*self.get_bb())
 
 
     def get_bb(self):
         if self.face_dir == 1:
-            if self.state_machine.cur_state == Idle:
-                return self.x - 20, self.y-53, self.x+25, self.y+43
+            return self.x - 20, self.y-53, self.x+25, self.y+43
         else:
-            if self.state_machine.cur_state == Idle:
-                return self.x - 25, self.y - 53, self.x + 20, self.y + 43
+            return self.x - 25, self.y - 53, self.x + 20, self.y + 43
 
     def get_bottom(self):
-        return self.x - 20, self.y-53, self.x+25, self.y-53,
+        return self.x - 20, self.y-53, self.x+25, self.y-53
+
+    def take_damage(self, power):
+        if not self.invincible:
+            self.hp_now -= power
+
+        self.invincible = True
+        print('knight is invincible in 3 second')
+        pass
 
 
 

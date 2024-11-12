@@ -94,9 +94,9 @@ class Return_to_Idle:
         if right_up(e) or left_up(e):
             big_slime1.move = 0
         elif right_down(e):
-            big_slime1.move = -5
+            big_slime1.move -= 5
         elif left_down(e):
-            big_slime1.move = 5
+            big_slime1.move += 5
         pass
 
     @staticmethod
@@ -166,7 +166,6 @@ class Big_slime1:
         self.world += self.speed * self.face_dir
         self.x += self.speed * self.face_dir
 
-        print(self.world, self.x)
         pass
 
     def handle_event(self, event):

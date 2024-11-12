@@ -17,7 +17,7 @@ class Idle:
         if right_up(e) or left_up(e):
             small_slime1.move = 0
         elif right_down(e):
-            small_slime1.move =-5
+            small_slime1.move = -5
         elif left_down(e):
             small_slime1.move = 5
         pass
@@ -158,15 +158,11 @@ class Small_slime1:
         if 0 <= self.knight_x_location - self.speed*self.move <= 1920:
             self.knight_x_location -= self.speed * self.move
 
-        if 480 < self.knight_x_location:
-            self.x += self.move
-        else:
-            self.x = self.world
+        if 480 < self.knight_x_location<1440:
+            self.x += self.move                 #그려지는 위치만 달라짐
 
         self.world += self.speed * self.face_dir
         self.x += self.speed * self.face_dir
-
-        print(self.world, self.x)
         pass
 
     def handle_event(self, event):
@@ -181,3 +177,6 @@ class Small_slime1:
 
     def get_bb(self):
         return self.x - 47, self.y-56, self.x+47, self.y+56
+
+    def power(self):
+        return self.power
