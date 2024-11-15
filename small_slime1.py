@@ -155,9 +155,10 @@ class Small_slime1:
 
         self.frame_Idle, self.frame_Idle_timer = 0, 0
         self.timer = 0
+        self.invincible, self.invincible_timer = False,  0
 
         self.image_Idle = load_image('mon_swamp_dungeon17_01.png')
-
+        self.image_hp_bar = load_image('hp_bar.png')
 
         self.state_machine = StateMachine(self)  # 소년 객체의 state machine 생성
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
@@ -180,9 +181,17 @@ class Small_slime1:
         self.world += self.speed * self.face_dir
         self.x += self.speed * self.face_dir
 
-        if self.hp_now == 0:
+        if self.hp_now <= 0:
             game_world.remove_object(self)
             print('slime is dead')
+
+        if self.invincible:
+            self.invincible_timer += 1
+
+            # 24프레임 후 무적 초기화
+        if self.invincible_timer == 29:
+            self.invincible = False
+            self.invincible_timer = 0
 
         pass
 
@@ -192,6 +201,7 @@ class Small_slime1:
 
     def draw(self):
         self.state_machine.draw()
+        self.image_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_now // 10 ,5)
 
 
     def get_bb(self):
@@ -200,12 +210,11 @@ class Small_slime1:
     def power(self):
         return self.power
 
-    def take_damage(self, power):
-        self.hp_now -= power
-        pass
 
     def handle_collision(self, group, other, power):
         # fill here
-        if group == 'knight:small_slime1':
-            self.hp_now -= power
+        if group == 'sword:monster':
+            if not self.invincible:
+                self.hp_now -= power
+                self.invincible = True
         pass
