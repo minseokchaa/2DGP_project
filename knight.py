@@ -32,6 +32,11 @@ class Idle:
 
         if knight.y == 168:
             knight.gravity = 0
+        if knight.face_dir == 1:
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 20, knight.y - 53, knight.x + 25, knight.y + 43
+        else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 25, knight.y - 53, knight.x + 20, knight.y + 43
+
+
         pass
 
     @staticmethod
@@ -40,15 +45,8 @@ class Idle:
             knight.image_Idle.clip_draw(knight.frame_Idle * 128, 0, 55, 70, knight.x, knight.y, 83, 105)
         else:
             knight.image_Idle.clip_composite_draw(knight.frame_Idle * 128, 0, 55, 70, 0, 'h', knight.x, knight.y, 83, 105)
-        draw_rectangle(*knight.get_bb())
 
         pass
-
-    def get_bb(self):
-        if self.face_dir == 1:
-            return self.x - 20, self.y - 53, self.x + 25, self.y + 43
-        else:
-            return self.x - 25, self.y - 53, self.x + 20, self.y + 43
 
 class Run:
     @staticmethod
@@ -75,8 +73,41 @@ class Run:
             knight.frame_Run_timer += 1
         if knight.y == 168:
             knight.gravity = 0
-        pass
+        if knight.frame_Run  == 0:
+            if knight.face_dir == 1:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 30, knight.y - 53, knight.x + 19, knight.y + 40
+            else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 19, knight.y - 53, knight.x + 30, knight.y + 40
+        if knight.frame_Run  == 1:
+            if knight.face_dir == 1:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 53, knight.y - 53, knight.x + 17, knight.y + 37
+            else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 17, knight.y - 53, knight.x + 53, knight.y + 37
+        if knight.frame_Run  == 2:
+            if knight.face_dir == 1:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 53, knight.y - 53, knight.x+2, knight.y + 40
+            else:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 2, knight.y - 53, knight.x + 53, knight.y + 40
+        if knight.frame_Run  == 3:
+            if knight.face_dir == 1:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 37, knight.y - 53, knight.x + 17, knight.y + 42
+            else:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 17, knight.y - 53, knight.x + 37, knight.y + 42
+        if knight.frame_Run  == 4:
+            if knight.face_dir == 1:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 27, knight.y - 53, knight.x + 27, knight.y + 38
+            else:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 27, knight.y - 53, knight.x + 27, knight.y + 38
+        if knight.frame_Run  == 5:
+            if knight.face_dir == 1:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 53, knight.y - 53, knight.x + 15, knight.y + 36
+            else:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 15, knight.y - 53, knight.x + 53, knight.y + 36
 
+        if knight.frame_Run  == 6:
+            if knight.face_dir == 1:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 48, knight.y - 53, knight.x + 5, knight.y + 41
+            else:
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 5, knight.y - 53, knight.x + 48, knight.y + 41
+        pass
     @staticmethod
     def draw(knight):
         if knight.face_dir:
@@ -115,6 +146,8 @@ class Jump_run:
             knight.gravity = 0
             knight.y = 168
             knight.state_machine.add_event(('LAND', 0))
+
+        knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 41, knight.y - 53, knight.x +5, knight.y + 43
         pass
 
     @staticmethod
@@ -123,6 +156,7 @@ class Jump_run:
             knight.image_Jump.clip_draw(knight.frame_Jump * 128, 0, 70, 70, knight.x, knight.y, 105, 105)
         else:
             knight.image_Jump.clip_composite_draw(knight.frame_Jump * 128, 0, 70, 70, 0, 'h', knight.x, knight.y, 105, 105)
+
         pass
 
 class Jump:
@@ -156,6 +190,8 @@ class Jump:
             knight.gravity = 0
             knight.y = 168
             knight.state_machine.add_event(('LAND', 0))
+
+        knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 41, knight.y - 53, knight.x +5, knight.y + 43
         pass
 
     @staticmethod
@@ -194,6 +230,7 @@ class Attack:
             knight.frame_Attack = 0
             knight.attack_count = 0
             knight.state_machine.add_event(('Attack_end', 0))
+        knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 20, knight.y - 53, knight.x + 25, knight.y + 43
 
         pass
 
@@ -233,10 +270,10 @@ class Protect:
     @staticmethod
     def do(knight):
         knight.stamina_now -= 0.5  # 방어중이면 스테미나 감소
-        print(knight.stamina_now)
 
         if knight.stamina_now < 0:
             knight.state_machine.add_event(('No_stamina', 0))
+        knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 27, knight.y - 53, knight.x + 25, knight.y + 37
         pass
 
     @staticmethod
@@ -251,11 +288,12 @@ class Protect:
 class Knight:
     def __init__(self):
         self.x, self.y, self.world = 480, 170, 480
-        self.y_foot = self.y - 35
+        self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
         self.gravity = 0
         self.face_dir, self.move, self.speed = 1, 0, 5
-        self.hp_max, self.stamina_max, self.power = 1000, 100, 100
+        self.hp_max, self.stamina_max, self.power = 1000, 100, 1000
         self.hp_now, self.stamina_now = 1000, 100
+        self.hp_decrease = 1000
         self.hp_draw = 150 - (self.hp_max-self.hp_now)//2
         self.stamina_draw = 150 - (self.stamina_max - self.stamina_now) // 2
         self.frame_Idle, self.frame_Idle_timer = 0, 0
@@ -265,20 +303,17 @@ class Knight:
         self.attack_motion, self.attack_count = 1, 0
         self.invincible, self.invincible_timer = False,  0
 
-        self.image_Idle = load_image('Knight_Idle.png')
-        self.image_Run = load_image('Knight_Run.png')
-        self.image_Jump = load_image('Knight_Jump.png')
-        self.image_Attack1 = load_image('Knight_Attack 1.png')
-        self.image_Attack2 = load_image('Knight_Attack 2.png')
-        self.image_Attack3 = load_image('Knight_Attack 3.png')
+        self.image_Idle,self.image_Run,self.image_Jump = load_image('Knight_Idle.png'), load_image('Knight_Run.png'), load_image('Knight_Jump.png')
+        self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('Knight_Attack 1.png'), load_image('Knight_Attack 2.png'),load_image('Knight_Attack 3.png')
+
         self.image_Protect = load_image('Knight_Protect.png')
-        self.image_hp_bar = load_image('hp_bar.png')
-        self.image_stamina_bar = load_image('stamina_bar.png')
-        self.image_max_hp_bar = load_image('max_hp_bar.png')
-        self.image_max_stamina_bar = load_image('max_stamina_bar.png')
+        self.image_hp_bar,self.image_stamina_bar = load_image('hp_bar.png'),load_image('stamina_bar.png')
+        self.image_max_hp_bar, self.image_max_stamina_bar = load_image('max_hp_bar.png'), load_image('max_stamina_bar.png')
+        self.image_decrease_hp_bar,self.image_ui = load_image('decreasing_hp_bar.png'), load_image('knight_ui.png')
+
         self.start_time = get_time()
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
-        self.state_machine.start(Idle)      #초기 상태 -- Idle
+        self.state_machine.start(Jump)      #초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
                 Idle: {right_down: Run, left_down: Run, space_down: Jump, a_down: Attack, d_down: Protect},
@@ -292,33 +327,37 @@ class Knight:
 
     def update(self):
         self.y += self.gravity  # 기사는 중력(gravity)에 의해 항상 y값이 줄어든다.
+
         if self.stamina_now < self.stamina_max:
             self.stamina_now += 0.1  # 1초에 10씩 스테미나 회복
 
-        if 0 <= self.world + 5*self.move <= 480:
-            if self.x + 5 * self.move > 10:
-                self.x += self.speed*self.move
-                self.world += 5 * self.move
-
-        elif 480 < self.world+ 5*self.move <= 1440:
-            self.x = 480
+        if 0 <= self.world + self.speed * self.move <= 1920:
             self.world += self.speed * self.move
 
-        elif 1440 < self.world+ 5*self.move <= 1920:
+        if 0 <= self.world + self.speed * self.move <= 480:
+            if self.x + 5 * self.move > 10:
+                self.x += self.speed*self.move
+
+        elif 1440 < self.world+ self.speed * self.move <= 1920:
             if self.x + 5 * self.move < 950:
                 self.x += self.speed * self.move
-                self.world += 5* self.move
-
         if self.invincible:
             self.invincible_timer += 1
 
-        # 3초 후 무적 상태를 해제하는 타이머 시작
-        if self.invincible_timer == 300:
+        # 1.5초 후 무적 상태를 해제하는 타이머 시작
+        if self.invincible_timer == 150:
             self.invincible = False
+            self.invincible_timer = 0
+            print('무적 해제')
 
         self.state_machine.update()
         #print('world:', self.world)
 
+        if self.hp_decrease > self.hp_now:
+            self.hp_decrease -= 2
+
+        if self.hp_decrease < self.hp_now:
+            self.hp_decrease += 2
 
 
     def handle_event(self, event):
@@ -328,33 +367,47 @@ class Knight:
         pass
 
     def draw(self):
-        self.state_machine.draw()
+        if self.invincible_timer % 10 <= 5:
+            self.state_machine.draw()
 
-        self.image_max_hp_bar.clip_draw(0, 0, 50, 50, 0, 90, self.hp_max/2, 20)
-        self.image_hp_bar.clip_draw(0, 0, 50, 50, 0, 90, self.hp_now/2, 20)
+        self.image_max_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_max//4*3, 20)             #(90,90)을 중심으로 hp바 생성
+        self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_decrease//4*3 , 20)
+        self.image_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_now//4*3, 20)
 
-        self.image_max_stamina_bar.clip_draw(0, 0, 50, 50, 0, 50, self.stamina_max*3, 20)
-        self.image_stamina_bar.clip_draw(0, 0, 50, 50, 0, 50, self.stamina_now*3, 20)
+        self.image_max_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_max*3, 20)      #(90,50)을 중심으로 stamina바 생성
+        self.image_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
 
+        self.image_ui.clip_draw(0, 0, 130, 80, 65, 70, 130, 80)
 
-        #draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.get_bb())
+        draw_rectangle(self.x-1,self.y-1,self.x+1,self.y+1)
 
 
     def get_bb(self):
-        if self.face_dir == 1:
-            return self.x - 20, self.y-53, self.x+25, self.y+43
-        else:
-            return self.x - 25, self.y - 53, self.x + 20, self.y + 43
+            return self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2
 
     def get_bottom(self):
         return self.x - 20, self.y-53, self.x+25, self.y-53
 
-    def take_damage(self, power):
-        if not self.invincible:
-            self.hp_now -= power
+    def power(self):
+        return self.power
 
-        self.invincible = True
-        print('knight is invincible in 3 second')
+    def current_state(self):
+        return str(self.state_machine.current_state)
+
+    def take_damage(self, power):
+        if not self.invincible and self.state_machine.current_state() != Protect:
+            # if power !=0:
+                    self.hp_now -= power
+                    self.invincible = True
+                    print('knight is invincible for 1.5 second')
+        pass
+
+    def handle_collision(self, group, other, power):
+        # fill here
+        if group == 'knight:small_slime1':
+            if not self.state_machine.current_state == Protect:
+                self.take_damage(power)
         pass
 
 

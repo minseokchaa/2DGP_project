@@ -96,3 +96,7 @@ class StateMachine:
                 return
 
         # print(f'        Warning: Event [{e}] at State [{self.cur_state}] not handled')
+
+    def current_state(self):
+        # cur_state가 이름을 가지는 속성을 가정하고, 없으면 필요한 속성을 추가하거나 기본적으로 문자열로 반환
+        return self.cur_state

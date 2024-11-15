@@ -1,6 +1,7 @@
 from pico2d import *
 from pygame.event import event_name
 import game_world
+from game_world import add_collision_pair
 from knight import Knight
 from swamp import Bg_swamp
 from swamp import Tile_ground_swamp
@@ -52,14 +53,23 @@ def reset_world():
     big_slime1 = Big_slime1()
     game_world.add_object(big_slime1, 0)
 
+
+
     #tree = Tree()
     #game_world.add_object(tree, 1)
 
+    add_collision_pair('knight:small_slime1', knight, None)
+    add_collision_pair('knight:small_slime1', None, small_slime1)
+
 def update_world():
     game_world.update()
-    if game_world.collide(knight, small_slime1):
-        print('knight:small_slime1 COLLIDE')
-        knight.take_damage(small_slime1.power)
+
+    game_world.handle_collisions()
+
+    # if game_world.collide(knight, small_slime1):
+    #     knight.take_damage(small_slime1.power)
+    #     if knight.current_state() == 'Attack':
+    #         small_slime1.take_damage(knight.power)
 
     pass
 
