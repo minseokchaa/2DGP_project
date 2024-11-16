@@ -145,13 +145,13 @@ class Return_to_Idle:
         pass
 
 class Small_slime1:
-    def __init__(self):
-        self.x, self.y, self.world = 700, 167, 700
-        self.x_first, self.y_first = 700, 167      #초기 위치 (700, 167)
-        self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = self.x - 47, self.y-56, self.x+47, self.y+35
+    def __init__(self, x=700, y=167):
+        self.x, self.y, self.world = x, y, x
+        self.x_first, self.y_first = x, y     #초기 위치 (700, 167)
+        self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y-56, x+47, y+35
         self.knight_x_location = 480
         self.face_dir, self.move, self.speed = 1, 0, 1
-        self.hp_max, self.hp_now,  self.power = 1000, 1000, 100
+        self.hp_max, self.hp_now, self.hp_decrease, self.power = 1000, 1000, 1000,100
 
         self.frame_Idle, self.frame_Idle_timer = 0, 0
         self.timer = 0
@@ -159,6 +159,7 @@ class Small_slime1:
 
         self.image_Idle = load_image('mon_swamp_dungeon17_01.png')
         self.image_hp_bar = load_image('hp_bar.png')
+        self.image_decrease_hp_bar = load_image('decreasing_hp_bar.png')
 
         self.state_machine = StateMachine(self)  # 소년 객체의 state machine 생성
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
@@ -193,7 +194,11 @@ class Small_slime1:
             self.invincible = False
             self.invincible_timer = 0
 
-        pass
+        if self.hp_decrease > self.hp_now:
+            self.hp_decrease -= 5
+
+        if self.hp_decrease < self.hp_now:
+            self.hp_decrease += 5
 
     def handle_event(self, event):
         self.state_machine.add_event(('INPUT', event))
@@ -201,6 +206,7 @@ class Small_slime1:
 
     def draw(self):
         self.state_machine.draw()
+        self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_decrease // 10, 5)
         self.image_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_now // 10 ,5)
 
 
@@ -213,8 +219,9 @@ class Small_slime1:
 
     def handle_collision(self, group, other, power):
         # fill here
-        if group == 'sword:monster':
+        if group == 'sword:small_slime1':
             if not self.invincible:
                 self.hp_now -= power
                 self.invincible = True
+
         pass

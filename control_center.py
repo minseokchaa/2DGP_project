@@ -1,6 +1,8 @@
 from pico2d import *
+import random
 from pygame.event import event_name
 import game_world
+import server
 from game_world import add_collision_pair
 from knight import Knight
 from swamp import Bg_swamp
@@ -22,9 +24,8 @@ def handle_events():
             running = False
         else:
             if event.type in (SDL_KEYDOWN, SDL_KEYUP):
-                knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
+                server.knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
                 background_swamp.handle_event(event)  # input 이벤트를 background에 전달하고 있다.
-                tile_ground_swamp.handle_event(event)  # input 이벤트를 tile_ground_swamp에 전달하고 있다.
                 small_slime1.handle_event(event)
                 # big_slime1.handle_event(event)
 
@@ -32,7 +33,6 @@ def reset_world():
     global running
     global knight
     global background_swamp
-    global tile_ground_swamp
     global small_slime1
     # global big_slime1
 
@@ -41,14 +41,15 @@ def reset_world():
     background_swamp = Bg_swamp()
     #game_world.add_object(background_swamp, 0)
 
-    tile_ground_swamp = Tile_ground_swamp()
-    game_world.add_object(tile_ground_swamp, 0)
+    server.tile_swamp = Tile_ground_swamp()
+    game_world.add_object(server.tile_swamp, 0)
 
-    knight = Knight()
-    game_world.add_object(knight, 1)
 
-    small_slime1 = Small_slime1()
-    game_world.add_object(small_slime1, 0)
+    small_slimes1 = [Small_slime1(random.randint(500, 1000), 167) for _ in range(5)]
+
+
+    server.knight = Knight()
+    game_world.add_object(server.knight, 1)
 
     # big_slime1 = Big_slime1()
     # game_world.add_object(big_slime1, 0)
@@ -58,9 +59,12 @@ def reset_world():
     #tree = Tree()
     #game_world.add_object(tree, 1)
 
-    add_collision_pair('knight:small_slime1', knight, None)
-    add_collision_pair('knight:small_slime1', None, small_slime1)
-    add_collision_pair('sword:monster', None, small_slime1)
+    add_collision_pair('knight:small_slime1', server.knight, None)
+
+    for small_slime1 in small_slimes1:
+        game_world.add_object(small_slime1, 1)
+        add_collision_pair('knight:small_slime1', None, small_slime1)
+        add_collision_pair('sword:small_slime1', None, small_slime1)
 
 def update_world():
     game_world.update()

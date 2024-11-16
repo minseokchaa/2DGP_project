@@ -1,10 +1,12 @@
-from pico2d import load_image, get_time, draw_rectangle
-
+from pico2d import *
+import server
 from state_machine import StateMachine, space_down, right_down, left_down, left_up, right_up, start_event, landing, attack_end, a_down, no_stamina, d_down, d_up
 import game_world
 from game_world import add_collision_pair
 from sword import Sword
-WIDTH = 960
+
+sx, sy = 0 , 0
+
 
 # 상태를 클래스를 통해서 정의함
 class Idle:
@@ -25,6 +27,7 @@ class Idle:
 
     @staticmethod
     def do(knight):
+
         if knight.frame_Idle_timer >= 15:  # idle 애니메이션
             knight.frame_Idle = (knight.frame_Idle + 1) % 4
             knight.frame_Idle_timer = 0
@@ -34,18 +37,17 @@ class Idle:
         if knight.y == 168:
             knight.gravity = 0
         if knight.face_dir == 1:
-            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 20, knight.y - 53, knight.x + 25, knight.y + 43
-        else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 25, knight.y - 53, knight.x + 20, knight.y + 43
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 20, sy - 53, sx + 25, sy + 43
+        else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 25, sy - 53, sx + 20, sy + 43
 
 
-        pass
 
     @staticmethod
     def draw(knight):
         if knight.face_dir:
-            knight.image_Idle.clip_draw(knight.frame_Idle * 128, 0, 55, 70, knight.x, knight.y, 83, 105)
+            knight.image_Idle.clip_draw(knight.frame_Idle * 128, 0, 55, 70, sx, sy, 83, 105)
         else:
-            knight.image_Idle.clip_composite_draw(knight.frame_Idle * 128, 0, 55, 70, 0, 'h', knight.x, knight.y, 83, 105)
+            knight.image_Idle.clip_composite_draw(knight.frame_Idle * 128, 0, 55, 70, 0, 'h', sx, sy, 83, 105)
 
         pass
 
@@ -74,47 +76,49 @@ class Run:
             knight.frame_Run_timer += 1
         if knight.y == 168:
             knight.gravity = 0
+
+        knight.x += knight.move * knight.speed
+
         if knight.frame_Run  == 0:
             if knight.face_dir == 1:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 30, knight.y - 53, knight.x + 19, knight.y + 40
-            else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 19, knight.y - 53, knight.x + 30, knight.y + 40
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 30, sy - 53, sx + 19, sy + 40
+            else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 19, sy - 53, sx + 30, sy + 40
         if knight.frame_Run  == 1:
             if knight.face_dir == 1:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 53, knight.y - 53, knight.x + 17, knight.y + 37
-            else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 17, knight.y - 53, knight.x + 53, knight.y + 37
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 53, sy - 53, sx + 17, sy + 37
+            else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 17, sy - 53, sx + 53, sy + 37
         if knight.frame_Run  == 2:
             if knight.face_dir == 1:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 53, knight.y - 53, knight.x+2, knight.y + 40
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 53, sy - 53, sx+2, sy + 40
             else:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 2, knight.y - 53, knight.x + 53, knight.y + 40
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 2, sy - 53, sx + 53, sy + 40
         if knight.frame_Run  == 3:
             if knight.face_dir == 1:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 37, knight.y - 53, knight.x + 17, knight.y + 42
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 37, sy - 53, sx + 17, sy + 42
             else:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 17, knight.y - 53, knight.x + 37, knight.y + 42
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 17,sy - 53, sx + 37, sy + 42
         if knight.frame_Run  == 4:
             if knight.face_dir == 1:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 27, knight.y - 53, knight.x + 27, knight.y + 38
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 =sx - 27, sy - 53, sx + 27, sy + 38
             else:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 27, knight.y - 53, knight.x + 27, knight.y + 38
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 =sx - 27, sy - 53, sx + 27, sy + 38
         if knight.frame_Run  == 5:
             if knight.face_dir == 1:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 53, knight.y - 53, knight.x + 15, knight.y + 36
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 53, sy - 53, sx + 15, sy + 36
             else:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 15, knight.y - 53, knight.x + 53, knight.y + 36
-
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 15, sy - 53, sx + 53, sy + 36
         if knight.frame_Run  == 6:
             if knight.face_dir == 1:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 48, knight.y - 53, knight.x + 5, knight.y + 41
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 48, sy - 53, sx + 5, sy + 41
             else:
-                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 5, knight.y - 53, knight.x + 48, knight.y + 41
+                knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 48, sy + 41
         pass
     @staticmethod
     def draw(knight):
         if knight.face_dir:
-            knight.image_Run.clip_draw(knight.frame_Run * 128, 0, 70, 70, knight.x, knight.y, 105, 105)
+            knight.image_Run.clip_draw(knight.frame_Run * 128, 0, 70, 70, sx, sy, 105, 105)
         else:
-            knight.image_Run.clip_composite_draw(knight.frame_Run * 128, 0, 70, 70, 0, 'h', knight.x, knight.y, 105, 105)
+            knight.image_Run.clip_composite_draw(knight.frame_Run * 128, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
         pass
 
 class Jump_run:
@@ -147,19 +151,20 @@ class Jump_run:
             knight.gravity = 0
             knight.y = 168
             knight.state_machine.add_event(('LAND', 0))
+        knight.x += knight.move * knight.speed
 
         if knight.face_dir:
-            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 41, knight.y - 53, knight.x + 5, knight.y + 43
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx + 5, sy + 43
         else:
-            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 5, knight.y - 53, knight.x + 41, knight.y + 43
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 41, sy + 43
         pass
 
     @staticmethod
     def draw(knight):
         if knight.face_dir:
-            knight.image_Jump.clip_draw(knight.frame_Jump * 128, 0, 70, 70, knight.x, knight.y, 105, 105)
+            knight.image_Jump.clip_draw(knight.frame_Jump * 128, 0, 70, 70, sx, sy, 105, 105)
         else:
-            knight.image_Jump.clip_composite_draw(knight.frame_Jump * 128, 0, 70, 70, 0, 'h', knight.x, knight.y, 105, 105)
+            knight.image_Jump.clip_composite_draw(knight.frame_Jump * 128, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
 
         pass
 
@@ -195,16 +200,16 @@ class Jump:
             knight.y = 168
             knight.state_machine.add_event(('LAND', 0))
         if knight.face_dir:
-            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 41, knight.y - 53, knight.x +5, knight.y + 43
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx +5, sy + 43
         else:
-            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 5, knight.y - 53, knight.x + 41, knight.y + 43
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 41, sy + 43
 
     @staticmethod
     def draw(knight):
         if knight.face_dir:
-            knight.image_Jump.clip_draw(knight.frame_Jump * 128, 0, 70, 70, knight.x, knight.y, 105, 105)
+            knight.image_Jump.clip_draw(knight.frame_Jump * 128, 0, 70, 70, sx, sy, 105, 105)
         else:
-            knight.image_Jump.clip_composite_draw(knight.frame_Jump * 128, 0, 70, 70, 0, 'h', knight.x, knight.y, 105, 105)
+            knight.image_Jump.clip_composite_draw(knight.frame_Jump * 128, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
         pass
 
 class Attack:
@@ -214,9 +219,9 @@ class Attack:
         knight.move = 0
         if a_down(e) and knight.attack_count + 1 <= 3:
             knight.attack_count += 1
-        sword = Sword(knight.x, knight.y, knight.power, knight.face_dir)
+        sword = Sword(sx, sy, knight.power, knight.face_dir)
         game_world.add_object(sword, 1)
-        add_collision_pair('sword:monster', sword, None)
+        add_collision_pair('sword:small_slime1', sword, None)
 
     @staticmethod
     def exit(knight, e):
@@ -245,66 +250,66 @@ class Attack:
         if knight.attack_motion == 1:
             if knight.frame_Attack == 0:
                 if knight.face_dir:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 43, knight.y - 53, knight.x + 35, knight.y + 43
-                else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 35, knight.y - 53, knight.x + 43, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 43, sy - 53, sx + 35, sy + 43
+                else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 35, sy - 53, sx + 43,sy + 43
             if knight.frame_Attack == 1:
                 if knight.face_dir:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 37, knight.y - 53, knight.x + 22, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 37, sy - 53, sx + 22,sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 22, knight.y - 53, knight.x + 37, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 22, sy - 53, sx + 37, sy + 43
             if knight.frame_Attack == 2:
                 if knight.face_dir:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 37, knight.y - 53, knight.x + 20, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 37, sy - 53, sx + 20, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 20, knight.y - 53, knight.x + 37, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 20, sy - 53, sx + 37, sy + 43
             if knight.frame_Attack == 3:
                 if knight.face_dir:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 36, knight.y - 53, knight.x + 25, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 36, sy - 53, sx + 25, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 25, knight.y - 53, knight.x + 36, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 25, sy - 53, sx + 36, sy + 43
 
         if knight.attack_motion == 2:
             if knight.frame_Attack == 0:
                 if knight.face_dir ==1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 40, knight.y - 53, knight.x + 22, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 40, sy - 53, sx + 22, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 22, knight.y - 53, knight.x + 40, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 22, sy - 53, sx + 40, sy + 43
             if knight.frame_Attack == 1:
                 if knight.face_dir == 1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 34, knight.y - 53, knight.x + 22, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 34, sy - 53, sx + 22, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 22, knight.y - 53, knight.x + 34, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 22, sy - 53, sx + 34,sy + 43
             if knight.frame_Attack == 2:
                 if knight.face_dir == 1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 39, knight.y - 53, knight.x + 32, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 39, sy - 53, sx + 32, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 32, knight.y - 53, knight.x + 39, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 =sx - 32, sy - 53,sx + 39, sy + 43
             if knight.frame_Attack == 3:
                 if knight.face_dir == 1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 43, knight.y - 53, knight.x + 32, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 43, sy - 53, sx + 32, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 32, knight.y - 53, knight.x + 43, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 32, sy - 53, sx + 43,sy + 43
         if knight.attack_motion == 3:
             if knight.frame_Attack == 0:
                 if knight.face_dir == 1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 43, knight.y - 53, knight.x + 24, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 43, sy - 53,sx + 24, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 24, knight.y - 53, knight.x + 43, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 24,sy - 53, sx + 43, sy + 43
             if knight.frame_Attack == 1:
                 if knight.face_dir == 1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 48, knight.y - 53, knight.x + 19, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 48, sy - 53, sx + 19, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 19, knight.y - 53, knight.x + 48, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 19, sy - 53, sx + 48, sy + 43
             if knight.frame_Attack == 2:
                 if knight.face_dir == 1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 43, knight.y - 53, knight.x + 40, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 43, sy - 53, sx + 40, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 40, knight.y - 53, knight.x + 43, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 40, sy - 53, sx + 43, sy + 43
             if knight.frame_Attack == 3:
                 if knight.face_dir == 1:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 43, knight.y - 53, knight.x + 32, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 43, sy - 53, sx + 32, sy + 43
                 else:
-                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 32, knight.y - 53, knight.x + 43, knight.y + 43
+                    knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 =sx - 32, sy - 53, sx + 43, sy + 43
 
 
         pass
@@ -313,19 +318,19 @@ class Attack:
     def draw(knight):
         if knight.face_dir:
             if knight.attack_motion == 1:
-                knight.image_Attack1.clip_draw(knight.frame_Attack * 128, 0, 100, 70, knight.x + 10, knight.y, 150, 105)
+                knight.image_Attack1.clip_draw(knight.frame_Attack * 128, 0, 100, 70, sx + 10, sy, 150, 105)
             if knight.attack_motion == 2:
-                knight.image_Attack2.clip_draw(knight.frame_Attack * 128, 0, 120, 70, knight.x + 20, knight.y, 180, 105)
+                knight.image_Attack2.clip_draw(knight.frame_Attack * 128, 0, 120, 70, sx + 20, sy, 180, 105)
             if knight.attack_motion == 3:
-                knight.image_Attack3.clip_draw(knight.frame_Attack * 128, 0, 110, 70, knight.x + 10, knight.y, 165, 105)
+                knight.image_Attack3.clip_draw(knight.frame_Attack * 128, 0, 110, 70, sx + 10, sy, 165, 105)
             pass
         else:
             if knight.attack_motion == 1:
-                knight.image_Attack1.clip_composite_draw(knight.frame_Attack * 128, 0, 100, 70, 0, 'h', knight.x - 10,knight.y, 150, 105)
+                knight.image_Attack1.clip_composite_draw(knight.frame_Attack * 128, 0, 100, 70, 0, 'h', sx - 10,sy, 150, 105)
             if knight.attack_motion == 2:
-                knight.image_Attack2.clip_composite_draw(knight.frame_Attack * 128, 0, 120, 70, 0, 'h', knight.x - 20,knight.y, 180, 105)
+                knight.image_Attack2.clip_composite_draw(knight.frame_Attack * 128, 0, 120, 70, 0, 'h', sx - 20,sy, 180, 105)
             if knight.attack_motion == 3:
-                knight.image_Attack3.clip_composite_draw(knight.frame_Attack * 128, 0, 100, 70, 0, 'h', knight.x - 10,knight.y, 150, 105)
+                knight.image_Attack3.clip_composite_draw(knight.frame_Attack * 128, 0, 100, 70, 0, 'h', sx - 10,sy, 150, 105)
         pass
 
 class Protect:
@@ -345,21 +350,21 @@ class Protect:
 
         if knight.stamina_now < 0:
             knight.state_machine.add_event(('No_stamina', 0))
-        knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = knight.x - 27, knight.y - 53, knight.x + 25, knight.y + 37
+        knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 =sx - 27, sy - 53, sx + 25, sy + 37
         pass
 
     @staticmethod
     def draw(knight):
         if knight.face_dir:
-            knight.image_Protect.clip_draw(0, 0, 70, 70, knight.x, knight.y, 105, 105)
+            knight.image_Protect.clip_draw(0, 0, 70, 70, sx, sy, 105, 105)
         else:
-            knight.image_Protect.clip_composite_draw(0, 0, 70, 70, 0, 'h', knight.x, knight.y, 105, 105)
+            knight.image_Protect.clip_composite_draw(0, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
         pass
 
 
 class Knight:
     def __init__(self):
-        self.x, self.y, self.world = 480, 170, 480
+        self.x, self.y, self.world = server.tile_swamp.w//2, 167, 480
         self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
         self.gravity = 0
         self.face_dir, self.move, self.speed = 1, 0, 5
@@ -378,7 +383,6 @@ class Knight:
 
         self.image_Idle,self.image_Run,self.image_Jump = load_image('Knight_Idle.png'), load_image('Knight_Run.png'), load_image('Knight_Jump.png')
         self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('Knight_Attack 1.png'), load_image('Knight_Attack 2.png'),load_image('Knight_Attack 3.png')
-
         self.image_Protect = load_image('Knight_Protect.png')
         self.image_hp_bar,self.image_stamina_bar = load_image('hp_bar.png'),load_image('stamina_bar.png')
         self.image_max_hp_bar, self.image_max_stamina_bar = load_image('max_hp_bar.png'), load_image('max_stamina_bar.png')
@@ -404,16 +408,6 @@ class Knight:
         if self.stamina_now < self.stamina_max:
             self.stamina_now += 0.1  # 1초에 10씩 스테미나 회복
 
-        if 0 <= self.world + self.speed * self.move <= 1920:
-            self.world += self.speed * self.move
-
-        if 0 <= self.world + self.speed * self.move <= 480:
-            if self.x + 5 * self.move > 10:
-                self.x += self.speed*self.move
-
-        elif 1440 < self.world+ self.speed * self.move <= 1920:
-            if self.x + 5 * self.move < 950:
-                self.x += self.speed * self.move
         if self.invincible:
             self.invincible_timer += 1
 
@@ -424,6 +418,9 @@ class Knight:
             print('무적 해제')
 
         self.state_machine.update()
+
+        self.x = clamp(10.0, self.x, server.tile_swamp.w - 10.0)
+        self.y = clamp(20.0, self.y, server.tile_swamp.h - 10.0)
 
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 2
@@ -439,33 +436,33 @@ class Knight:
         pass
 
     def draw(self):
+        global sx
+        global sy
+
+        sx = self.x - server.tile_swamp.window_left
+        sy = self.y - server.tile_swamp.window_bottom
+
         if self.invincible_timer % 10 <= 5:
             self.state_machine.draw()
 
         self.image_max_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_max//4*3, 20)             #(90,90)을 중심으로 hp바 생성
         self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_decrease//4*3 , 20)
         self.image_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_now//4*3, 20)
-
         self.image_max_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_max*3, 20)      #(90,50)을 중심으로 stamina바 생성
         self.image_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
-
         self.image_ui.clip_draw(0, 0, 130, 80, 65, 70, 130, 80)
 
+
+
         draw_rectangle(*self.get_bb())
-        draw_rectangle(self.x-1,self.y-1,self.x+1,self.y+1)
+        draw_rectangle(sx-1,sy-1,sx+1,sy+1)
 
 
     def get_bb(self):
             return self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2
 
-    def get_bottom(self):
-        return self.x - 20, self.y-53, self.x+25, self.y-53
-
     def power(self):
         return self.power
-
-    def current_state(self):
-        return str(self.state_machine.current_state)
 
     def take_damage(self, power):
         if not self.invincible and self.state_machine.current_state() != Protect:
@@ -478,7 +475,6 @@ class Knight:
     def handle_collision(self, group, other, power):
         # fill here
         if group == 'knight:small_slime1':
-            if not self.state_machine.current_state == Protect:
                 self.take_damage(power)
         pass
 

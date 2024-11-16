@@ -1,5 +1,6 @@
-from pico2d import load_image, draw_rectangle
+from pico2d import *
 from state_machine import StateMachine, right_down, left_down, left_up, right_up, d_down, a_down, out_of_width
+import server
 
 WIDTH =960
 HEIGHT = 800
@@ -81,87 +82,25 @@ class Bg_swamp:
     def draw(self):
         self.state_machine.draw()
 
-class Tile_Idle:
-
-    @staticmethod
-    def enter(tile_ground_swamp, e):
-        pass
-
-    @staticmethod
-    def exit(tile_ground_swamp,e):
-            pass
-
-    @staticmethod
-    def do(tile_ground_swamp):
-        pass
-
-    @staticmethod
-    def draw(tile_ground_swamp):
-        for i in range(37):
-            tile_ground_swamp.tile_swamp.draw(tile_ground_swamp.x + 128 * i-480, 50, 192, 136)
-        pass
-
-class Tile_move:
-
-    @staticmethod
-    def enter(tile_ground_swamp, e):
-        if right_down(e):
-            tile_ground_swamp.move_x = -1
-        if right_up(e):
-            tile_ground_swamp.move_x = 0
-        elif left_down(e):
-            tile_ground_swamp.move_x = 1
-        if left_up(e):
-            tile_ground_swamp.move_x = 0
-        pass
-
-    @staticmethod
-    def exit(tile_ground_swamp,e):
-            pass
-
-    @staticmethod
-    def do(tile_ground_swamp):
-        if 0 < tile_ground_swamp.world - tile_ground_swamp.scroll_speed * tile_ground_swamp.move_x <1920:
-            tile_ground_swamp.world -= tile_ground_swamp.scroll_speed * tile_ground_swamp.move_x
-
-        if 480 < tile_ground_swamp.world + 5 * tile_ground_swamp.move_x <= 1440:
-            tile_ground_swamp.x += tile_ground_swamp.scroll_speed * tile_ground_swamp.move_x
-
-            pass
-
-    @staticmethod
-    def draw(tile_ground_swamp):
-        for i in range(37):
-            tile_ground_swamp.tile_swamp.draw(tile_ground_swamp.x + 128 * i - 480, 50, 192, 136)
-        pass
-
 class Tile_ground_swamp:
-    i =0
     def __init__(self):
-        self.x, self.y, self.world  = 480, 50, 480
+
         self.tile_swamp = load_image('tile_chapter_0000_tile1_.png')
+
+        self.cw = get_canvas_width()
+        self.ch = get_canvas_height()
+        self.w = self.tile_swamp.w
+        self.h = self.tile_swamp.h
+
         self.scroll_speed = 5
         self.move_x = 0
-        self.state_machine = StateMachine(self)  # 늪배경 객체의 state machine 생성
-        self.state_machine.start(Tile_Idle)
-        self.state_machine.set_transitions(
-            {Tile_Idle: {right_down: Tile_move, left_down: Tile_move},
-             Tile_move: {right_up: Tile_Idle, left_up: Tile_Idle, a_down: Tile_Idle, d_down: Tile_Idle}
-             }
-        )
 
-    def update(self):
-        self.state_machine.update()
-
-    def handle_event(self, event):
-        self.state_machine.add_event(('INPUT', event))
-        pass
 
     def draw(self):
-        self.state_machine.draw()
-        bb = self.get_bb()
-        if bb:
-            draw_rectangle(*bb)
+        self.tile_swamp.clip_draw_to_origin(self.window_left, self.window_bottom, self.cw, self.ch, 0, 0)
 
-    def get_bb(self):
-        return self.x-96, self.y-68, self.x+96,self.y+68
+    def update(self):
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, self.w - self.cw - 1)
+        self.window_bottom = clamp(0, int(server.knight.y) - self.ch // 2, self.h - self.ch - 1)
+
+
