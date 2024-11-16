@@ -108,8 +108,6 @@ class Small_slime1:
 
         if self.invincible:
             self.invincible_timer += 1
-
-            # 24프레임 후 무적 초기화
         if self.invincible_timer == 29:
             self.invincible = False
             self.invincible_timer = 0

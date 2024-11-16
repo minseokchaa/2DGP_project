@@ -215,18 +215,20 @@ class Jump:
 class Attack:
     @staticmethod
     def enter(knight, e):
-        global sword
         knight.move = 0
         if a_down(e) and knight.attack_count + 1 <= 3:
             knight.attack_count += 1
-        sword = Sword(sx, sy, knight.power, knight.face_dir)
-        game_world.add_object(sword, 1)
-        add_collision_pair('sword:small_slime1', sword, None)
-        add_collision_pair('sword:tree', sword, None)
-
     @staticmethod
     def exit(knight, e):
-        game_world.remove_object(sword)
+        if right_down(e) or left_down(e) or space_down(e) or d_down(e):
+            knight.attack_motion = 1
+            knight.frame_Attack = 0
+            knight.attack_count = 0
+            if knight.sword:
+                game_world.remove_object(knight.sword)
+                knight.sword = None
+
+            pass
         pass
 
     @staticmethod
@@ -246,6 +248,19 @@ class Attack:
             knight.frame_Attack = 0
             knight.attack_count = 0
             knight.state_machine.add_event(('Attack_end', 0))
+
+        if knight.frame_Attack == 2 and knight.frame_Attack_timer == 0:
+            knight.sword = Sword(sx, sy, knight.power, knight.face_dir)  # Sword 객체 생성
+            game_world.add_object(knight.sword, 1)
+            add_collision_pair('sword:small_slime1', knight.sword, None)
+            add_collision_pair('sword:tree', knight.sword, None)
+
+        if knight.frame_Attack == 3 and knight.frame_Attack_timer == 3:
+            if knight.sword:
+                game_world.remove_object(knight.sword)
+                knight.sword = None
+
+
 
 
         if knight.attack_motion == 1:
@@ -268,7 +283,6 @@ class Attack:
                     knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 36, sy - 53, sx + 25, sy + 43
                 else:
                     knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 25, sy - 53, sx + 36, sy + 43
-
         if knight.attack_motion == 2:
             if knight.frame_Attack == 0:
                 if knight.face_dir ==1:
@@ -367,7 +381,7 @@ class Knight:
     def __init__(self):
         self.x, self.y, self.world = server.tile_swamp.w//4, 187, 480
         self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
-        self.gravity = 0
+        self.gravity, self.sword = 0, None
         self.face_dir, self.move, self.speed = 1, 0, 5
         self.hp_max, self.stamina_max, self.power = 1000, 100, 300
         self.hp_now, self.stamina_now = 1000, 100
@@ -458,8 +472,6 @@ class Knight:
         draw_rectangle(*self.get_bb())
         draw_rectangle(sx-1,sy-1,sx+1,sy+1)
 
-        print(self.x)
-        print(sx)
 
 
     def get_bb(self):
@@ -480,6 +492,14 @@ class Knight:
         # fill here
         if group == 'knight:small_slime1':
                 self.take_damage(power)
+
+        if group == 'knight:elixir_hp':
+            self.hp_max += 100
+            self.hp_now += 100
+
+        if group == 'knight:elixir_power':
+            self.power += 100
+
         pass
 
 

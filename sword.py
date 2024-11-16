@@ -28,4 +28,6 @@ class Sword:
 
     def handle_collision(self, group, other, power):
         # fill here
+        if group == 'sword:tree':
+            pass
         pass

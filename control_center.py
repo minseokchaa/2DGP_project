@@ -8,7 +8,8 @@ from knight import Knight
 from swamp import Bg_swamp
 from swamp import Tile_ground_swamp
 from small_slime1 import Small_slime1
-from tree import Dead_tree
+from tree import Dead_tree1, Dead_tree2
+from broken_wood import Broken_wood1
 from big_slime1 import Big_slime1
 
 # Game object class here
@@ -52,19 +53,25 @@ def reset_world():
     server.knight = Knight()
     game_world.add_object(server.knight, 1)
     add_collision_pair('knight:small_slime1', server.knight, None)
+    add_collision_pair('knight:elixir_hp', server.knight, None)
+    add_collision_pair('knight:elixir_power', server.knight, None)
 
     # big_slime1 = Big_slime1()
     # game_world.add_object(big_slime1, 0)
 
 
 
-    tree1 = Dead_tree(700, 135)
-    game_world.add_object(tree1, 1)
+    tree1 = Dead_tree1(700, 135)
+    game_world.add_object(tree1, 0)
     add_collision_pair('sword:tree', None, tree1)
 
-    tree2 = Dead_tree(1400, 135)
-    game_world.add_object(tree2, 1)
+    tree2 = Dead_tree2(1400, 135)
+    game_world.add_object(tree2, 0)
     add_collision_pair('sword:tree', None, tree2)
+
+    ridges1 = Broken_wood1(200, 135)
+    game_world.add_object(ridges1, 1)
+    add_collision_pair('sword:tree', None, ridges1)
 
 
 
