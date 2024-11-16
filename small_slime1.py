@@ -64,88 +64,8 @@ class Idle:
     def get_bb(small_slime1):
         return small_slime1.x - 47, small_slime1.y-56, small_slime1.x+47, small_slime1.y+35
 
-class Attack:
-    @staticmethod
-    def enter(small_slime1, e):
-        pass
-
-    @staticmethod
-    def exit(small_slime1, e):
-        if right_up(e) or left_up(e):
-            small_slime1.move = 0
-        elif right_down(e):
-            small_slime1.move =-5
-        elif left_down(e):
-            small_slime1.move = 5
-        pass
-
-    @staticmethod
-    def do(small_slime1):
-        if small_slime1.frame_Idle_timer >= 10:  # idle 애니메이션
-            small_slime1.frame_Idle = (small_slime1.frame_Idle + 1) % 4
-            small_slime1.frame_Idle_timer = 0
-        else:
-            small_slime1.frame_Idle_timer += 1
-
-        if abs(small_slime1.x - small_slime1.x_first) > 400:    #처음 위치에서 400만큼 떨어지면 처음 위치로 돌아가기
-            small_slime1.state_machine.add_event(('Too_far_to_first', 0))
-        pass
-
-    @staticmethod
-    def draw(small_slime1):
-        if small_slime1.face_dir == 1:
-            small_slime1.image_Idle.clip_composite_draw(small_slime1.frame_Idle * 94, 0, 94, 112, 0, 'h',
-                                                        small_slime1.x, small_slime1.y, 94, 112)
-        elif small_slime1.face_dir == -1:
-            small_slime1.image_Idle.clip_draw(small_slime1.frame_Idle * 94, 0, 94, 112, small_slime1.x, small_slime1.y)
-        pass
-
-class Return_to_Idle:
-    @staticmethod
-    def enter(small_slime1, e):
-        pass
-
-    @staticmethod
-    def exit(small_slime1, e):
-        if right_up(e) or left_up(e):
-            small_slime1.move = 0
-        elif right_down(e):
-            small_slime1.move = -5
-        elif left_down(e):
-            small_slime1.move = 5
-        pass
-
-    @staticmethod
-    def do(small_slime1):
-        if small_slime1.frame_Idle_timer >= 10:  # idle 애니메이션
-            small_slime1.frame_Idle = (small_slime1.frame_Idle + 1) % 4
-            small_slime1.frame_Idle_timer = 0
-        else:
-            small_slime1.frame_Idle_timer += 1
-
-        if small_slime1.world < small_slime1.x_first:
-            small_slime1.face_dir = 1
-            small_slime1.world += 1
-            small_slime1.x += 1
-        if small_slime1.world > small_slime1.x_first:
-            small_slime1.face_dir = -1
-            small_slime1.world -= 1
-            small_slime1.x -= 1
-
-        if small_slime1.world == small_slime1.x_first:
-            small_slime1.state_machine.add_event(('Arrive_at_first', 0))
-        pass
-
-    @staticmethod
-    def draw(small_slime1):
-        if small_slime1.face_dir == 1:
-            small_slime1.image_Idle.clip_composite_draw(small_slime1.frame_Idle * 94, 0, 94, 112, 0, 'h',small_slime1.x, small_slime1.y, 94, 112)
-        elif small_slime1.face_dir == -1:
-            small_slime1.image_Idle.clip_draw(small_slime1.frame_Idle * 94, 0, 94, 112, small_slime1.x, small_slime1.y)
-        pass
-
 class Small_slime1:
-    def __init__(self, x=700, y=167):
+    def __init__(self, x=700, y=187):
         self.x, self.y, self.world = x, y, x
         self.x_first, self.y_first = x, y     #초기 위치 (700, 167)
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y-56, x+47, y+35
@@ -206,6 +126,8 @@ class Small_slime1:
 
     def draw(self):
         self.state_machine.draw()
+
+
         self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_decrease // 10, 5)
         self.image_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_now // 10 ,5)
 

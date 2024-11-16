@@ -8,6 +8,7 @@ from knight import Knight
 from swamp import Bg_swamp
 from swamp import Tile_ground_swamp
 from small_slime1 import Small_slime1
+from tree import Dead_tree
 from big_slime1 import Big_slime1
 
 # Game object class here
@@ -26,7 +27,7 @@ def handle_events():
             if event.type in (SDL_KEYDOWN, SDL_KEYUP):
                 server.knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
                 background_swamp.handle_event(event)  # input 이벤트를 background에 전달하고 있다.
-                small_slime1.handle_event(event)
+                #small_slime1.handle_event(event)
                 # big_slime1.handle_event(event)
 
 def reset_world():
@@ -45,26 +46,32 @@ def reset_world():
     game_world.add_object(server.tile_swamp, 0)
 
 
-    small_slimes1 = [Small_slime1(random.randint(500, 1000), 167) for _ in range(5)]
+    small_slimes1 = [Small_slime1(random.randint(500, 1000), 187) for _ in range(5)]
 
 
     server.knight = Knight()
     game_world.add_object(server.knight, 1)
+    add_collision_pair('knight:small_slime1', server.knight, None)
 
     # big_slime1 = Big_slime1()
     # game_world.add_object(big_slime1, 0)
 
 
 
-    #tree = Tree()
-    #game_world.add_object(tree, 1)
+    tree1 = Dead_tree(700, 135)
+    game_world.add_object(tree1, 1)
+    add_collision_pair('sword:tree', None, tree1)
 
-    add_collision_pair('knight:small_slime1', server.knight, None)
+    tree2 = Dead_tree(1400, 135)
+    game_world.add_object(tree2, 1)
+    add_collision_pair('sword:tree', None, tree2)
 
-    for small_slime1 in small_slimes1:
-        game_world.add_object(small_slime1, 1)
-        add_collision_pair('knight:small_slime1', None, small_slime1)
-        add_collision_pair('sword:small_slime1', None, small_slime1)
+
+
+    # for small_slime1 in small_slimes1:
+    #     game_world.add_object(small_slime1, 1)
+    #     add_collision_pair('knight:small_slime1', None, small_slime1)
+    #     add_collision_pair('sword:small_slime1', None, small_slime1)
 
 def update_world():
     game_world.update()

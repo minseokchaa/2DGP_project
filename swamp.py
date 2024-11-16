@@ -92,9 +92,6 @@ class Tile_ground_swamp:
         self.w = self.tile_swamp.w
         self.h = self.tile_swamp.h
 
-        self.scroll_speed = 5
-        self.move_x = 0
-
 
     def draw(self):
         self.tile_swamp.clip_draw_to_origin(self.window_left, self.window_bottom, self.cw, self.ch, 0, 0)

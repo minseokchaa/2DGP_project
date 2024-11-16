@@ -34,7 +34,7 @@ class Idle:
         else:
             knight.frame_Idle_timer += 1
 
-        if knight.y == 168:
+        if knight.y == 187:
             knight.gravity = 0
         if knight.face_dir == 1:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 20, sy - 53, sx + 25, sy + 43
@@ -147,9 +147,9 @@ class Jump_run:
             knight.frame_Jump_timer += 1
 
         knight.gravity -= 1
-        if knight.y <= 168:
+        if knight.y <= 187:
             knight.gravity = 0
-            knight.y = 168
+            knight.y = 187
             knight.state_machine.add_event(('LAND', 0))
         knight.x += knight.move * knight.speed
 
@@ -195,9 +195,9 @@ class Jump:
             knight.frame_Jump_timer += 1
 
         knight.gravity -= 1
-        if knight.y <= 168:
+        if knight.y <= 187:
             knight.gravity = 0
-            knight.y = 168
+            knight.y = 187
             knight.state_machine.add_event(('LAND', 0))
         if knight.face_dir:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx +5, sy + 43
@@ -222,6 +222,7 @@ class Attack:
         sword = Sword(sx, sy, knight.power, knight.face_dir)
         game_world.add_object(sword, 1)
         add_collision_pair('sword:small_slime1', sword, None)
+        add_collision_pair('sword:tree', sword, None)
 
     @staticmethod
     def exit(knight, e):
@@ -364,7 +365,7 @@ class Protect:
 
 class Knight:
     def __init__(self):
-        self.x, self.y, self.world = server.tile_swamp.w//2, 167, 480
+        self.x, self.y, self.world = server.tile_swamp.w//4, 187, 480
         self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
         self.gravity = 0
         self.face_dir, self.move, self.speed = 1, 0, 5
@@ -456,6 +457,9 @@ class Knight:
 
         draw_rectangle(*self.get_bb())
         draw_rectangle(sx-1,sy-1,sx+1,sy+1)
+
+        print(self.x)
+        print(sx)
 
 
     def get_bb(self):
