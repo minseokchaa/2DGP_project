@@ -12,7 +12,7 @@ class Broken_wood1:
 
         self.ob_Ridges_6 = load_image('ob_Ridges_6.png')
         self.invincible, self.invincible_timer = False, 0
-        self.life =2
+        self.life =4
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -51,6 +51,9 @@ class Broken_wood1:
         if self.invincible:
             self.invincible_timer += 1
 
+        if self.invincible_timer == 10:
+            self.ob_Ridges_6 = load_image('ob_Ridges_6.png')
+
         if self.invincible_timer == 29:
             self.invincible = False
             self.invincible_timer = 0
@@ -68,4 +71,5 @@ class Broken_wood1:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
+                self.ob_Ridges_6 = load_image('ob_Ridges_6_hit.png')
         pass

@@ -63,7 +63,7 @@ class Big_slime1:
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y - 56, x + 47, y + 35
         self.gravity = 0
         self.face_dir, self.move, self.speed = 1, 0, 1
-        self.hp_max, self.hp_now, self.hp_decrease,self.power = 1000, 1000, 1000, 300
+        self.hp_max, self.hp_now, self.hp_decrease,self.power = 1500, 1500, 1500, 300
         self.frame_Idle, self.frame_Idle_timer = 3, 0
         self.invincible, self.invincible_timer = False, 0
         self.cw = get_canvas_width()

@@ -11,7 +11,7 @@ class Dead_tree1:
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
         self.db_dead_tree_1 = load_image('ob_dead_tree_1.png')
         self.invincible, self.invincible_timer = False, 0
-        self.life =4
+        self.life =7
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -51,6 +51,10 @@ class Dead_tree1:
         if self.invincible:
             self.invincible_timer += 1
 
+
+        if self.invincible_timer == 10:
+            self.db_dead_tree_1 = load_image('ob_dead_tree_1.png')
+
         if self.invincible_timer == 29:
             self.invincible = False
             self.invincible_timer = 0
@@ -69,6 +73,7 @@ class Dead_tree1:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
+                self.db_dead_tree_1 = load_image('ob_dead_tree_1_hit.png')
         pass
 
 class Dead_tree2:
@@ -78,7 +83,7 @@ class Dead_tree2:
         self.type = type  # 1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
         self.ob_dead_tree_2 = load_image('ob_dead_tree_2.png')
         self.invincible, self.invincible_timer = False, 0
-        self.life =3
+        self.life =5
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -117,6 +122,9 @@ class Dead_tree2:
         if self.invincible:
             self.invincible_timer += 1
 
+        if self.invincible_timer == 10:
+            self.ob_dead_tree_2 = load_image('ob_dead_tree_2.png')
+
         if self.invincible_timer == 29:
             self.invincible = False
             self.invincible_timer = 0
@@ -135,5 +143,6 @@ class Dead_tree2:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
+                self.ob_dead_tree_2 = load_image('ob_dead_tree_2_hit.png')
         pass
 
