@@ -466,8 +466,6 @@ class Knight:
         self.image_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
         self.image_ui.clip_draw(0, 0, 130, 80, 65, 70, 130, 80)
 
-        print('중력:',self.gravity)
-
 
     def draw_rectangle(self):
         draw_rectangle(*self.get_bb())

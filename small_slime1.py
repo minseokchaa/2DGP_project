@@ -66,7 +66,7 @@ class Small_slime1:
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y-56, x+47, y+35
         self.knight_x_location = 480
         self.face_dir, self.move, self.speed = random.choice([-1,1]), 0, 1
-        self.hp_max, self.hp_now, self.hp_decrease, self.power = 1000, 1000, 1000,100
+        self.hp_max, self.hp_now, self.hp_decrease, self.power = 1000, 1000, 1000,200
 
         self.frame_Idle, self.frame_Idle_timer = random.randint(0, 3), 0
         self.timer = 0

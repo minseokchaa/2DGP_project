@@ -34,7 +34,6 @@ def handle_events():
 def reset_world():
     global running
     global knight
-    global small_slime1
     # global big_slime1
 
     running = True
@@ -73,8 +72,10 @@ def reset_world():
     add_collision_pair_for_tile('knight:tile_ground', server.knight, None)
     add_collision_pair_for_tile('knight:tile_midair', server.knight, None)
 
-    # big_slime1 = Big_slime1()
-    # game_world.add_object(big_slime1, 0)
+    big_slime1 = Big_slime1(1400, 205)
+    game_world.add_object(big_slime1, 1)
+    add_collision_pair('knight:small_slime1', None, big_slime1)
+    add_collision_pair('sword:small_slime1', None, big_slime1)
 
 
 
