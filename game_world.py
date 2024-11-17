@@ -4,6 +4,7 @@
 world = [[],[]]
 
 collision_pairs = {}
+collision_pairs_for_tile = {}
 
 def add_collision_pair(group, a, b):
     if group not in collision_pairs:
@@ -12,6 +13,14 @@ def add_collision_pair(group, a, b):
         collision_pairs[group][0].append(a)
     if b:
         collision_pairs[group][1].append(b)
+
+def add_collision_pair_for_tile(group, a, b):
+    if group not in collision_pairs_for_tile:
+        collision_pairs_for_tile[group] = [[],[]]        #초기화
+    if a:
+        collision_pairs_for_tile[group][0].append(a)
+    if b:
+        collision_pairs_for_tile[group][1].append(b)
 
 
 def remove_collision_object(o):
@@ -35,6 +44,11 @@ def render():
     for layer in world:
         for o in layer:
             o.draw()
+
+def draw_rectangle_all():
+    for layer in world:
+        for o in layer:
+            o.draw_rectangle()
 
 
 def remove_object(o):
@@ -63,3 +77,21 @@ def handle_collisions():
                 if collide(a, b):
                     a.handle_collision(group, b, b.power)
                     b.handle_collision(group, a, a.power)
+
+def tile_collide(a, b):
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+
+    if top_b >= bottom_a >= top_b-50:
+        if left_a < right_b and right_a > left_b:
+
+            return True
+        else: return False
+
+def tile_handle_collisions():
+    for group, pairs in collision_pairs_for_tile.items():
+        for a in pairs[0]:
+            for b in pairs[1]:
+                if tile_collide(a, b):
+                    left_b, bottom_b, right_b, top_b = b.get_bb()
+                    a.handle_collision(group, b, top_b)

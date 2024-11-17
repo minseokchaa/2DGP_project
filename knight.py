@@ -1,6 +1,6 @@
 from pico2d import *
 import server
-from state_machine import StateMachine, space_down, right_down, left_down, left_up, right_up, start_event, landing, attack_end, a_down, no_stamina, d_down, d_up
+from state_machine import StateMachine, space_down, right_down, left_down, left_up, right_up, start_event, landing, attack_end, a_down, no_stamina, d_down, d_up, falling
 import game_world
 from game_world import add_collision_pair
 from sword import Sword
@@ -34,11 +34,10 @@ class Idle:
         else:
             knight.frame_Idle_timer += 1
 
-        if knight.y == 187:
-            knight.gravity = 0
         if knight.face_dir == 1:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 20, sy - 53, sx + 25, sy + 43
         else: knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 25, sy - 53, sx + 20, sy + 43
+
 
 
 
@@ -112,6 +111,10 @@ class Run:
                 knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 48, sy - 53, sx + 5, sy + 41
             else:
                 knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 48, sy + 41
+
+        if knight.gravity <=-3:
+            knight.state_machine.add_event(('Falling', 0))
+
         pass
     @staticmethod
     def draw(knight):
@@ -131,7 +134,7 @@ class Jump_run:
             knight.face_dir = 0
             knight.move = -1
         if space_down(e):
-            knight.gravity = 18
+            knight.gravity = 27
         pass
 
     @staticmethod
@@ -147,10 +150,6 @@ class Jump_run:
             knight.frame_Jump_timer += 1
 
         knight.gravity -= 1
-        if knight.y <= 187:
-            knight.gravity = 0
-            knight.y = 187
-            knight.state_machine.add_event(('LAND', 0))
         knight.x += knight.move * knight.speed
 
         if knight.face_dir:
@@ -177,7 +176,7 @@ class Jump:
         elif left_down(e):
             knight.face_dir = 0
         if space_down(e):
-            knight.gravity = 18
+            knight.gravity = 27
 
         knight.move = 0
         pass
@@ -195,10 +194,7 @@ class Jump:
             knight.frame_Jump_timer += 1
 
         knight.gravity -= 1
-        if knight.y <= 187:
-            knight.gravity = 0
-            knight.y = 187
-            knight.state_machine.add_event(('LAND', 0))
+
         if knight.face_dir:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx +5, sy + 43
         else:
@@ -379,7 +375,7 @@ class Protect:
 
 class Knight:
     def __init__(self):
-        self.x, self.y, self.world = server.tile_swamp.w//4, 187, 480
+        self.x, self.y, self.world = server.tile_ground_swamp.w//4, 188, 480
         self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
         self.gravity, self.sword = 0, None
         self.face_dir, self.move, self.speed = 1, 0, 5
@@ -409,7 +405,7 @@ class Knight:
         self.state_machine.set_transitions(
             {
                 Idle: {right_down: Run, left_down: Run, space_down: Jump, a_down: Attack, d_down: Protect},
-                Run: {right_up: Idle, left_up: Idle, space_down: Jump_run,a_down: Attack, d_down: Protect},
+                Run: {right_up: Idle, left_up: Idle, space_down: Jump_run,a_down: Attack, d_down: Protect, falling: Jump_run},
                 Attack : {a_down : Attack, attack_end: Idle, right_down: Run, left_down: Run, space_down: Jump, d_down: Protect},
                 Jump : {right_down: Jump_run, left_down: Jump_run, landing: Idle},
                 Jump_run: {right_up: Jump, left_up: Jump, landing: Run},
@@ -419,9 +415,12 @@ class Knight:
 
     def update(self):
         self.y += self.gravity  # 기사는 중력(gravity)에 의해 항상 y값이 줄어든다.
+        self.gravity -=0.5
 
         if self.stamina_now < self.stamina_max:
             self.stamina_now += 0.1  # 1초에 10씩 스테미나 회복
+        if self.hp_now < self.hp_max:
+            self.hp_now += 0.05
 
         if self.invincible:
             self.invincible_timer += 1
@@ -434,14 +433,14 @@ class Knight:
 
         self.state_machine.update()
 
-        self.x = clamp(10.0, self.x, server.tile_swamp.w - 10.0)
-        self.y = clamp(20.0, self.y, server.tile_swamp.h - 10.0)
+        self.x = clamp(10.0, self.x, server.tile_ground_swamp.w - 10.0)
+        self.y = clamp(20.0, self.y, server.tile_ground_swamp.h - 10.0)
 
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 2
 
         if self.hp_decrease < self.hp_now:
-            self.hp_decrease += 2
+            self.hp_decrease += 0.05
 
 
     def handle_event(self, event):
@@ -454,8 +453,8 @@ class Knight:
         global sx
         global sy
 
-        sx = self.x - server.tile_swamp.window_left
-        sy = self.y - server.tile_swamp.window_bottom
+        sx = self.x - server.tile_ground_swamp.window_left
+        sy = self.y - server.tile_ground_swamp.window_bottom
 
         if self.invincible_timer % 10 <= 5:
             self.state_machine.draw()
@@ -467,8 +466,10 @@ class Knight:
         self.image_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
         self.image_ui.clip_draw(0, 0, 130, 80, 65, 70, 130, 80)
 
+        print('중력:',self.gravity)
 
 
+    def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
         draw_rectangle(sx-1,sy-1,sx+1,sy+1)
 
@@ -482,11 +483,11 @@ class Knight:
 
     def take_damage(self, power):
         if not self.invincible and self.state_machine.current_state() != Protect:
-            # if power !=0:
-                    self.hp_now -= power
-                    self.invincible = True
-                    print('knight is invincible for 1.5 second')
+                self.hp_now -= power
+                self.invincible = True
+                print('knight is invincible for 1.5 second')
         pass
+
 
     def handle_collision(self, group, other, power):
         # fill here
@@ -498,9 +499,22 @@ class Knight:
             self.hp_now += 100
 
         if group == 'knight:elixir_power':
-            self.power += 100
+            self.power += 200
+            self.stamina_now += 20
+            self.stamina_max +=20
 
-        pass
+        if group == 'knight:tile_ground':
+            if self.gravity <=-0.7:            #떨어지는 중에
+                if self.y <= power+53:
+                    self.y = power+53
+                    self.gravity = 0
+                    self.state_machine.add_event(('LAND', 0))
 
+        if group == 'knight:tile_midair':
+            if self.gravity <= -0.7:
+                if self.y < power+53:
+                    self.y = power+53
+                    self.gravity = 0
+                    self.state_machine.add_event(('LAND', 0))
 
 

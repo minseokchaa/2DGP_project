@@ -16,6 +16,8 @@ class Elixir_hp:
 
     def draw(self):
         self.elixir_red.clip_draw_to_origin(0, 0, self.w, self.h, self.x+50, self.y)
+
+    def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
 
         #이미지 파일의 0,0부터 self.w, self.h 까지 이미지를 도려내서 화면의 self.x, self.y(맨 왼쪽 아래부터)의 위치에 그린다.
@@ -45,6 +47,18 @@ class Elixir_hp:
         # fill here
         if group == 'knight:elixir_hp':
             game_world.remove_object(self)
+
+        if group == 'knight:tile_ground':
+            if self.gravity <=-0.7:            #떨어지는 중에
+                if self.y <= power:
+                    self.y = power
+                    self.gravity = 0
+
+        if group == 'knight:tile_midair':
+            if self.gravity <= -0.7:
+                if self.y < power:
+                    self.y = power
+                    self.gravity = 0
         pass
 
 class Elixir_power:
@@ -60,6 +74,8 @@ class Elixir_power:
 
     def draw(self):
         self.elixir_yellow.clip_draw_to_origin(0, 0, self.w, self.h, self.x+50, self.y)
+
+    def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
 
         #이미지 파일의 0,0부터 self.w, self.h 까지 이미지를 도려내서 화면의 self.x, self.y(맨 왼쪽 아래부터)의 위치에 그린다.
@@ -88,4 +104,16 @@ class Elixir_power:
         # fill here
         if group == 'knight:elixir_power':
             game_world.remove_object(self)
+
+        if group == 'knight:tile_ground':
+            if self.gravity <=-0.7:            #떨어지는 중에
+                if self.y <= power:
+                    self.y = power
+                    self.gravity = 0
+
+        if group == 'knight:tile_midair':
+            if self.gravity <= -0.7:
+                if self.y < power:
+                    self.y = power
+                    self.gravity = 0
         pass

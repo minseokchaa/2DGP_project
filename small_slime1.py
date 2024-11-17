@@ -1,12 +1,8 @@
-from pico2d import load_image, get_time, draw_rectangle
+from pico2d import *
 from state_machine import StateMachine, too_far_to_first, right_up, right_down, left_down, left_up, arrive_at_first
 import game_world
-
-
-def find_knight(monster): #knight를 찾았을 때  state machine에 이벤트 생성
-
-    monster.state_machine.add_event(('Find_knight', 0))
-    pass
+import server
+import random
 
 class Idle:
     @staticmethod
@@ -56,8 +52,7 @@ class Idle:
         elif small_slime1.face_dir == -1:
             small_slime1.image_Idle.clip_draw(small_slime1.frame_Idle * 94, 0, 94, 112, small_slime1.x,small_slime1.y)
 
-        draw_rectangle(small_slime1.x - 1, small_slime1.y - 1, small_slime1.x + 1, small_slime1.y + 1)
-        draw_rectangle(*small_slime1.get_bb())
+
         pass
 
     @staticmethod
@@ -70,36 +65,29 @@ class Small_slime1:
         self.x_first, self.y_first = x, y     #초기 위치 (700, 167)
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y-56, x+47, y+35
         self.knight_x_location = 480
-        self.face_dir, self.move, self.speed = 1, 0, 1
+        self.face_dir, self.move, self.speed = random.choice([-1,1]), 0, 1
         self.hp_max, self.hp_now, self.hp_decrease, self.power = 1000, 1000, 1000,100
 
-        self.frame_Idle, self.frame_Idle_timer = 0, 0
+        self.frame_Idle, self.frame_Idle_timer = random.randint(0, 3), 0
         self.timer = 0
         self.invincible, self.invincible_timer = False,  0
-
+        self.cw = get_canvas_width()
+        self.ch = get_canvas_height()
         self.image_Idle = load_image('mon_swamp_dungeon17_01.png')
         self.image_hp_bar = load_image('hp_bar.png')
         self.image_decrease_hp_bar = load_image('decreasing_hp_bar.png')
-
         self.state_machine = StateMachine(self)  # 소년 객체의 state machine 생성
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
-        self.state_machine.set_transitions(
-            {
-                Idle: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle} #슬라임이 보는 시선의 방향에서 일정거리 안에 knight가 있으면 attack으로 전환
-            }
-        )
 
 
     def update(self):
         self.state_machine.update()
 
-        if 0 <= self.knight_x_location - self.speed*self.move <= 1920:
-            self.knight_x_location -= self.speed * self.move
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, 1920 - self.cw - 1)
 
-        if 480 < self.knight_x_location<1440:
-            self.x += self.move                 #그려지는 위치만 달라짐
+        if self.window_left != 0 and self.window_left != 1920 - self.cw - 1:
+            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
-        self.world += self.speed * self.face_dir
         self.x += self.speed * self.face_dir
 
         if self.hp_now <= 0:
@@ -129,6 +117,11 @@ class Small_slime1:
         self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_decrease // 10, 5)
         self.image_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_now // 10 ,5)
 
+
+
+    def draw_rectangle(self):
+        draw_rectangle(self.x - 1, self.y - 1, self.x + 1, self.y + 1)
+        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2

@@ -10,6 +10,9 @@ class Sword:
 
         pass
     def draw(self):
+        pass
+
+    def draw_rectangle(self):
         draw_rectangle(*self.get_bb())  # *을 써줌으로서 패키지를 뜯는다.
 
     def update(self):

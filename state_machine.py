@@ -57,6 +57,8 @@ def too_far_to_first(e):         #e가 time out인지 판단
 def arrive_at_first(e):         #e가 time out인지 판단
     return e[0] == 'Arrive_at_first'
 
+def falling(e):         #e가 time out인지 판단
+    return e[0] == 'Falling'
 
 class StateMachine:
     def __init__(self, o):
