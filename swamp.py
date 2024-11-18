@@ -1,5 +1,5 @@
 from pico2d import *
-from state_machine import StateMachine, right_down, left_down, left_up, right_up, d_down, a_down, out_of_width
+from state_machine import StateMachine, right_down, left_down, left_up, right_up, d_down, a_down
 import server
 
 class Bg_swamp:
@@ -7,7 +7,7 @@ class Bg_swamp:
     def __init__(self):
 
         self.x = 0
-        self.Back_ground_swamp = load_image('bg_tile_chapter_02_02x2.png')
+        self.Back_ground_swamp = load_image('./using_resource/'+'bg_tile_chapter_02_02x2.png')
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -15,10 +15,10 @@ class Bg_swamp:
         self.h = self.Back_ground_swamp.h
         pass
     def update(self):
-        self.window_left = clamp(0, (int(server.knight.x) - self.cw // 2)//4, self.w - self.cw - 720)
+        self.window_left = clamp(0, (int(server.knight.x) - self.cw // 2)//4, 400)
         self.window_bottom = clamp(0, (int(server.knight.y) - self.ch // 2)//4, self.h - self.ch - 1)
 
-        if self.window_left != 0 and self.window_left != 1920 - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
 
@@ -31,7 +31,7 @@ class Bg_swamp:
 class Tile_ground_swamp:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.tile_ground_swamp = load_image('tile_chapter_0000_tile1_.png')
+        self.tile_ground_swamp = load_image('./using_resource/'+'tile_chapter_0000_tile1_.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.tile_ground_swamp.w
@@ -50,12 +50,12 @@ class Tile_ground_swamp:
         self.window_bottom = clamp(0, int(server.knight.y) - self.ch // 2, self.h - self.ch - 1)
 
     def get_bb(self):
-        return 0, 0, 1920, self.y+132
+        return 0, 0, 1920, self.y+150
 
 class Tile_midair_swamp:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.tile_midair_swamp = load_image('tile_swamp.png')
+        self.tile_midair_swamp = load_image('./using_resource/'+'tile_swamp.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.tile_midair_swamp.w
@@ -70,9 +70,9 @@ class Tile_midair_swamp:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, 1920 - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != 1920 - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
     def get_bb(self):

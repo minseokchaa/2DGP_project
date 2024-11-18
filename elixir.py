@@ -7,7 +7,7 @@ class Elixir_hp:
     def __init__(self, x=500, y=135):
         self.x, self.y = x, y  # 나무의 기본 위치
         self.gravity = 15
-        self.elixir_red = load_image('elixir_red.png')
+        self.elixir_red = load_image('./using_resource/'+'elixir_red.png')
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -15,7 +15,7 @@ class Elixir_hp:
         self.h = self.elixir_red.h
 
     def draw(self):
-        self.elixir_red.clip_draw_to_origin(0, 0, self.w, self.h, self.x+50, self.y)
+        self.elixir_red.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y)
 
     def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
@@ -29,14 +29,14 @@ class Elixir_hp:
             self.gravity = 0
             self.y = 135
 
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, 1920 - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w)  - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != 1920 - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
 
     def get_bb(self):
-            return self.x+50, self.y,self.x+74,self.y+35
+            return self.x, self.y,self.x+24,self.y+35
 
 
     def power(self):
@@ -65,7 +65,7 @@ class Elixir_power:
     def __init__(self, x=500, y=135):
         self.x, self.y = x, y  # 나무의 기본 위치
         self.gravity = 15
-        self.elixir_yellow = load_image('elixir_yellow.png')
+        self.elixir_yellow = load_image('./using_resource/'+'elixir_yellow.png')
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -73,7 +73,7 @@ class Elixir_power:
         self.h = self.elixir_yellow.h
 
     def draw(self):
-        self.elixir_yellow.clip_draw_to_origin(0, 0, self.w, self.h, self.x+50, self.y)
+        self.elixir_yellow.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y)
 
     def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
@@ -87,14 +87,14 @@ class Elixir_power:
             self.gravity = 0
             self.y = 135
 
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, 1920 - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w)  - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != 1920 - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
 
     def get_bb(self):
-            return self.x+50, self.y,self.x+74,self.y+35
+            return self.x, self.y,self.x+24,self.y+35
 
 
     def power(self):

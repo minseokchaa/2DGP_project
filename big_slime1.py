@@ -69,9 +69,9 @@ class Big_slime1:
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.timer = 0
-        self.image_Idle = load_image('mon_swamp_Big_Undead3_2_01.png')
-        self.image_hp_bar = load_image('hp_bar.png')
-        self.image_decrease_hp_bar = load_image('decreasing_hp_bar.png')
+        self.image_Idle = load_image('./using_resource/'+'mon_swamp_Big_Undead3_2_01.png')
+        self.image_hp_bar = load_image('./using_resource/'+'hp_bar.png')
+        self.image_decrease_hp_bar = load_image('./using_resource/'+'decreasing_hp_bar.png')
         self.state_machine = StateMachine(self)  # 소년 객체의 state machine 생성
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
 
@@ -80,9 +80,9 @@ class Big_slime1:
     def update(self):
         self.state_machine.update()
 
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, 1920 - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != 1920 - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
         self.x += self.speed * self.face_dir
@@ -93,6 +93,8 @@ class Big_slime1:
 
         if self.invincible:
             self.invincible_timer += 1
+
+
         if self.invincible_timer == 29:
             self.invincible = False
             self.invincible_timer = 0
@@ -134,7 +136,7 @@ class Big_slime1:
 
     def handle_collision(self, group, other, power):
         # fill here
-        if group == 'sword:small_slime1':
+        if group == 'sword:monster':
             if not self.invincible:
                 self.hp_now -= power
                 self.invincible = True

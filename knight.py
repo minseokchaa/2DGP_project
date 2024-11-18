@@ -73,8 +73,7 @@ class Run:
             knight.frame_Run_timer = 0
         else:
             knight.frame_Run_timer += 1
-        if knight.y == 168:
-            knight.gravity = 0
+
 
         knight.x += knight.move * knight.speed
 
@@ -134,7 +133,7 @@ class Jump_run:
             knight.face_dir = 0
             knight.move = -1
         if space_down(e):
-            knight.gravity = 27
+            knight.gravity = 21
         pass
 
     @staticmethod
@@ -149,7 +148,6 @@ class Jump_run:
         else:
             knight.frame_Jump_timer += 1
 
-        knight.gravity -= 1
         knight.x += knight.move * knight.speed
 
         if knight.face_dir:
@@ -176,7 +174,7 @@ class Jump:
         elif left_down(e):
             knight.face_dir = 0
         if space_down(e):
-            knight.gravity = 27
+            knight.gravity = 21
 
         knight.move = 0
         pass
@@ -193,7 +191,6 @@ class Jump:
         else:
             knight.frame_Jump_timer += 1
 
-        knight.gravity -= 1
 
         if knight.face_dir:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx +5, sy + 43
@@ -248,7 +245,7 @@ class Attack:
         if knight.frame_Attack == 2 and knight.frame_Attack_timer == 0:
             knight.sword = Sword(sx, sy, knight.power, knight.face_dir)  # Sword 객체 생성
             game_world.add_object(knight.sword, 1)
-            add_collision_pair('sword:small_slime1', knight.sword, None)
+            add_collision_pair('sword:monster', knight.sword, None)
             add_collision_pair('sword:tree', knight.sword, None)
 
         if knight.frame_Attack == 3 and knight.frame_Attack_timer == 3:
@@ -375,7 +372,7 @@ class Protect:
 
 class Knight:
     def __init__(self):
-        self.x, self.y, self.world = server.tile_ground_swamp.w//4, 188, 480
+        self.x, self.y, self.world = 480, 188, 480
         self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
         self.gravity, self.sword = 0, None
         self.face_dir, self.move, self.speed = 1, 0, 5
@@ -392,12 +389,12 @@ class Knight:
 
         self.invincible, self.invincible_timer = False,  0
 
-        self.image_Idle,self.image_Run,self.image_Jump = load_image('Knight_Idle.png'), load_image('Knight_Run.png'), load_image('Knight_Jump.png')
-        self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('Knight_Attack 1.png'), load_image('Knight_Attack 2.png'),load_image('Knight_Attack 3.png')
-        self.image_Protect = load_image('Knight_Protect.png')
-        self.image_hp_bar,self.image_stamina_bar = load_image('hp_bar.png'),load_image('stamina_bar.png')
-        self.image_max_hp_bar, self.image_max_stamina_bar = load_image('max_hp_bar.png'), load_image('max_stamina_bar.png')
-        self.image_decrease_hp_bar,self.image_ui = load_image('decreasing_hp_bar.png'), load_image('knight_ui.png')
+        self.image_Idle,self.image_Run,self.image_Jump = load_image('./using_resource/'+'Knight_Idle.png'), load_image('./using_resource/'+'Knight_Run.png'), load_image('./using_resource/'+'Knight_Jump.png')
+        self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('./using_resource/'+'Knight_Attack 1.png'), load_image('./using_resource/'+'Knight_Attack 2.png'),load_image('./using_resource/'+'Knight_Attack 3.png')
+        self.image_Protect = load_image('./using_resource/'+'Knight_Protect.png')
+        self.image_hp_bar,self.image_stamina_bar = load_image('./using_resource/'+'hp_bar.png'),load_image('./using_resource/'+'stamina_bar.png')
+        self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource/'+'max_hp_bar.png'), load_image('./using_resource/'+'max_stamina_bar.png')
+        self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource/'+'decreasing_hp_bar.png'), load_image('./using_resource/'+'knight_ui.png')
 
         self.start_time = get_time()
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
@@ -415,7 +412,7 @@ class Knight:
 
     def update(self):
         self.y += self.gravity  # 기사는 중력(gravity)에 의해 항상 y값이 줄어든다.
-        self.gravity -=0.5
+        self.gravity -=1
 
         if self.stamina_now < self.stamina_max:
             self.stamina_now += 0.1  # 1초에 10씩 스테미나 회복
@@ -434,14 +431,12 @@ class Knight:
         self.state_machine.update()
 
         self.x = clamp(10.0, self.x, server.tile_ground_swamp.w - 10.0)
-        self.y = clamp(20.0, self.y, server.tile_ground_swamp.h - 10.0)
 
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 2
 
         if self.hp_decrease < self.hp_now:
             self.hp_decrease += 0.05
-
 
     def handle_event(self, event):
         #event: 입력 이벤트 key mouse
@@ -489,7 +484,7 @@ class Knight:
 
     def handle_collision(self, group, other, power):
         # fill here
-        if group == 'knight:small_slime1':
+        if group == 'knight:monster':
                 self.take_damage(power)
 
         if group == 'knight:elixir_hp':
@@ -502,14 +497,14 @@ class Knight:
             self.stamina_max +=20
 
         if group == 'knight:tile_ground':
-            if self.gravity <=-0.7:            #떨어지는 중에
+            if self.gravity <=-2:            #떨어지는 중에
                 if self.y <= power+53:
                     self.y = power+53
                     self.gravity = 0
                     self.state_machine.add_event(('LAND', 0))
 
         if group == 'knight:tile_midair':
-            if self.gravity <= -0.7:
+            if self.gravity <= -2:
                 if self.y < power+53:
                     self.y = power+53
                     self.gravity = 0

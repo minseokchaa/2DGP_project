@@ -10,7 +10,7 @@ class Broken_wood1:
         self.x, self.y = x, y  # 나무의 기본 위치
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
 
-        self.ob_Ridges_6 = load_image('ob_Ridges_6.png')
+        self.ob_Ridges_6 = load_image('./using_resource/'+'ob_Ridges_6.png')
         self.invincible, self.invincible_timer = False, 0
         self.life =4
 
@@ -28,21 +28,21 @@ class Broken_wood1:
         #이미지 파일의 0,0부터 self.w, self.h 까지 이미지를 도려내서 화면의 self.x, self.y(맨 왼쪽 아래부터)의 위치에 그린다.
 
     def update(self):
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, 1920 - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != 1920 - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
         if self.life ==0:
             game_world.remove_object(self)
             if self.type == 1:
-                elixir_hp = Elixir_hp(self.x, self.y)
+                elixir_hp = Elixir_hp(self.x+20, self.y)
                 game_world.add_object(elixir_hp, 1)
                 add_collision_pair('knight:elixir_hp', None, elixir_hp)
                 add_collision_pair_for_tile('knight:tile_ground', elixir_hp, None)
                 add_collision_pair_for_tile('knight:tile_midair', elixir_hp, None)
             elif self.type == 2:
-                elixir_power = Elixir_power(self.x, self.y)
+                elixir_power = Elixir_power(self.x+20, self.y)
                 game_world.add_object(elixir_power, 1)
                 add_collision_pair('knight:elixir_power', None, elixir_power)
                 add_collision_pair_for_tile('knight:tile_ground', elixir_power, None)
@@ -51,8 +51,13 @@ class Broken_wood1:
         if self.invincible:
             self.invincible_timer += 1
 
+
+        if 1 <= self.invincible_timer < 5:
+            self.x -=1
+        if 5 <= self.invincible_timer < 9:
+            self.x +=1
         if self.invincible_timer == 10:
-            self.ob_Ridges_6 = load_image('ob_Ridges_6.png')
+            self.ob_Ridges_6 = load_image('./using_resource/'+'ob_Ridges_6.png')
 
         if self.invincible_timer == 29:
             self.invincible = False
@@ -71,5 +76,5 @@ class Broken_wood1:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
-                self.ob_Ridges_6 = load_image('ob_Ridges_6_hit.png')
+                self.ob_Ridges_6 = load_image('./using_resource/'+'ob_Ridges_6_hit.png')
         pass

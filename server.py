@@ -5,11 +5,5 @@ knight = None
 background_swamp = None
 tile_ground_swamp = None
 
-tile_midair_swamp1 = None
-tile_midair_swamp2= None
-tile_midair_swamp3 = None
-tile_midair_swamp4 = None
-tile_midair_swamp5 = None
-tile_midair_swamp6 = None
-tile_midair_swamp7 = None
+tile_midair_swamp = None
 

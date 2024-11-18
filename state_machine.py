@@ -48,9 +48,6 @@ def attack_end(e):         #e가 time out인지 판단
 def no_stamina(e):         #e가 time out인지 판단
     return e[0] == 'No_stamina'
 
-def out_of_width(e):         #e가 time out인지 판단
-    return e[0] == 'OUT_OF_WIDTH'
-
 def too_far_to_first(e):         #e가 time out인지 판단
     return e[0] == 'Too_far_to_first'
 
