@@ -6,7 +6,7 @@ class Sword:
     image = None
 
     def __init__(self, x , y, power, face_dir):
-        self.x, self.y, self.power, self.face_dir = x, y, power, face_dir
+        self.x, self.y, self.Power, self.face_dir = x, y, power, face_dir
 
         pass
     def draw(self):
@@ -16,10 +16,11 @@ class Sword:
         draw_rectangle(*self.get_bb())  # *을 써줌으로서 패키지를 뜯는다.
 
     def update(self):
+
         pass
 
-    def power(self):
-        return self.power
+    def get_power(self):
+        return self.Power
 
     def get_bb(self):
         # fill here

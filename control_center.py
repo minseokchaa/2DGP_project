@@ -7,7 +7,7 @@ from knight import Knight
 from swamp import Bg_swamp, Tile_midair_swamp,Tile_ground_swamp
 from small_slime1 import Small_slime1
 from tree import Dead_tree1, Dead_tree2, Alive_tree1
-from broken_wood import Broken_wood1
+from broken_wood import Broken_wood1, Broken_wood2
 from big_slime1 import Big_slime1
 
 # Game object class here
@@ -44,9 +44,15 @@ def reset_world():
     game_world.add_object(server.tile_ground_swamp, 0)
     add_collision_pair_for_tile('knight:tile_ground', None, server.tile_ground_swamp)
 
-    positions = [500, 700]
+    positions = [500, 700, 1300,1400]
     for i in positions:
         server.tile_midair_swamp = Tile_midair_swamp(i, 220)
+        game_world.add_object(server.tile_midair_swamp, 0)
+        add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
+
+    positions = [300, 350, 550]
+    for i in positions:
+        server.tile_midair_swamp = Tile_midair_swamp(i, 680)
         game_world.add_object(server.tile_midair_swamp, 0)
         add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
 
@@ -54,25 +60,25 @@ def reset_world():
     game_world.add_object(server.tile_midair_swamp, 0)
     add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
 
-    server.tile_midair_swamp = Tile_midair_swamp(-125, 600)
+    server.tile_midair_swamp = Tile_midair_swamp(-120, 600)
     game_world.add_object(server.tile_midair_swamp, 0)
     add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
 
 
 
 
-    # small_slimes1 = [Small_slime1(random.randint(600, 2500), 200) for _ in range(4)]
-    #
-    # for small_slime1 in small_slimes1:
-    #     game_world.add_object(small_slime1, 1)
-    #     add_collision_pair('knight:monster', None, small_slime1)
-    #     add_collision_pair('sword:monster', None, small_slime1)
-    #
-    #
-    # big_slime1 = Big_slime1(1400, 220)
-    # game_world.add_object(big_slime1, 1)
-    # add_collision_pair('knight:monster', None, big_slime1)
-    # add_collision_pair('sword:monster', None, big_slime1)
+    small_slimes1 = [Small_slime1(random.randint(600, 2500), 200) for _ in range(4)]
+
+    for small_slime1 in small_slimes1:
+        game_world.add_object(small_slime1, 1)
+        add_collision_pair('knight:monster', None, small_slime1)
+        add_collision_pair('sword:monster', None, small_slime1)
+
+
+    big_slime1 = Big_slime1(1400, 220)
+    game_world.add_object(big_slime1, 1)
+    add_collision_pair('knight:monster', None, big_slime1)
+    add_collision_pair('sword:monster', None, big_slime1)
 
 
     server.knight = Knight()
@@ -90,7 +96,7 @@ def reset_world():
     game_world.add_object(tree1, 0)
     add_collision_pair('sword:tree', None, tree1)
 
-    tree1 = Dead_tree1(300, 530, 2)
+    tree1 = Dead_tree1(300, 530, 0)
     game_world.add_object(tree1, 0)
     add_collision_pair('sword:tree', None, tree1)
 
@@ -100,7 +106,7 @@ def reset_world():
     add_collision_pair('sword:tree', None, tree1)
 
 
-    tree2 = Dead_tree2(1400, 150,2)
+    tree2 = Dead_tree2(1400, 351,2)
     game_world.add_object(tree2, 0)
     add_collision_pair('sword:tree', None, tree2)
 
@@ -110,13 +116,17 @@ def reset_world():
         if i == 200: j = 1
         else: j= 2
 
-        ridges2 = Broken_wood1(i, 150, j)
+        ridges2 = Broken_wood1(i, 151, j)
         game_world.add_object(ridges2, 0)
         add_collision_pair('sword:tree', None, ridges2)
 
 
 
     ridges2 = Broken_wood1(700, 351,1)
+    game_world.add_object(ridges2, 0)
+    add_collision_pair('sword:tree', None, ridges2)
+
+    ridges2 = Broken_wood2(550, 811, 2)
     game_world.add_object(ridges2, 0)
     add_collision_pair('sword:tree', None, ridges2)
 

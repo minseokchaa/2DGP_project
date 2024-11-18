@@ -75,14 +75,14 @@ def handle_collisions():
         for a in pairs[0]:
             for b in pairs[1]:
                 if collide(a, b):
-                    a.handle_collision(group, b, b.power)
-                    b.handle_collision(group, a, a.power)
+                    a.handle_collision(group, b, b.get_power())
+                    b.handle_collision(group, a, a.get_power())
 
 def tile_collide(a, b):
     left_a, bottom_a, right_a, top_a = a.get_bb()
     left_b, bottom_b, right_b, top_b = b.get_bb()
 
-    if top_b >= bottom_a >= top_b-50:
+    if top_b >= bottom_a >= top_b-30:
         if left_a < right_b and right_a > left_b:
 
             return True

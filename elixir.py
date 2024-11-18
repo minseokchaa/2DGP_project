@@ -39,7 +39,7 @@ class Elixir_hp:
             return self.x, self.y,self.x+24,self.y+35
 
 
-    def power(self):
+    def get_power(self):
         return 0
 
 
@@ -97,7 +97,7 @@ class Elixir_power:
             return self.x, self.y,self.x+24,self.y+35
 
 
-    def power(self):
+    def get_power(self):
         return 0
 
     def handle_collision(self, group, other, power):

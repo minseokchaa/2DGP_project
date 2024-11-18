@@ -7,7 +7,7 @@ from game_world import add_collision_pair, add_collision_pair_for_tile
 
 class Dead_tree1:
     def __init__(self, x=500, y=135, type = 0):
-        self.x, self.y = x, y  # 나무의 기본 위치
+        self.x, self.y, self.i = x, y, 1  # 나무의 기본 위치
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
         self.db_dead_tree_1 = load_image('./using_resource/'+'ob_dead_tree_1.png')
         self.invincible, self.invincible_timer = False, 0
@@ -32,8 +32,13 @@ class Dead_tree1:
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
-        if self.life ==0:
+        if self.life == 0:
+            self.i -= 0.02
+            self.db_dead_tree_1.opacify(self.i)
+            self.invincible = True
+            self.invincible_timer = 0
 
+        if self.i <=0:
             game_world.remove_object(self)
             if self.type ==1:
                 elixir_hp = Elixir_hp(self.x+80, self.y)
@@ -50,11 +55,10 @@ class Dead_tree1:
 
         if self.invincible:
             self.invincible_timer += 1
-
-        if 1 <= self.invincible_timer < 5:
-            self.x -=1
-        if 5 <= self.invincible_timer < 9:
-            self.x +=1
+            if 2 <= self.invincible_timer < 6:
+                self.x -= 0.5
+            if 6 <= self.invincible_timer < 10:
+                self.x += 0.5
 
         if self.invincible_timer == 10:
             self.db_dead_tree_1 = load_image('./using_resource/'+'ob_dead_tree_1.png')
@@ -67,7 +71,7 @@ class Dead_tree1:
             return self.x+60, self.y,self.x+110,self.y+150
 
 
-    def power(self):
+    def get_power(self):
         return 0
 
 
@@ -82,7 +86,7 @@ class Dead_tree1:
 
 class Dead_tree2:
     def __init__(self, x=500, y=135, type = 0):
-        self.x, self.y = x, y  # 나무의 기본 위치
+        self.x, self.y, self.i = x, y, 1  # 나무의 기본 위치
         self.x, self.y = x, y  # 나무의 기본 위치
         self.type = type  # 1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
         self.ob_dead_tree_2 = load_image('./using_resource/'+'ob_dead_tree_2.png')
@@ -108,7 +112,13 @@ class Dead_tree2:
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
-        if self.life ==0:
+        if self.life == 0:
+            self.i -= 0.02
+            self.ob_dead_tree_2.opacify(self.i)
+            self.invincible = True
+            self.invincible_timer = 0
+
+        if self.i <=0:
             game_world.remove_object(self)
             if self.type == 1:
                 elixir_hp = Elixir_hp(self.x+75, self.y)
@@ -125,11 +135,10 @@ class Dead_tree2:
 
         if self.invincible:
             self.invincible_timer += 1
-
-        if 1 <= self.invincible_timer < 5:
-            self.x -=1
-        if 5 <= self.invincible_timer < 9:
-            self.x +=1
+            if 2 <= self.invincible_timer < 6:
+                self.x -= 0.5
+            if 6 <= self.invincible_timer < 10:
+                self.x += 0.5
 
         if self.invincible_timer == 10:
             self.ob_dead_tree_2 = load_image('./using_resource/'+'ob_dead_tree_2.png')
@@ -142,7 +151,7 @@ class Dead_tree2:
             return self.x+50, self.y,self.x+100,self.y+150
 
 
-    def power(self):
+    def get_power(self):
         return 0
 
 
@@ -157,19 +166,20 @@ class Dead_tree2:
 
 class Alive_tree1:
     def __init__(self, x=500, y=135, type = 0):
-        self.x, self.y = x, y  # 나무의 기본 위치
+        self.x, self.y, self.i = x, y, 1  # 나무의 기본 위치
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
-        self.db_tree_3 = load_image('./using_resource/'+'ob_tree_3.png')
+        self.ob_tree_3 = load_image('./using_resource/'+'ob_tree_3.png')
         self.invincible, self.invincible_timer = False, 0
         self.life =13
 
+
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
-        self.w = self.db_tree_3.w
-        self.h = self.db_tree_3.h
+        self.w = self.ob_tree_3.w
+        self.h = self.ob_tree_3.h
 
     def draw(self):
-        self.db_tree_3.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,398,366)
+        self.ob_tree_3.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,398,366)
 
     def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
@@ -182,29 +192,26 @@ class Alive_tree1:
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
             self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
 
-        if self.life ==0:
 
+
+        if self.life ==0:
+            self.i -= 0.007
+            self.ob_tree_3.opacify(self.i)
+            self.invincible = True
+            self.invincible_timer = 0
+
+        if self.i <= 0:
             game_world.remove_object(self)
-            if self.type ==1:
-                elixir_hp = Elixir_hp(self.x+80, self.y)
-                game_world.add_object(elixir_hp, 1)
-                add_collision_pair('knight:elixir_hp', None, elixir_hp)
-                add_collision_pair_for_tile('knight:tile_ground', elixir_hp, None)
-                add_collision_pair_for_tile('knight:tile_midair', elixir_hp, None)
-            elif self.type ==2:
-                elixir_power = Elixir_power(self.x+80, self.y)
-                game_world.add_object(elixir_power, 1)
-                add_collision_pair('knight:elixir_power', None, elixir_power)
-                add_collision_pair_for_tile('knight:tile_ground', elixir_power, None)
-                add_collision_pair_for_tile('knight:tile_midair', elixir_power, None)
+            # forest_guardian = Forest_guardian(self.x+80, self.y)      #forest_guardian 생성
+            # game_world.add_object(forest_guardian, 1)
+            # add_collision_pair('knight:monster', None, forest_guardian)
 
         if self.invincible:
             self.invincible_timer += 1
-
-        if 1 <= self.invincible_timer < 5:
-            self.x -=0.5
-        if 5 <= self.invincible_timer < 9:
-            self.x +=0.5
+            if 2 <= self.invincible_timer < 6:
+                self.x -=0.5
+            if 6 <= self.invincible_timer < 10:
+                self.x +=0.5
 
         if self.invincible_timer == 29:
             self.invincible = False
@@ -214,7 +221,7 @@ class Alive_tree1:
             return self.x+230, self.y,self.x+330,self.y+150
 
 
-    def power(self):
+    def get_power(self):
         return 0
 
 

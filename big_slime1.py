@@ -114,8 +114,8 @@ class Big_slime1:
     def draw(self):
         self.state_machine.draw()
 
-        self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_decrease // 10, 5)
-        self.image_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_now // 10 ,5)
+        self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, self.x-67, self.y+100, self.hp_decrease // 10, 5)
+        self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, self.x-67, self.y+100, self.hp_now // 10 ,5)
 
 
 
@@ -130,7 +130,7 @@ class Big_slime1:
 
 
 
-    def power(self):
+    def get_power(self):
         return self.power
 
 

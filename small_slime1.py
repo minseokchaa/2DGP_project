@@ -69,7 +69,7 @@ class Small_slime1:
         self.hp_max, self.hp_now, self.hp_decrease, self.power = 1000, 1000, 1000,200
 
         self.frame_Idle, self.frame_Idle_timer = random.randint(0, 3), 0
-        self.timer = 0
+        self.timer = random.randint(0, 200)
         self.invincible, self.invincible_timer = False,  0
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -116,8 +116,8 @@ class Small_slime1:
         self.state_machine.draw()
 
 
-        self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_decrease // 10, 5)
-        self.image_hp_bar.clip_draw(0, 0, 50, 50, self.x, self.y+50, self.hp_now // 10 ,5)
+        self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, self.x-50, self.y+50, self.hp_decrease // 10, 5)
+        self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, self.x-50, self.y+50, self.hp_now // 10 ,5)
 
 
 
@@ -128,7 +128,7 @@ class Small_slime1:
     def get_bb(self):
         return self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2
 
-    def power(self):
+    def get_power(self):
         return self.power
 
 

@@ -217,6 +217,7 @@ class Attack:
             knight.attack_motion = 1
             knight.frame_Attack = 0
             knight.attack_count = 0
+            knight.power_combo = knight.power
             if knight.sword:
                 game_world.remove_object(knight.sword)
                 knight.sword = None
@@ -234,6 +235,7 @@ class Attack:
 
         if knight.attack_motion <= knight.attack_count and knight.frame_Attack == 4:  # 4프레임이 다 그려졌을 때 다음 모션, 프레임 초기화
             knight.attack_motion += 1
+            knight.power_combo +=50
             knight.frame_Attack = 0
 
         elif knight.attack_motion > knight.attack_count:
@@ -241,9 +243,10 @@ class Attack:
             knight.frame_Attack = 0
             knight.attack_count = 0
             knight.state_machine.add_event(('Attack_end', 0))
+            knight.power_combo = knight.power
 
         if knight.frame_Attack == 2 and knight.frame_Attack_timer == 0:
-            knight.sword = Sword(sx, sy, knight.power, knight.face_dir)  # Sword 객체 생성
+            knight.sword = Sword(sx, sy, knight.power_combo, knight.face_dir)  # Sword 객체 생성
             game_world.add_object(knight.sword, 1)
             add_collision_pair('sword:monster', knight.sword, None)
             add_collision_pair('sword:tree', knight.sword, None)
@@ -376,7 +379,8 @@ class Knight:
         self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
         self.gravity, self.sword = 0, None
         self.face_dir, self.move, self.speed = 1, 0, 5
-        self.hp_max, self.stamina_max, self.power = 1000, 100, 300
+        self.hp_max, self.stamina_max, self.power = 1000, 100, 200
+        self.power_combo = self.power
         self.hp_now, self.stamina_now = 1000, 100
         self.hp_decrease = 1000
         self.hp_draw = 150 - (self.hp_max-self.hp_now)//2
@@ -413,7 +417,6 @@ class Knight:
     def update(self):
         self.y += self.gravity  # 기사는 중력(gravity)에 의해 항상 y값이 줄어든다.
         self.gravity -=1
-
         if self.stamina_now < self.stamina_max:
             self.stamina_now += 0.1  # 1초에 10씩 스테미나 회복
         if self.hp_now < self.hp_max:
@@ -454,12 +457,12 @@ class Knight:
         if self.invincible_timer % 10 <= 5:
             self.state_machine.draw()
 
-        self.image_max_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_max//4*3, 20)             #(90,90)을 중심으로 hp바 생성
-        self.image_decrease_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_decrease//4*3 , 20)
-        self.image_hp_bar.clip_draw(0, 0, 50, 50, 90, 90, self.hp_now//4*3, 20)
-        self.image_max_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_max*3, 20)      #(90,50)을 중심으로 stamina바 생성
-        self.image_stamina_bar.clip_draw(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
-        self.image_ui.clip_draw(0, 0, 130, 80, 65, 70, 130, 80)
+        self.image_max_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_max//2, 20)             #(90,90)을 왼쪽 아래로 두고 그리기
+        self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_decrease//2 , 20)
+        self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_now//2, 20)
+        self.image_max_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_max*3, 20)      #(90,50)을 왼쪽 아래로 두고 그리기
+        self.image_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
+        self.image_ui.clip_draw_to_origin(0, 0, 130, 80, 0, 40, 130, 80)
 
 
     def draw_rectangle(self):
@@ -471,21 +474,21 @@ class Knight:
     def get_bb(self):
             return self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2
 
-    def power(self):
+    def get_power(self):
         return self.power
 
-    def take_damage(self, power):
+    def take_damage(self, others_power):
         if not self.invincible and self.state_machine.current_state() != Protect:
-                self.hp_now -= power
+                self.hp_now -= others_power
                 self.invincible = True
                 print('knight is invincible for 1.5 second')
         pass
 
 
-    def handle_collision(self, group, other, power):
+    def handle_collision(self, group, other, others_power):
         # fill here
         if group == 'knight:monster':
-                self.take_damage(power)
+                self.take_damage(others_power)
 
         if group == 'knight:elixir_hp':
             self.hp_max += 100
@@ -493,20 +496,21 @@ class Knight:
 
         if group == 'knight:elixir_power':
             self.power += 200
+            self.power_combo = self.power
             self.stamina_now += 20
             self.stamina_max +=20
 
         if group == 'knight:tile_ground':
             if self.gravity <=-2:            #떨어지는 중에
-                if self.y <= power+53:
-                    self.y = power+53
+                if self.y <= others_power+53:
+                    self.y = others_power + 53
                     self.gravity = 0
                     self.state_machine.add_event(('LAND', 0))
 
         if group == 'knight:tile_midair':
             if self.gravity <= -2:
-                if self.y < power+53:
-                    self.y = power+53
+                if self.y < others_power+53:
+                    self.y = others_power + 53
                     self.gravity = 0
                     self.state_machine.add_event(('LAND', 0))
 
