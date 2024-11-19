@@ -45,6 +45,11 @@ def render():
         for o in layer:
             o.draw()
 
+def clear():
+    for layer in world:
+        layer.clear()
+    return None
+
 def draw_rectangle_all():
     for layer in world:
         for o in layer:

@@ -460,8 +460,11 @@ class Knight:
         self.image_max_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_max//2, 20)             #(90,90)을 왼쪽 아래로 두고 그리기
         self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_decrease//2 , 20)
         self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_now//2, 20)
+
+
         self.image_max_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_max*3, 20)      #(90,50)을 왼쪽 아래로 두고 그리기
         self.image_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
+
         self.image_ui.clip_draw_to_origin(0, 0, 130, 80, 0, 40, 130, 80)
 
 
