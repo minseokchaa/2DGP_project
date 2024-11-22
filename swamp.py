@@ -1,6 +1,14 @@
 from pico2d import *
 from state_machine import StateMachine, right_down, left_down, left_up, right_up, d_down, a_down
 import server
+import game_framework
+
+PIXEL_PER_METER = (10.0 / 0.12)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
 
 class Bg_swamp:
 
@@ -19,7 +27,7 @@ class Bg_swamp:
         self.window_bottom = clamp(0, (int(server.knight.y) - self.ch // 2)//4, self.h - self.ch - 1)
 
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
-            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
+            self.x -= int(server.knight.move *RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
 
     def draw(self):
@@ -73,7 +81,7 @@ class Tile_midair_swamp:
         self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
-            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
+            self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
     def get_bb(self):
         return self.x, self.y, self.x+200, self.y+131

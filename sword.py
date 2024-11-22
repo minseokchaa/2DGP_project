@@ -33,5 +33,8 @@ class Sword:
     def handle_collision(self, group, other, power):
         # fill here
         if group == 'sword:tree':
-            pass
+            game_world.remove_object(self)
+        if group == 'sword:monster':
+            game_world.remove_object(self)
+
         pass

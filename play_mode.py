@@ -2,6 +2,8 @@ from pico2d import *
 import random
 import game_world
 import server
+import game_framework
+
 from game_world import add_collision_pair, add_collision_pair_for_tile
 from knight import Knight
 from swamp import Bg_swamp, Tile_midair_swamp,Tile_ground_swamp
@@ -21,9 +23,9 @@ def handle_events():
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
-            running = False
+            game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
+            game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_b:
             view_box = not view_box
         else:
@@ -31,7 +33,7 @@ def handle_events():
                 server.knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
 
 
-def reset_world():
+def init():
     global running
     global knight
 
@@ -105,25 +107,25 @@ def reset_world():
 
     server.knight = Knight()
     game_world.add_object(server.knight, 1)
+
     add_collision_pair('knight:monster', server.knight, None)
     add_collision_pair('knight:elixir_hp', server.knight, None)
     add_collision_pair('knight:elixir_power', server.knight, None)
     add_collision_pair_for_tile('knight:tile_ground', server.knight, None)
     add_collision_pair_for_tile('knight:tile_midair', server.knight, None)
 
+def finish():
+    game_world.clear()
+    pass
 
-
-
-
-def update_world():
+def update():
     game_world.update()
     game_world.handle_collisions()
     game_world.tile_handle_collisions()
 
     pass
 
-
-def render_world():
+def draw():
     clear_canvas()
     game_world.render()
     if view_box:
@@ -131,13 +133,7 @@ def render_world():
     update_canvas()
 
 
-open_canvas(1600,900)
-reset_world()
-# game loop
-while running:
-    handle_events()
-    update_world()
-    render_world()
-    delay(0.01)
-# finalization code
-close_canvas()
+def pause():
+    pass
+def resume():
+    pass

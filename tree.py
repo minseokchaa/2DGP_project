@@ -1,8 +1,16 @@
 from pico2d import *
 import server
 import game_world
+import game_framework
 from elixir import Elixir_hp, Elixir_power
 from game_world import add_collision_pair, add_collision_pair_for_tile
+
+PIXEL_PER_METER = (10.0 / 0.12)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
 
 
 class Dead_tree1:
@@ -30,7 +38,7 @@ class Dead_tree1:
         self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
-            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
+            self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
         if self.life == 0:
             self.i -= 0.02
@@ -56,9 +64,9 @@ class Dead_tree1:
         if self.invincible:
             self.invincible_timer += 1
             if 2 <= self.invincible_timer < 6:
-                self.x -= 0.5
+                self.x -= 1
             if 6 <= self.invincible_timer < 10:
-                self.x += 0.5
+                self.x += 1
 
         if self.invincible_timer == 10:
             self.db_dead_tree_1 = load_image('./using_resource/'+'ob_dead_tree_1.png')
@@ -110,7 +118,7 @@ class Dead_tree2:
         self.window_left = clamp(0, int(server.knight.x) - self.cw // 2,int(server.tile_ground_swamp.w) - self.cw - 1)
 
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
-            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
+            self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
         if self.life == 0:
             self.i -= 0.02
@@ -136,9 +144,9 @@ class Dead_tree2:
         if self.invincible:
             self.invincible_timer += 1
             if 2 <= self.invincible_timer < 6:
-                self.x -= 0.5
+                self.x -= 1
             if 6 <= self.invincible_timer < 10:
-                self.x += 0.5
+                self.x += 1
 
         if self.invincible_timer == 10:
             self.ob_dead_tree_2 = load_image('./using_resource/'+'ob_dead_tree_2.png')
@@ -190,7 +198,7 @@ class Alive_tree1:
         self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
-            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
+            self.x -= server.knight.move * int(RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
 
 

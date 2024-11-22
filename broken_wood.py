@@ -3,6 +3,13 @@ import server
 import game_world
 from elixir import Elixir_hp, Elixir_power
 from game_world import add_collision_pair, add_collision_pair_for_tile
+import game_framework
+
+PIXEL_PER_METER = (10.0 / 0.12)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 
 class Broken_wood1:
@@ -31,7 +38,7 @@ class Broken_wood1:
         self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
-            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
+            self.x -= int(server.knight.move *  RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
         if self.life ==0:
             self.i -= 0.02
@@ -110,7 +117,7 @@ class Broken_wood2:
         self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
 
         if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
-            self.x -= int(server.knight.move * server.knight.speed)  # 타일 이동에 맞춰 x 좌표 수정
+            self.x -= int(server.knight.move *  RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
         if self.life == 0:
             self.i -= 0.02
