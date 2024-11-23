@@ -3,7 +3,9 @@
 
 knight = None
 background_swamp = None
-tile_ground_swamp = None
-
+background = None
 tile_midair_swamp = None
+
+
+bg_boss_room = None
 

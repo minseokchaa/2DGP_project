@@ -33,9 +33,9 @@ class Elixir_hp:
         self.gravity -= 1
         self.y += self.gravity
 
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w)  - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.background.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
             self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
 
@@ -88,9 +88,9 @@ class Elixir_power:
         self.gravity -= 1
         self.y += self.gravity
 
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w)  - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.background.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
             self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
 

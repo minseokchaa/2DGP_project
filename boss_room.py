@@ -9,44 +9,18 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 
-class Bg_swamp:
-
-    def __init__(self):
-
-        self.x = 0
-        self.Back_ground_swamp = load_image('./using_resource/'+'bg_tile_chapter_02_02x2.png')
-
-        self.cw = get_canvas_width()
-        self.ch = get_canvas_height()
-        self.w = self.Back_ground_swamp.w
-        self.h = self.Back_ground_swamp.h
-        pass
-    def update(self):
-        self.window_left = clamp(0, (int(server.knight.x) - self.cw // 2)//4, 400)
-        self.window_bottom = clamp(0, (int(server.knight.y) - self.ch // 2)//4, self.h - self.ch - 1)
-
-        if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
-            self.x -= int(server.knight.move *RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
-
-
-    def draw(self):
-        self.Back_ground_swamp.clip_draw_to_origin(self.window_left, self.window_bottom, self.cw, self.ch, 0, 0)
-
-    def draw_rectangle(self):
-        pass
-
-class Tile_ground_swamp:
+class Bg_Boss_room:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.tile_ground_swamp = load_image('./using_resource/'+'tile_chapter_0000_tile1_.png')
+        self.bg_boss_room = load_image('./using_resource/'+'bg_boss_room.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
-        self.w = self.tile_ground_swamp.w
-        self.h = self.tile_ground_swamp.h
+        self.w = self.bg_boss_room.w
+        self.h = self.bg_boss_room.h
 
 
     def draw(self):
-        self.tile_ground_swamp.clip_draw_to_origin(self.window_left, self.window_bottom, self.cw, self.ch, self.x, self.y)
+        self.bg_boss_room.clip_draw_to_origin(self.window_left, self.window_bottom, self.cw, self.ch, self.x, self.y)
 
     def draw_rectangle(self):
         draw_rectangle(self.x - 1, self.y - 1, self.x + 1, self.y + 1)

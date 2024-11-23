@@ -428,7 +428,8 @@ class Knight:
 
         self.state_machine.update()
 
-        self.x = clamp(10.0, self.x, server.tile_ground_swamp.w - 10.0)
+        self.x = clamp(10.0, self.x, server.background.w - 10.0)
+        self.y = clamp(180.0, self.y, server.background.w - 10.0)
 
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 2
@@ -446,7 +447,7 @@ class Knight:
         global sx
         global sy
 
-        sx = self.x - server.tile_ground_swamp.window_left
+        sx = self.x - server.background.window_left
         sy = self.y
 
         if self.invincible_timer % 10 <= 5:
@@ -461,6 +462,7 @@ class Knight:
         self.image_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
 
         self.image_ui.clip_draw_to_origin(0, 0, 130, 80, 0, 40, 130, 80)
+        print(sx)
 
 
 

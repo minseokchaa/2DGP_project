@@ -35,9 +35,9 @@ class Dead_tree1:
         #이미지 파일의 0,0부터 self.w, self.h 까지 이미지를 도려내서 화면의 self.x, self.y(맨 왼쪽 아래부터)의 위치에 그린다.
 
     def update(self):
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.background.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
             self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
         if self.life == 0:
@@ -115,9 +115,9 @@ class Dead_tree2:
         #이미지 파일의 0,0부터 self.w, self.h 까지 이미지를 도려내서 화면의 self.x, self.y(맨 왼쪽 아래부터)의 위치에 그린다.
 
     def update(self):
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2,int(server.tile_ground_swamp.w) - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.background.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
             self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
         if self.life == 0:
@@ -195,9 +195,9 @@ class Alive_tree1:
         #이미지 파일의 0,0부터 self.w, self.h 까지 이미지를 도려내서 화면의 self.x, self.y(맨 왼쪽 아래부터)의 위치에 그린다.
 
     def update(self):
-        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.tile_ground_swamp.w) - self.cw - 1)
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.background.w) - self.cw - 1)
 
-        if self.window_left != 0 and self.window_left != int(server.tile_ground_swamp.w) - self.cw - 1:
+        if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
             self.x -= server.knight.move * int(RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
 

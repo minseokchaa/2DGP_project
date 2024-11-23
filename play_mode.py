@@ -3,6 +3,7 @@ import random
 import game_world
 import server
 import game_framework
+import play_boss_room
 
 from game_world import add_collision_pair, add_collision_pair_for_tile
 from knight import Knight
@@ -28,6 +29,8 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_b:
             view_box = not view_box
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_UP:
+            game_framework.change_mode(play_boss_room)
         else:
             if event.type in (SDL_KEYDOWN, SDL_KEYUP):
                 server.knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
@@ -41,9 +44,9 @@ def init():
 
     server.background_swamp = Bg_swamp()
     game_world.add_object(server.background_swamp, 0)
-    server.tile_ground_swamp = Tile_ground_swamp()
-    game_world.add_object(server.tile_ground_swamp, 0)
-    add_collision_pair_for_tile('knight:tile_ground', None, server.tile_ground_swamp)
+    server.background = Tile_ground_swamp()
+    game_world.add_object(server.background, 0)
+    add_collision_pair_for_tile('knight:tile_ground', None, server.background)
     positions = [500, 700, 1300,1400]
     for i in positions:
         server.tile_midair_swamp = Tile_midair_swamp(i, 220)
