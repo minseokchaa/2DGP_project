@@ -5,6 +5,7 @@ knight = None
 background_swamp = None
 background = None
 tile_midair_swamp = None
+entrance = None
 
 
 bg_boss_room = None

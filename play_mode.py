@@ -30,7 +30,8 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_b:
             view_box = not view_box
         elif event.type == SDL_KEYDOWN and event.key == SDLK_UP:
-            game_framework.change_mode(play_boss_room)
+            if game_world.collide(server.knight, server.entrance):
+                game_framework.change_mode(play_boss_room)
         else:
             if event.type in (SDL_KEYDOWN, SDL_KEYUP):
                 server.knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
@@ -65,8 +66,8 @@ def init():
     game_world.add_object(server.tile_midair_swamp, 0)
     add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
 
-    entrance = Entrance(3000,150)
-    game_world.add_object(entrance, 0)
+    server.entrance = Entrance(3000,150)
+    game_world.add_object(server.entrance, 0)
 
 
 
