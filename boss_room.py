@@ -33,10 +33,10 @@ class Bg_Boss_room:
     def get_bb(self):
         return 0, 0, 1920, self.y+150
 
-class Tile_midair_swamp:
+class Tile_midair:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.tile_midair_swamp = load_image('./using_resource/'+'tile_swamp.png')
+        self.tile_midair_swamp = load_image('./using_resource/'+'tile_chapter_0004_tile2.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.tile_midair_swamp.w
@@ -44,7 +44,7 @@ class Tile_midair_swamp:
 
 
     def draw(self):
-        self.tile_midair_swamp.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y)
+        self.tile_midair_swamp.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,200,132)
 
     def draw_rectangle(self):
         draw_rectangle(self.x - 1, self.y - 1, self.x + 1, self.y + 1)

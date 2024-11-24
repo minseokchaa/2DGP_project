@@ -7,7 +7,7 @@ import play_mode
 
 from game_world_boss_room import add_collision_pair, add_collision_pair_for_tile
 from knight import Knight
-from boss_room import Bg_Boss_room
+from boss_room import Bg_Boss_room, Tile_midair
 
 # Game object class here
 running = True
@@ -39,6 +39,16 @@ def init():
     server.background = Bg_Boss_room()
     game_world_boss_room.add_object(server.background, 0)
     add_collision_pair_for_tile('knight:tile_ground', None, server.background)
+
+    positions = [200, 350, 1050, 1200]
+    for i in positions:
+        server.tile_midair_boss = Tile_midair(i, 210)
+        game_world_boss_room.add_object(server.tile_midair_boss, 0)
+        add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_boss)
+
+        server.tile_midair_boss = Tile_midair(i, 420)
+        game_world_boss_room.add_object(server.tile_midair_boss, 0)
+        add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_boss)
 
 
 

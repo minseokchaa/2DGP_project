@@ -2,6 +2,7 @@ from pico2d import *
 import server
 from state_machine import StateMachine, space_down, right_down, left_down, left_up, right_up, start_event, landing, attack_end, a_down, no_stamina, d_down, d_up, falling
 import game_world
+import game_world_boss_room
 import game_framework
 from game_world import add_collision_pair
 from sword import Sword
@@ -216,6 +217,7 @@ class Attack:
             knight.power_combo = knight.power
             if knight.sword:
                 game_world.remove_object(knight.sword)
+                game_world_boss_room.remove_object(knight.sword)
                 knight.sword = None
 
             pass
@@ -245,12 +247,14 @@ class Attack:
             if knight.sword == None:
                 knight.sword = Sword(sx, sy, knight.power_combo, knight.face_dir)  # Sword 객체 생성
                 game_world.add_object(knight.sword, 1)
+                game_world_boss_room.add_object(knight.sword, 1)
                 add_collision_pair('sword:monster', knight.sword, None)
                 add_collision_pair('sword:tree', knight.sword, None)
 
         if int(knight.frame_Attack) == 3:
             if knight.sword:
                 game_world.remove_object(knight.sword)
+                game_world_boss_room.remove_object(knight.sword)
                 knight.sword = None
 
         if knight.attack_motion == 1:
