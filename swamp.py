@@ -84,3 +84,30 @@ class Tile_midair_swamp:
 
     def get_bb(self):
         return self.x, self.y, self.x+200, self.y+131
+
+
+class Entrance:
+    def __init__(self, x = 0, y = 0):
+        self.x, self.y = x, y
+        self.entrance = load_image('./using_resource/'+'entrance.png')
+        self.cw = get_canvas_width()
+        self.ch = get_canvas_height()
+        self.w = self.entrance.w
+        self.h = self.entrance.h
+
+
+    def draw(self):
+        self.entrance.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y)
+
+    def draw_rectangle(self):
+        draw_rectangle(self.x - 1, self.y - 1, self.x + 1, self.y + 1)
+        draw_rectangle(*self.get_bb())
+
+    def update(self):
+        self.window_left = clamp(0, int(server.knight.x) - self.cw // 2, int(server.background.w) - self.cw - 1)
+
+        if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
+            self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
+
+    def get_bb(self):
+        return self.x+20, self.y, self.x+81, self.y+120

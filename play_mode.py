@@ -7,7 +7,7 @@ import play_boss_room
 
 from game_world import add_collision_pair, add_collision_pair_for_tile
 from knight import Knight
-from swamp import Bg_swamp, Tile_midair_swamp,Tile_ground_swamp
+from swamp import Bg_swamp, Tile_midair_swamp,Tile_ground_swamp, Entrance
 from small_slime1 import Small_slime1
 from tree import Dead_tree1, Dead_tree2, Alive_tree1
 from broken_wood import Broken_wood1, Broken_wood2
@@ -60,9 +60,13 @@ def init():
     server.tile_midair_swamp = Tile_midair_swamp(300, 400)
     game_world.add_object(server.tile_midair_swamp, 0)
     add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
+
     server.tile_midair_swamp = Tile_midair_swamp(-120, 600)
     game_world.add_object(server.tile_midair_swamp, 0)
     add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
+
+    entrance = Entrance(3000,150)
+    game_world.add_object(entrance, 0)
 
 
 

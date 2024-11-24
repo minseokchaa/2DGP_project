@@ -78,7 +78,7 @@ class Run:
 
 
 
-        knight.x += int(knight.move * RUN_SPEED_PPS * game_framework.frame_time)
+        knight.x += knight.move * int(RUN_SPEED_PPS * game_framework.frame_time)
 
         if int(knight.frame_Run)  == 0:
             if knight.face_dir == 1:
@@ -147,7 +147,7 @@ class Jump_run:
     def do(knight):
         knight.frame_Jump = (knight.frame_Jump +FRAMES_PER_RUN_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
 
-        knight.x += int(knight.move * RUN_SPEED_PPS * game_framework.frame_time)
+        knight.x += knight.move * int(RUN_SPEED_PPS * game_framework.frame_time)
 
         if knight.face_dir:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx + 5, sy + 43
@@ -420,8 +420,7 @@ class Knight:
         if self.invincible:
             self.invincible_timer += 1
 
-        # 1.5초 후 무적 상태를 해제하는 타이머 시작
-        if self.invincible_timer == 150:
+        if self.invincible_timer == 180:
             self.invincible = False
             self.invincible_timer = 0
             print('무적 해제')
@@ -447,7 +446,7 @@ class Knight:
         global sx
         global sy
 
-        sx = self.x - server.background.window_left
+        sx = self.x -server.background.window_left
         sy = self.y
 
         if self.invincible_timer % 10 <= 5:

@@ -25,8 +25,6 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_b:
             view_box = not view_box
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_UP:
-            game_framework.change_mode(play_mode)
         else:
             if event.type in (SDL_KEYDOWN, SDL_KEYUP):
                 server.knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
@@ -45,6 +43,7 @@ def init():
 
 
     server.knight = server.knight
+    server.knight.x = 360
     game_world_boss_room.add_object(server.knight, 1)
 
     add_collision_pair('knight:monster', server.knight, None)
