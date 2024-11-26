@@ -465,7 +465,6 @@ class Knight:
         self.image_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
 
         self.image_ui.clip_draw_to_origin(0, 0, 130, 80, 0, 40, 130, 80)
-        print(self.gravity)
 
 
 

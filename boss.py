@@ -4,7 +4,7 @@ from pico2d import *
 import game_framework
 import game_world
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
-from state_machine import StateMachine, boss_attack, boss_move, boss_stop
+from state_machine import StateMachine, boss_attack, boss_move, boss_stop, boss_attack_end
 import play_boss_room
 import server
 
@@ -41,30 +41,30 @@ class Idle:
 
         if boss.face_dir == -1:
             if int(boss.frame_Idle) ==0:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 198, boss.x + 87, boss.y - 23
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
             elif int(boss.frame_Idle) ==1:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 198, boss.x + 87, boss.y - 20
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 200, boss.x + 87, boss.y - 20
             elif int(boss.frame_Idle) ==2:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 198, boss.x + 87, boss.y - 18
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 200, boss.x + 87, boss.y - 18
             elif int(boss.frame_Idle) ==3:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 198, boss.x + 87, boss.y - 11
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 200, boss.x + 87, boss.y - 11
             elif int(boss.frame_Idle) ==4:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 198, boss.x + 87, boss.y - 16
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 200, boss.x + 87, boss.y - 16
             elif int(boss.frame_Idle) ==5:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 198, boss.x + 87, boss.y - 20
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 200, boss.x + 87, boss.y - 20
         else:
             if int(boss.frame_Idle) == 0:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 62, boss.y - 23
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 200, boss.x + 62, boss.y - 23
             elif int(boss.frame_Idle) == 1:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 65, boss.y - 20
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 200, boss.x + 65, boss.y - 20
             elif int(boss.frame_Idle) == 2:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 65, boss.y - 18
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 200, boss.x + 65, boss.y - 18
             elif int(boss.frame_Idle) == 3:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 65, boss.y - 11
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 200, boss.x + 65, boss.y - 11
             elif int(boss.frame_Idle) == 4:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 65, boss.y - 16
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 200, boss.x + 65, boss.y - 16
             elif int(boss.frame_Idle) == 5:
-                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 65, boss.y - 20
+                boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 200, boss.x + 65, boss.y - 20
 
     @staticmethod
     def draw(boss):
@@ -78,7 +78,6 @@ class Idle:
 class Walk:
     @staticmethod  # @는 데코레이터라는 기능, 클래스 안에 들어있는 객채하곤 상관이 없는 함수, 모아 놓는 개념?
     def enter(boss, e):
-
         boss.action_num = 3
         pass
 
@@ -92,9 +91,9 @@ class Walk:
 
         boss.frame_Walk = (boss.frame_Walk + 0.5*FRAMES_WALK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_WALK_ACTION
 
-        if int(boss.frame_Walk) ==0:
+        if int(boss.frame_Walk) ==1:
             Walk_SPEED_PPS  = 0
-        elif int(boss.frame_Walk) ==1:
+        elif int(boss.frame_Walk) ==2:
             Walk_SPEED_PPS = 0
         elif int(boss.frame_Walk) ==7:
             Walk_SPEED_PPS = 0
@@ -104,9 +103,9 @@ class Walk:
             Walk_SPEED_PPS = (Walk_SPEED_MPS * PIXEL_PER_METER)
 
         if boss.face_dir == 1:
-            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 20, boss.y - 53, boss.x + 25, boss.y + 43
+            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
         else:
-            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 25, boss.y - 53, boss.x + 20, boss.y + 43
+            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
 
     @staticmethod
     def draw(boss):
@@ -131,19 +130,23 @@ class Attack:
     @staticmethod
     def do(boss):
 
-        boss.frame_Attack = (boss.frame_Attack + FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 15
+        boss.frame_Attack = (boss.frame_Attack + 0.5*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
 
         if boss.face_dir == 1:
             boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 20, boss.y - 53, boss.x + 25, boss.y + 43
         else:
             boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 25, boss.y - 53, boss.x + 20, boss.y + 43
 
+        if int(boss.frame_Attack) ==14:
+            boss.state_machine.add_event(('Boss_attack_end', 0))
+            boss.frame_Attack =0
+
     @staticmethod
     def draw(boss):
-        if boss.face_dir:
-            boss.image.clip_draw(int(boss.frame_Attack) * 228, boss.action_num*160, 228, 160, boss.x, boss.y, 342, 240)
+        if boss.face_dir == 1:
+            boss.image.clip_composite_draw(int(boss.frame_Attack) * 288, boss.action_num * 160, 288, 160, 0, 'h', boss.x,boss.y, 720, 400)
         else:
-            boss.image.clip_composite_draw(int(boss.frame_Attack) * 128, boss.action_num*160, 228, 160, 0, 'h', boss.x, boss.y, 342, 240)
+            boss.image.clip_draw(int(boss.frame_Attack) * 288, boss.action_num * 160, 288, 160, boss.x, boss.y, 720, 400)
 
         pass
 
@@ -170,9 +173,9 @@ class Boss:
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
-                Idle: {boss_move: Walk},
-                Walk: {boss_stop: Idle},
-                # Attack: {a_down: Attack, attack_end: Idle, right_down: Walk, left_down: Walk, space_down: Jump,d_down: Protect}
+                Idle: {boss_move: Walk, boss_attack: Attack},
+                Walk: {boss_stop: Idle, boss_attack: Attack},
+                Attack: {boss_attack_end: Idle}
             }
         )
 
@@ -183,16 +186,11 @@ class Boss:
 
     def update(self):
 
-
         self.x = clamp(50, self.x, 1550)
-
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 20
 
-
         self.state_machine.update()
-
-
         # fill here
         self.bt.run()
 
@@ -206,7 +204,7 @@ class Boss:
 
     def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
-        draw_rectangle(self.x - 1, self.y - 1, self.x + 1, self.y + 1)
+        draw_rectangle(self.x - 1, self.y - 200, self.x + 1, self.y + 1)
 
         # Zombie.marker_image.draw(self.tx, self.ty)
 
@@ -240,13 +238,7 @@ class Boss:
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
 
-        pass
 
-    def distance_more_than(self, x1, y1, x2, y2, r):
-        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
-        return distance2 > (PIXEL_PER_METER * r) ** 2
-
-        pass
 
     def move_slightly_to(self, tx):
         distance = Walk_SPEED_PPS * game_framework.frame_time
@@ -262,9 +254,23 @@ class Boss:
             self.x += distance * (self.face_dir)
             self.state_machine.add_event(('Boss_knight_diff_x', 0))
 
-    def slash_the_sword(self, tx, ty):
+
+
+    def find_direction(self, tx):
+        diff = tx - self.x              #face_dir =1 => 오른쪽 공격, tx가 self.x보다 작으면 =>face_dir =-1 => 왼쪽 공격
+        if diff > 0:
+            self.face_dir = 1
+        else:
+            self.face_dir = -1
+
+    def turn_to_knight(self):
+        if self.frame_Attack <= 0:
+            self.find_direction(server.knight.x)
+        return BehaviorTree.SUCCESS
+
+    def slash_the_sword(self):
         self.state_machine.add_event(('Boss_attack', 0))
-        pass
+        return BehaviorTree.SUCCESS
 
 
     def is_knight_nearby(self, r):
@@ -272,6 +278,13 @@ class Boss:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
+
+    def is_attacking_now(self):
+        if self.frame_Attack >0:
+            return BehaviorTree.FAIL
+        else:
+            return BehaviorTree.SUCCESS
+
 
     def move_to_knight(self, r=0.5):
         self.move_slightly_to(server.knight.x)
@@ -283,9 +296,9 @@ class Boss:
     def build_behavior_tree(self):
     #     #--------------------------------------------------------------------
     #
-    #     c1 = Condition('기사가 근처에 있는가?', self.is_knight_nearby, 7)
-    #
-    #     a3 = Action('검 내려찍기', self.slash_the_sword)
+        c1 = Condition('기사가 근처에 있는가?', self.is_knight_nearby, 2)
+        a1 = Action('기사 방향으로 돌기', self.turn_to_knight)
+        a3 = Action('검 내려찍기', self.slash_the_sword)
     #
     #     # --------------------------------------------------------------------
     #
@@ -296,22 +309,22 @@ class Boss:
     #     a2 = Action('불기둥 생성', self.move_to)
     #
     #     # --------------------------------------------------------------------
-    #
+        c4 = Condition('공격 중이 아닌가?', self.is_attacking_now)
         a4 = Action('기사의 x위치 추적', self.move_to_knight)
     #
     #
     #     #----------------------------------------------------------------------
-    #     sword_attack = Sequence('검 공격', c1, a3)
+        sword_attack = Sequence('검 공격', c1, a1, a3)
     #
     #     flame_strike = Sequence('불기둥 공격', c2, c3, a2)
 
-        chase_knight = Sequence('이동', a4)
+        chase_knight = Sequence('이동', c4, a4)
     #
     #
     #
     #
-        root = boss_behavior_tree = Selector('보스의 행동트리', chase_knight)
-
+     #   root = boss_behavior_tree = Selector('보스의 행동트리', chase_knight)
+        root = boss_behavior_tree = Selector('보스의 행동트리', sword_attack, chase_knight)
         #root = boss_behavior_tree = Selector('보스의 행동트리', sword_attack, flame_strike, chase_knight)
 
         self.bt = BehaviorTree(root)

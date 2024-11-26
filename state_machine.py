@@ -66,6 +66,9 @@ def boss_move(e):         #e가 time out인지 판단
 def boss_stop(e):         #e가 time out인지 판단
     return e[0] == 'Boss_knight_same_x'
 
+def boss_attack_end(e):         #e가 time out인지 판단
+    return e[0] == 'Boss_attack_end'
+
 
 class StateMachine:
     def __init__(self, o):
