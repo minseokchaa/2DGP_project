@@ -2,11 +2,13 @@ from xml.sax.saxutils import escape
 
 from pico2d import *
 import game_framework
-import game_world
+import game_world_boss_room
+from game_world_boss_room import add_collision_pair_boss_room
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from state_machine import StateMachine, boss_attack, boss_move, boss_stop, boss_attack_end
 import play_boss_room
 import server
+from boss_sword import Sword
 
 
 PIXEL_PER_METER = (10.0 / 0.12)  # 10 pixel 30 cm
@@ -130,16 +132,34 @@ class Attack:
     @staticmethod
     def do(boss):
 
-        boss.frame_Attack = (boss.frame_Attack + 0.5*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
+        boss.frame_Attack = (boss.frame_Attack + 0.35*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
 
         if boss.face_dir == 1:
-            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 20, boss.y - 53, boss.x + 25, boss.y + 43
+            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
         else:
-            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 25, boss.y - 53, boss.x + 20, boss.y + 43
+            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
+
+
+        if int(boss.frame_Attack) == 10:
+            if boss.sword == None:
+                boss.sword = Sword(boss.x, boss.y, boss.power, boss.face_dir)  # Sword 객체 생성
+                game_world_boss_room.add_object(boss.sword, 1)
+
+                add_collision_pair_boss_room('knight:boss_sword', None, boss.sword)
+
+        if int(boss.frame_Attack) == 12:
+            if boss.sword:
+                game_world_boss_room.remove_object(boss.sword)
+                boss.sword = None
+
+
+
 
         if int(boss.frame_Attack) ==14:
             boss.state_machine.add_event(('Boss_attack_end', 0))
             boss.frame_Attack =0
+
+
 
     @staticmethod
     def draw(boss):
@@ -153,13 +173,13 @@ class Attack:
 
 class Boss:
 
-    def __init__(self, x=500, y=350):
+    def __init__(self, x=1000, y=350):
         self.x ,self.y = x,y
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = self.x - 20, self.y - 53, self.x + 25, self.y + 43
         self.image = load_image('./using_resource/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
         self.face_dir = 1       #1=오른쪽으로 이동 0=왼쪽으로 이동
         self.frame_Idle, self.frame_Walk, self.frame_Attack = 0, 0, 0
-        self.state = 'Idle'
+        self.sword = None
         self.hp_max, self.hp_now,self.hp_decrease, self.power = 15000, 15000, 15000,300
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
 
@@ -204,9 +224,7 @@ class Boss:
 
     def draw_rectangle(self):
         draw_rectangle(*self.get_bb())
-        draw_rectangle(self.x - 1, self.y - 200, self.x + 1, self.y + 1)
-
-        # Zombie.marker_image.draw(self.tx, self.ty)
+        draw_rectangle(self.x - 1, self.y - 1, self.x + 1, self.y + 1)
 
 
     def handle_event(self, event):

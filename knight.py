@@ -417,9 +417,9 @@ class Knight:
         self.gravity -=1
 
         if self.stamina_now < self.stamina_max:
-            self.stamina_now += 10*game_framework.frame_time  # 1초에 10씩 스테미나 회복
+            self.stamina_now += 10*game_framework.frame_time
         if self.hp_now < self.hp_max:
-            self.hp_now += 0.05
+            self.hp_now += 0.1
 
         if self.invincible:
             self.invincible_timer += 1
@@ -492,9 +492,12 @@ class Knight:
         if group == 'knight:monster':
             self.take_damage(others_power)
 
+        if group == 'knight:boss_sword':
+            self.take_damage(others_power)
+
         if group == 'knight:elixir_hp':
-            self.hp_max += 100
-            self.hp_now += 100
+            self.hp_max += 150
+            self.hp_now += 150
 
         if group == 'knight:elixir_power':
             self.power += 200

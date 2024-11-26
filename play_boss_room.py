@@ -61,7 +61,7 @@ def init():
     server.knight.x = 360
     game_world_boss_room.add_object(server.knight, 1)
 
-    add_collision_pair_boss_room('knight:monster', server.knight, None)
+    add_collision_pair_boss_room('knight:boss_sword', server.knight, None)
     add_collision_pair_for_tile('knight:tile_ground', server.knight, None)
     add_collision_pair_for_tile('knight:tile_midair', server.knight, None)
 
