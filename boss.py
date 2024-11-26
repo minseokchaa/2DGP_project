@@ -4,13 +4,13 @@ from pico2d import *
 import game_framework
 import game_world
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
-from state_machine import StateMachine, space_down, right_down, left_down, left_up, right_up, landing, attack_end, a_down, no_stamina, d_down, d_up, falling, start_event
+from state_machine import StateMachine, boss_attack, boss_move, boss_stop
 import play_boss_room
 import server
 
 
 PIXEL_PER_METER = (10.0 / 0.12)  # 10 pixel 30 cm
-Walk_SPEED_KMPH = 10.0  # Km / Hour
+Walk_SPEED_KMPH = 12.0  # Km / Hour
 Walk_SPEED_MPM = (Walk_SPEED_KMPH * 1000.0 / 60.0)
 Walk_SPEED_MPS = (Walk_SPEED_MPM / 60.0)
 Walk_SPEED_PPS = (Walk_SPEED_MPS * PIXEL_PER_METER)
@@ -37,10 +37,10 @@ class Idle:
     @staticmethod
     def do(boss):
 
-        boss.frame_Idle = (boss.frame_Idle + 0.5*FRAMES_IDLE_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
+        boss.frame_Idle = (boss.frame_Idle + 0.5*FRAMES_IDLE_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_IDLE_ACTION
 
         if boss.face_dir == -1:
-            if boss.frame_Idle ==0:
+            if int(boss.frame_Idle) ==0:
                 boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 198, boss.x + 87, boss.y - 23
             elif int(boss.frame_Idle) ==1:
                 boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 198, boss.x + 87, boss.y - 20
@@ -53,7 +53,7 @@ class Idle:
             elif int(boss.frame_Idle) ==5:
                 boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 65, boss.y - 198, boss.x + 87, boss.y - 20
         else:
-            if boss.frame_Idle == 0:
+            if int(boss.frame_Idle) == 0:
                 boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 62, boss.y - 23
             elif int(boss.frame_Idle) == 1:
                 boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 87, boss.y - 198, boss.x + 65, boss.y - 20
@@ -88,8 +88,20 @@ class Walk:
 
     @staticmethod
     def do(boss):
+        global Walk_SPEED_PPS
 
-        boss.frame_Walk = (boss.frame_Walk + FRAMES_WALK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 12
+        boss.frame_Walk = (boss.frame_Walk + 0.5*FRAMES_WALK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_WALK_ACTION
+
+        if int(boss.frame_Walk) ==0:
+            Walk_SPEED_PPS  = 0
+        elif int(boss.frame_Walk) ==1:
+            Walk_SPEED_PPS = 0
+        elif int(boss.frame_Walk) ==7:
+            Walk_SPEED_PPS = 0
+        elif int(boss.frame_Walk) ==8:
+            Walk_SPEED_PPS = 0
+        else:
+            Walk_SPEED_PPS = (Walk_SPEED_MPS * PIXEL_PER_METER)
 
         if boss.face_dir == 1:
             boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 20, boss.y - 53, boss.x + 25, boss.y + 43
@@ -98,10 +110,10 @@ class Walk:
 
     @staticmethod
     def draw(boss):
-        if boss.face_dir:
-            boss.image.clip_draw(int(boss.frame_Walk) * 228, boss.action_num*160, 228, 160, boss.x, boss.y, 342, 240)
+        if boss.face_dir == 1:
+            boss.image.clip_composite_draw(int(boss.frame_Walk) * 288, boss.action_num * 160, 288, 160, 0, 'h', boss.x,boss.y, 720, 400)
         else:
-            boss.image.clip_composite_draw(int(boss.frame_Walk) * 128, boss.action_num*160, 228, 160, 0, 'h', boss.x, boss.y, 342, 240)
+            boss.image.clip_draw(int(boss.frame_Walk) * 288, boss.action_num * 160, 288, 160, boss.x, boss.y, 720, 400)
 
         pass
     
@@ -158,8 +170,8 @@ class Boss:
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
-                # Idle: {right_down: Walk, left_down: Walk, space_down: Jump, a_down: Attack, d_down: Protect},
-                # Walk: {right_up: Idle, left_up: Idle, space_down: Jump_Walk, a_down: Attack, d_down: Protect,falling: Jump_Walk},
+                Idle: {boss_move: Walk},
+                Walk: {boss_stop: Idle},
                 # Attack: {a_down: Attack, attack_end: Idle, right_down: Walk, left_down: Walk, space_down: Jump,d_down: Protect}
             }
         )
@@ -245,8 +257,10 @@ class Boss:
             self.face_dir = -1
         if abs(diff) <= distance:
             self.x = tx  # 정확히 목표 지점에 도달
+            self.state_machine.add_event(('Boss_knight_same_x', 0))
         else:
             self.x += distance * (self.face_dir)
+            self.state_machine.add_event(('Boss_knight_diff_x', 0))
 
     def slash_the_sword(self, tx, ty):
         self.state_machine.add_event(('Boss_attack', 0))
@@ -257,11 +271,9 @@ class Boss:
         if self.distance_less_than(server.knight.x, server.knight.y, self.x, self.y, r):
             return BehaviorTree.SUCCESS
         else:
-            self.state = 'Idle'
             return BehaviorTree.FAIL
 
     def move_to_knight(self, r=0.5):
-        self.state = 'Walk'
         self.move_slightly_to(server.knight.x)
         if self.distance_less_than(server.knight.x, server.knight.y, self.x, self.y, r):
             return BehaviorTree.SUCCESS

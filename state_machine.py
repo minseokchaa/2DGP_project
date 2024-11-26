@@ -57,8 +57,15 @@ def arrive_at_first(e):         #e가 time out인지 판단
 def falling(e):         #e가 time out인지 판단
     return e[0] == 'Falling'
 
-def falling(e):         #e가 time out인지 판단
+def boss_attack(e):         #e가 time out인지 판단
     return e[0] == 'Boss_attack'
+
+def boss_move(e):         #e가 time out인지 판단
+    return e[0] == 'Boss_knight_diff_x'
+
+def boss_stop(e):         #e가 time out인지 판단
+    return e[0] == 'Boss_knight_same_x'
+
 
 class StateMachine:
     def __init__(self, o):
