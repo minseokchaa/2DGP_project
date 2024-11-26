@@ -45,24 +45,25 @@ def run(start_mode):
     start_mode.init()
 
     global frame_time
+    frame_time = 0.0
 
-    desired_fps = 60
-    frame_duration = 1.0 / desired_fps
-
+    target_fps = 60
+    frame_duration = 1.0 / target_fps
     current_time = time.time()
-    while running:
+
+    while running and stack:
         stack[-1].handle_events()
         stack[-1].update()
         stack[-1].draw()
+
         frame_time = time.time() - current_time
+        current_time = time.time()  # 정확한 시간 갱신
+
+        # 프레임 속도 제한
         if frame_time < frame_duration:
             time.sleep(frame_duration - frame_time)
 
-        frame_rate = 1.0 / max(frame_time, frame_duration)  # 0으로 나누는 걸 방지
-        current_time += frame_time
-        # print(f'Frame Time: {frame_time}, Frame Rate: {frame_rate}')
-
-    # repeatedly delete the top of the stack
-    while (len(stack) > 0):
+    # 스택 정리
+    while stack:
         stack[-1].finish()
         stack.pop()

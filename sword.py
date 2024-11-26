@@ -1,5 +1,6 @@
 from pico2d import *
 import game_world
+import game_world_boss_room
 
 
 class Sword:
@@ -36,5 +37,7 @@ class Sword:
             game_world.remove_object(self)
         if group == 'sword:monster':
             game_world.remove_object(self)
+        if group == 'sword:boss':
+            game_world_boss_room.remove_object(self)
 
         pass

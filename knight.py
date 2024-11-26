@@ -1,5 +1,7 @@
+from xml.sax.saxutils import escape
 from pico2d import *
 import server
+from game_world_boss_room import add_collision_pair_boss_room
 from state_machine import StateMachine, space_down, right_down, left_down, left_up, right_up, start_event, landing, attack_end, a_down, no_stamina, d_down, d_up, falling
 import game_world
 import game_world_boss_room
@@ -26,7 +28,6 @@ FRAMES_PER_RUN_ACTION = 7
 class Idle:
     @staticmethod  # @는 데코레이터라는 기능, 클래스 안에 들어있는 객채하곤 상관이 없는 함수, 모아 놓는 개념?
     def enter(knight, e):
-        knight.start_time = get_time()
         if right_up(e) or start_event(e):
             knight.face_dir = 1
             knight.move = 0
@@ -251,6 +252,8 @@ class Attack:
                 add_collision_pair('sword:monster', knight.sword, None)
                 add_collision_pair('sword:tree', knight.sword, None)
 
+                add_collision_pair_boss_room('sword:boss', knight.sword, None)
+
         if int(knight.frame_Attack) == 3:
             if knight.sword:
                 game_world.remove_object(knight.sword)
@@ -381,12 +384,10 @@ class Knight:
         self.power_combo = self.power
         self.hp_now, self.stamina_now = 1000, 100
         self.hp_decrease = 1000
-        self.hp_draw = 150 - (self.hp_max-self.hp_now)//2
-        self.stamina_draw = 150 - (self.stamina_max - self.stamina_now) // 2
-        self.frame_Idle, self.frame_Idle_timer = 0, 0
-        self.frame_Run, self.frame_Run_timer = 0, 0
-        self.frame_Jump, self.frame_Jump_timer = 0, 0
-        self.frame_Attack, self.frame_Attack_timer = 0, 0
+        self.frame_Idle= 0
+        self.frame_Run=0
+        self.frame_Jump= 0
+        self.frame_Attack=0
         self.attack_motion, self.attack_count = 1, 0
 
         self.invincible, self.invincible_timer = False,  0
@@ -398,7 +399,6 @@ class Knight:
         self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource/'+'max_hp_bar.png'), load_image('./using_resource/'+'max_stamina_bar.png')
         self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource/'+'decreasing_hp_bar.png'), load_image('./using_resource/'+'knight_ui.png')
 
-        self.start_time = get_time()
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
         self.state_machine.start(Idle)      #초기 상태 -- Idle
         self.state_machine.set_transitions(
@@ -430,15 +430,12 @@ class Knight:
             print('무적 해제')
 
         self.state_machine.update()
-
         self.x = clamp(10.0, self.x, server.background.w - 10.0)
         self.y = clamp(180.0, self.y, server.background.w - 10.0)
 
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 2
 
-        if self.hp_decrease < self.hp_now:
-            self.hp_decrease += 0.05
 
     def handle_event(self, event):
         #event: 입력 이벤트 key mouse
@@ -450,8 +447,11 @@ class Knight:
         global sx
         global sy
 
-        sx = self.x -server.background.window_left
+        sx = int(self.x -server.background.window_left)
         sy = self.y
+
+        if get_canvas_width()/2<=self.x<=server.background.w-get_canvas_width()/2:
+            sx = get_canvas_width()/2
 
         if self.invincible_timer % 10 <= 5:
             self.state_machine.draw()

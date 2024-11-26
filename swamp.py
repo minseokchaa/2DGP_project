@@ -111,3 +111,27 @@ class Entrance:
 
     def get_bb(self):
         return self.x+20, self.y, self.x+81, self.y+120
+
+class Filter:
+    def __init__(self, x = 0, y = 0):
+        self.x, self.y = x, y
+        self.entrance = load_image('./using_resource/'+'title_back_ground.png')
+        self.cw = get_canvas_width()
+        self.ch = get_canvas_height()
+        self.w = self.entrance.w
+        self.h = self.entrance.h
+
+
+    def draw(self):
+        self.entrance.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y)
+
+    def draw_rectangle(self):
+        draw_rectangle(self.x - 1, self.y - 1, self.x + 1, self.y + 1)
+        draw_rectangle(*self.get_bb())
+
+    def update(self):
+        self.entrance.opacify(200)
+        pass
+    def get_bb(self):
+        return self.x+20, self.y, self.x+81, self.y+120
+

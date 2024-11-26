@@ -1,3 +1,4 @@
+from xml.sax.saxutils import escape
 from pico2d import *
 import random
 import game_world
@@ -7,7 +8,7 @@ import play_boss_room
 
 from game_world import add_collision_pair, add_collision_pair_for_tile
 from knight import Knight
-from swamp import Bg_swamp, Tile_midair_swamp,Tile_ground_swamp, Entrance
+from swamp import Bg_swamp, Tile_midair_swamp, Tile_ground_swamp, Entrance, Filter
 from small_slime1 import Small_slime1
 from tree import Dead_tree1, Dead_tree2, Alive_tree1
 from broken_wood import Broken_wood1, Broken_wood2
@@ -121,6 +122,9 @@ def init():
     add_collision_pair('knight:elixir_power', server.knight, None)
     add_collision_pair_for_tile('knight:tile_ground', server.knight, None)
     add_collision_pair_for_tile('knight:tile_midair', server.knight, None)
+
+    # filter = Filter()
+    # game_world.add_object(filter, 1)
 
 def finish():
     game_world.clear()

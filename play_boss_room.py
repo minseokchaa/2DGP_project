@@ -1,3 +1,4 @@
+from xml.sax.saxutils import escape
 from pico2d import *
 import random
 import game_world_boss_room
@@ -5,9 +6,10 @@ import server
 import game_framework
 import play_mode
 
-from game_world_boss_room import add_collision_pair, add_collision_pair_for_tile
+from game_world_boss_room import add_collision_pair_boss_room, add_collision_pair_for_tile
 from knight import Knight
 from boss_room import Bg_Boss_room, Tile_midair
+from boss import Boss
 
 # Game object class here
 running = True
@@ -28,6 +30,7 @@ def handle_events():
         else:
             if event.type in (SDL_KEYDOWN, SDL_KEYUP):
                 server.knight.handle_event(event)  # input 이벤트를 boy에게 전달하고 있다.
+                pass
 
 
 def init():
@@ -50,13 +53,15 @@ def init():
         game_world_boss_room.add_object(server.tile_midair_boss, 0)
         add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_boss)
 
-
+    boss = Boss()
+    game_world_boss_room.add_object(boss, 1)
+    add_collision_pair_boss_room('sword:boss', None, boss)
 
     server.knight = server.knight
     server.knight.x = 360
     game_world_boss_room.add_object(server.knight, 1)
 
-    add_collision_pair('knight:monster', server.knight, None)
+    add_collision_pair_boss_room('knight:monster', server.knight, None)
     add_collision_pair_for_tile('knight:tile_ground', server.knight, None)
     add_collision_pair_for_tile('knight:tile_midair', server.knight, None)
 

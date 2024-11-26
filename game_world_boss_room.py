@@ -6,7 +6,7 @@ world = [[],[]]
 collision_pairs = {}
 collision_pairs_for_tile = {}
 
-def add_collision_pair(group, a, b):
+def add_collision_pair_boss_room(group, a, b):
     if group not in collision_pairs:
         collision_pairs[group] = [[],[]]        #초기화
     if a:
