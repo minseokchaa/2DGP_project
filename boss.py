@@ -8,6 +8,7 @@ from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from state_machine import StateMachine, boss_attack, boss_move, boss_stop, boss_attack_end
 import play_boss_room
 import server
+import random
 from boss_sword import Sword
 
 
@@ -92,11 +93,20 @@ class Walk:
         global Walk_SPEED_PPS
 
         boss.frame_Walk = (boss.frame_Walk + 0.5*FRAMES_WALK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_WALK_ACTION
-
+        if int(boss.frame_Walk) ==0:
+            if boss.sound1 ==None:
+                boss.sound_walk1.play()
+                boss.sound1 = 1
+                boss.sound2 = None
         if int(boss.frame_Walk) ==1:
             Walk_SPEED_PPS  = 0
         elif int(boss.frame_Walk) ==2:
             Walk_SPEED_PPS = 0
+        if int(boss.frame_Walk) ==6:
+            if boss.sound2 == None:
+                boss.sound_walk2.play()
+                boss.sound2 = 1
+                boss.sound1 = None
         elif int(boss.frame_Walk) ==7:
             Walk_SPEED_PPS = 0
         elif int(boss.frame_Walk) ==8:
@@ -121,6 +131,12 @@ class Walk:
 class Attack:
     @staticmethod  # @는 데코레이터라는 기능, 클래스 안에 들어있는 객채하곤 상관이 없는 함수, 모아 놓는 개념?
     def enter(boss, e):
+        boss.method = random.choice([1, 2])
+
+        if boss.method == 1:
+            boss.sound_attack1.play()
+        if boss.method == 2:
+            boss.sound_attack2.play()
 
         boss.action_num = 2
         pass
@@ -179,13 +195,19 @@ class Boss:
         self.image = load_image('./using_resource_image/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
         self.face_dir = 1       #1=오른쪽으로 이동 0=왼쪽으로 이동
         self.frame_Idle, self.frame_Walk, self.frame_Attack = 0, 0, 0
-        self.sword = None
+        self.sword, self.sound1, self.sound2 = None, None, None
         self.hp_max, self.hp_now,self.hp_decrease, self.power = 20000, 20000, 20000,300
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
+        self.method = 0
 
         self.image_hp_bar= load_image('./using_resource_image/' + 'hp_bar.png')
         self.image_max_hp_bar= load_image('./using_resource_image/' + 'max_hp_bar.png')
         self.image_decrease_hp_bar = load_image('./using_resource_image/' + 'decreasing_hp_bar.png')
+
+        self.sound_attack1, self.sound_attack2 = load_wav('./using_resource_sound/' + 'boss_attack_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_attack_sound2.wav')
+        self.sound_walk1, self.sound_walk2 = load_wav('./using_resource_sound/' + 'small_explosion1.wav'), load_wav('./using_resource_sound/' + 'small_explosion2.wav')
+
+        self.sound_attack1.set_volume(80), self.sound_attack2.set_volume(80), self.sound_walk1.set_volume(30), self.sound_walk2.set_volume(30)
 
         self.build_behavior_tree()
 

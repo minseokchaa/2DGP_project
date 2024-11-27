@@ -62,6 +62,9 @@ class Run:
     @staticmethod
     def enter(knight, e):
         knight.attack_count = 0
+        knight.sound_running = load_wav('./using_resource_sound/' + 'running_sound.wav')
+        knight.sound_running.set_volume(60)
+        knight.sound_running.play()
         if right_down(e) or left_up(e):
             knight.face_dir = 1
             knight.move = 1
@@ -72,6 +75,7 @@ class Run:
 
     @staticmethod
     def exit(knight,e):
+        knight.sound_running = None
         pass
 
     @staticmethod
@@ -228,11 +232,11 @@ class Attack:
     def do(knight):
         knight.frame_Attack = (knight.frame_Attack +2*FRAMES_PER_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5  # 0.06초에 1프레임, 총 4프레임 있음
 
-
         if knight.attack_motion <= knight.attack_count and int(knight.frame_Attack) == 4:  # 4프레임이 다 그려졌을 때 다음 모션, 프레임 초기화
             knight.attack_motion += 1
             knight.power_combo +=50
             knight.frame_Attack = 0
+
 
         elif knight.attack_motion > knight.attack_count:
             knight.attack_motion = 1
@@ -245,6 +249,7 @@ class Attack:
 
 
         if int(knight.frame_Attack) == 2:
+
             if knight.sword == None:
                 knight.sword = Sword(sx, sy, knight.power_combo, knight.face_dir)  # Sword 객체 생성
                 game_world.add_object(knight.sword, 1)
@@ -253,6 +258,13 @@ class Attack:
                 add_collision_pair('sword:tree', knight.sword, None)
 
                 add_collision_pair_boss_room('sword:boss', knight.sword, None)
+
+                if knight.attack_motion == 1:
+                    knight.sound_attack1.play()
+                if knight.attack_motion == 2:
+                    knight.sound_attack2.play()
+                if knight.attack_motion == 3:
+                    knight.sound_attack3.play()
 
         if int(knight.frame_Attack) == 3:
             if knight.sword:
@@ -399,11 +411,11 @@ class Knight:
         self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource_image/'+'max_hp_bar.png'), load_image('./using_resource_image/'+'max_stamina_bar.png')
         self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource_image/'+'decreasing_hp_bar.png'), load_image('./using_resource_image/'+'knight_ui.png')
 
-        self.sound_attack1,  self.sound_attack2,  self.sound_attack3 = load_music('./using_resource_sound/'+'attack1.mp3'), load_music('./using_resource_sound/'+'attack2.mp3'),load_music('./using_resource_sound/'+'attack3.mp3')
-        self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_music('./using_resource_sound/'+'get_red_elixir.mp3'), load_music('./using_resource_sound/'+'get_yellow_elixir.mp3')
-        self.sound_running = load_music('./using_resource_sound/'+'running_sound.mp3')
+        self.sound_attack1,  self.sound_attack2,  self.sound_attack3 = load_wav('./using_resource_sound/'+'attack1.wav'), load_wav('./using_resource_sound/'+'attack2.wav'),load_wav('./using_resource_sound/'+'attack3.wav')
+        self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_wav('./using_resource_sound/'+'get_red_elixir.wav'), load_wav('./using_resource_sound/'+'get_yellow_elixir.wav')
+        self.sound_running = load_wav('./using_resource_sound/'+'running_sound.wav')
 
-        self.sound_get_red_elixir.set_volume(60)
+        self.sound_get_red_elixir.set_volume(60), self.sound_attack1.set_volume(30), self.sound_running.set_volume(40)
 
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
         self.state_machine.start(Idle)      #초기 상태 -- Idle

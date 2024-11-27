@@ -26,6 +26,10 @@ class Broken_wood1:
         self.w = self.ob_Ridges_6.w
         self.h = self.ob_Ridges_6.h
 
+        self.tree_hit1, self.tree_hit2 = load_wav('./using_resource_sound/'+'tree_hit1.wav'), load_wav('./using_resource_sound/'+'tree_hit2.wav')
+        self.tree_destroyed = load_wav('./using_resource_sound/'+'tree_destroyed.wav')
+        self.tree_hit1.set_volume(90), self.tree_hit2.set_volume(90), self.tree_destroyed.set_volume(90)
+
     def draw(self):
         self.ob_Ridges_6.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,70,82)
 
@@ -89,6 +93,13 @@ class Broken_wood1:
                 self.life -=1
                 self.invincible = True
                 self.ob_Ridges_6 = load_image('./using_resource_image/'+'ob_Ridges_6_hit.png')
+                if self.life > 0 and self.life % 2 == 0:
+                    self.tree_hit1.play()
+                elif self.life > 0 and self.life % 2 != 0:
+                    self.tree_hit2.play()
+
+                if self.life == 0:
+                    self.tree_destroyed.play()
         pass
 
 class Broken_wood2:
@@ -104,6 +115,10 @@ class Broken_wood2:
         self.ch = get_canvas_height()
         self.w = self.ob_Ridges_3.w
         self.h = self.ob_Ridges_3.h
+
+        self.tree_hit1, self.tree_hit2 = load_wav('./using_resource_sound/'+'tree_hit1.wav'), load_wav('./using_resource_sound/'+'tree_hit2.wav')
+        self.tree_destroyed = load_wav('./using_resource_sound/'+'tree_destroyed.wav')
+        self.tree_hit1.set_volume(90), self.tree_hit2.set_volume(90), self.tree_destroyed.set_volume(90)
 
     def draw(self):
         self.ob_Ridges_3.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,141,53)
@@ -166,4 +181,11 @@ class Broken_wood2:
                 self.life -=1
                 self.invincible = True
                 #self.ob_Ridges_3 = load_image('./using_resource_image/'+'ob_Ridges_3_hit.png')
+                if self.life > 0 and self.life % 2 == 0:
+                    self.tree_hit1.play()
+                elif self.life > 0 and self.life % 2 != 0:
+                    self.tree_hit2.play()
+
+                if self.life == 0:
+                    self.tree_destroyed.play()
         pass
