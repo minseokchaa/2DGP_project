@@ -18,6 +18,10 @@ class Bg_Boss_room:
         self.w = self.bg_boss_room.w
         self.h = self.bg_boss_room.h
 
+        self.bgm = load_music('./using_resource_sound/' + '80s-video-game-battle-chiptune-216255.mp3')
+        self.bgm.set_volume(45)
+        self.bgm.repeat_play()
+
 
     def draw(self):
         self.bg_boss_room.clip_draw_to_origin(self.window_left, self.window_bottom, self.cw, self.ch, self.x, self.y)

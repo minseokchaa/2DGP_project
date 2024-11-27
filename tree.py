@@ -29,7 +29,7 @@ class Dead_tree1:
         self.tree_hit1, self.tree_hit2 = load_wav('./using_resource_sound/'+'tree_hit1.wav'), load_wav('./using_resource_sound/'+'tree_hit2.wav')
         self.tree_destroyed = load_wav('./using_resource_sound/'+'tree_destroyed.wav')
 
-        self.tree_hit1.set_volume(90), self.tree_hit2.set_volume(90), self.tree_destroyed.set_volume(90)
+        self.tree_hit1.set_volume(48), self.tree_hit2.set_volume(48), self.tree_destroyed.set_volume(48)
 
     def draw(self):
         self.db_dead_tree_1.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,170,170)
@@ -97,13 +97,13 @@ class Dead_tree1:
                 self.invincible = True
                 self.db_dead_tree_1 = load_image('./using_resource_image/'+'ob_dead_tree_1_hit.png')
 
-            if self.life >0 and self.life%2 ==0:
-                self.tree_hit1.play()
-            elif self.life >0 and self.life%2 !=0:
-                self.tree_hit2.play()
+                if self.life > 0 and self.life % 2 == 0:
+                    self.tree_hit1.play()
+                elif self.life > 0 and self.life % 2 != 0:
+                    self.tree_hit2.play()
 
-            if self.life ==0:
-                self.tree_destroyed.play()
+                if self.life == 0:
+                    self.tree_destroyed.play()
         pass
 
 class Dead_tree2:
@@ -122,7 +122,7 @@ class Dead_tree2:
 
         self.tree_hit1, self.tree_hit2 = load_wav('./using_resource_sound/'+'tree_hit1.wav'), load_wav('./using_resource_sound/'+'tree_hit2.wav')
         self.tree_destroyed = load_wav('./using_resource_sound/'+'tree_destroyed.wav')
-        self.tree_hit1.set_volume(90), self.tree_hit2.set_volume(90), self.tree_destroyed.set_volume(90)
+        self.tree_hit1.set_volume(48), self.tree_hit2.set_volume(48), self.tree_destroyed.set_volume(48)
 
     def draw(self):
         self.ob_dead_tree_2.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,150,150)
@@ -190,13 +190,13 @@ class Dead_tree2:
                 self.invincible = True
                 self.ob_dead_tree_2 = load_image('./using_resource_image/'+'ob_dead_tree_2_hit.png')
 
-            if self.life > 0 and self.life % 2 == 0:
-                self.tree_hit1.play()
-            elif self.life > 0 and self.life % 2 != 0:
-                self.tree_hit2.play()
+                if self.life > 0 and self.life % 2 == 0:
+                    self.tree_hit1.play()
+                elif self.life > 0 and self.life % 2 != 0:
+                    self.tree_hit2.play()
 
-            if self.life == 0:
-                self.tree_destroyed.play()
+                if self.life == 0:
+                    self.tree_destroyed.play()
         pass
 
 class Alive_tree1:
@@ -209,7 +209,7 @@ class Alive_tree1:
 
         self.tree_hit1, self.tree_hit2 = load_wav('./using_resource_sound/'+'tree_hit1.wav'), load_wav('./using_resource_sound/'+'tree_hit2.wav')
         self.tree_destroyed = load_wav('./using_resource_sound/'+'tree_destroyed.wav')
-        self.tree_hit1.set_volume(90), self.tree_hit2.set_volume(90), self.tree_destroyed.set_volume(90)
+        self.tree_hit1.set_volume(48), self.tree_hit2.set_volume(48), self.tree_destroyed.set_volume(48)
 
 
         self.cw = get_canvas_width()
@@ -271,10 +271,10 @@ class Alive_tree1:
                 self.life -=1
                 self.invincible = True
 
-            if self.life > 0 and self.life % 2 == 0:
-                self.tree_hit1.play()
-            elif self.life > 0 and self.life % 2 != 0:
-                self.tree_hit2.play()
+                if self.life > 0 and self.life % 2 == 0:
+                    self.tree_hit1.play()
+                elif self.life > 0 and self.life % 2 != 0:
+                    self.tree_hit2.play()
 
-            if self.life == 0:
-                self.tree_destroyed.play()
+                if self.life == 0:
+                    self.tree_destroyed.play()

@@ -44,6 +44,10 @@ class Tile_ground_swamp:
         self.w = self.tile_ground_swamp.w
         self.h = self.tile_ground_swamp.h
 
+        self.bgm = load_music('./using_resource_sound/' + 'little-slimex27s-adventure-151007.mp3')
+        self.bgm.set_volume(32)
+        self.bgm.repeat_play()
+
 
     def draw(self):
         self.tile_ground_swamp.clip_draw_to_origin(self.window_left, self.window_bottom, self.cw, self.ch, self.x, self.y)

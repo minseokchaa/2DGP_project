@@ -63,8 +63,8 @@ class Run:
     def enter(knight, e):
         knight.attack_count = 0
         knight.sound_running = load_wav('./using_resource_sound/' + 'running_sound.wav')
-        knight.sound_running.set_volume(60)
-        knight.sound_running.play()
+        # knight.sound_running.set_volume(60)
+        # knight.sound_running.play()
         if right_down(e) or left_up(e):
             knight.face_dir = 1
             knight.move = 1
@@ -415,7 +415,10 @@ class Knight:
         self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_wav('./using_resource_sound/'+'get_red_elixir.wav'), load_wav('./using_resource_sound/'+'get_yellow_elixir.wav')
         self.sound_running = load_wav('./using_resource_sound/'+'running_sound.wav')
 
-        self.sound_get_red_elixir.set_volume(60), self.sound_attack1.set_volume(30), self.sound_running.set_volume(40)
+        self.sound_get_red_elixir.set_volume(60), self.sound_running.set_volume(40)
+        self.sound_attack1.set_volume(20),self.sound_attack2.set_volume(70),self.sound_attack3.set_volume(70),
+
+
 
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
         self.state_machine.start(Idle)      #초기 상태 -- Idle

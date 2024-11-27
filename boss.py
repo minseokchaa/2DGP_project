@@ -148,7 +148,7 @@ class Attack:
     @staticmethod
     def do(boss):
 
-        boss.frame_Attack = (boss.frame_Attack + 0.35*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
+        boss.frame_Attack = (boss.frame_Attack + 0.4*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
 
         if boss.face_dir == 1:
             boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
@@ -207,7 +207,7 @@ class Boss:
         self.sound_attack1, self.sound_attack2 = load_wav('./using_resource_sound/' + 'boss_attack_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_attack_sound2.wav')
         self.sound_walk1, self.sound_walk2 = load_wav('./using_resource_sound/' + 'small_explosion1.wav'), load_wav('./using_resource_sound/' + 'small_explosion2.wav')
 
-        self.sound_attack1.set_volume(80), self.sound_attack2.set_volume(80), self.sound_walk1.set_volume(30), self.sound_walk2.set_volume(30)
+        self.sound_attack1.set_volume(55), self.sound_attack2.set_volume(55), self.sound_walk1.set_volume(20), self.sound_walk2.set_volume(20)
 
         self.build_behavior_tree()
 

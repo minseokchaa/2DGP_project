@@ -82,6 +82,10 @@ class Small_slime1:
         self.image_Idle = load_image('./using_resource_image/'+'mon_swamp_dungeon17_01.png')
         self.image_hp_bar = load_image('./using_resource_image/'+'hp_bar.png')
         self.image_decrease_hp_bar = load_image('./using_resource_image/'+'decreasing_hp_bar.png')
+
+        self.slime_hit = load_wav('./using_resource_sound/' + 'slime_hit.wav')
+        self.slime_hit.set_volume(60)
+
         self.state_machine = StateMachine(self)  # 소년 객체의 state machine 생성
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
 
@@ -134,5 +138,6 @@ class Small_slime1:
         # fill here
         if group == 'sword:monster':
             self.hp_now -= power
+            self.slime_hit.play()
 
         pass

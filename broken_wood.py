@@ -28,7 +28,7 @@ class Broken_wood1:
 
         self.tree_hit1, self.tree_hit2 = load_wav('./using_resource_sound/'+'tree_hit1.wav'), load_wav('./using_resource_sound/'+'tree_hit2.wav')
         self.tree_destroyed = load_wav('./using_resource_sound/'+'tree_destroyed.wav')
-        self.tree_hit1.set_volume(90), self.tree_hit2.set_volume(90), self.tree_destroyed.set_volume(90)
+        self.tree_hit1.set_volume(48), self.tree_hit2.set_volume(48), self.tree_destroyed.set_volume(48)
 
     def draw(self):
         self.ob_Ridges_6.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,70,82)
@@ -118,7 +118,7 @@ class Broken_wood2:
 
         self.tree_hit1, self.tree_hit2 = load_wav('./using_resource_sound/'+'tree_hit1.wav'), load_wav('./using_resource_sound/'+'tree_hit2.wav')
         self.tree_destroyed = load_wav('./using_resource_sound/'+'tree_destroyed.wav')
-        self.tree_hit1.set_volume(90), self.tree_hit2.set_volume(90), self.tree_destroyed.set_volume(90)
+        self.tree_hit1.set_volume(48), self.tree_hit2.set_volume(48), self.tree_destroyed.set_volume(48)
 
     def draw(self):
         self.ob_Ridges_3.clip_draw_to_origin(0, 0, self.w, self.h, self.x, self.y,141,53)
