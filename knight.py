@@ -8,6 +8,7 @@ import game_world_boss_room
 import game_framework
 from game_world import add_collision_pair
 from sword import Sword
+import random
 
 sx, sy = 0 , 0
 PIXEL_PER_METER = (10.0 / 0.12)                     # 10 pixel 12 cm
@@ -401,6 +402,7 @@ class Knight:
         self.frame_Jump= 0
         self.frame_Attack=0
         self.attack_motion, self.attack_count = 1, 0
+        self.method = 0
 
         self.invincible, self.invincible_timer = False,  0
 
@@ -414,6 +416,9 @@ class Knight:
         self.sound_attack1,  self.sound_attack2,  self.sound_attack3 = load_wav('./using_resource_sound/'+'attack1.wav'), load_wav('./using_resource_sound/'+'attack2.wav'),load_wav('./using_resource_sound/'+'attack3.wav')
         self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_wav('./using_resource_sound/'+'get_red_elixir.wav'), load_wav('./using_resource_sound/'+'get_yellow_elixir.wav')
         self.sound_running = load_wav('./using_resource_sound/'+'running_sound.wav')
+        self.sound_block1, self.sound_block2, self.sound_block3 = load_wav('./using_resource_sound/'+'knight_block_sword1.wav'), load_wav('./using_resource_sound/'+'knight_block_sword2.wav'),load_wav('./using_resource_sound/'+'knight_block_sword3.wav')
+
+
 
         self.sound_get_red_elixir.set_volume(60), self.sound_running.set_volume(40)
         self.sound_attack1.set_volume(20),self.sound_attack2.set_volume(70),self.sound_attack3.set_volume(70),
@@ -438,7 +443,7 @@ class Knight:
         self.gravity -=1
 
         if self.stamina_now < self.stamina_max:
-            self.stamina_now += 10*game_framework.frame_time
+            self.stamina_now += 5*game_framework.frame_time
         if self.hp_now < self.hp_max:
             self.hp_now += 0.1
 
@@ -514,7 +519,16 @@ class Knight:
             self.take_damage(others_power)
 
         if group == 'knight:boss_sword':
+            if self.state_machine.current_state() == Protect:
+                self.method = random.choice([1,2,3])
+                if self.method == 1:
+                    self.sound_block1.play()
+                if self.method == 2:
+                    self.sound_block2.play()
+                if self.method == 3:
+                    self.sound_block3.play()
             self.take_damage(others_power)
+
 
         if group == 'knight:elixir_hp':
             self.sound_get_red_elixir.play()

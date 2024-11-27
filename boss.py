@@ -196,7 +196,7 @@ class Boss:
         self.face_dir = 1       #1=오른쪽으로 이동 0=왼쪽으로 이동
         self.frame_Idle, self.frame_Walk, self.frame_Attack = 0, 0, 0
         self.sword, self.sound1, self.sound2 = None, None, None
-        self.hp_max, self.hp_now,self.hp_decrease, self.power = 20000, 20000, 20000,300
+        self.hp_max, self.hp_now,self.hp_decrease, self.power = 28000, 28000, 28000,300
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
         self.method = 0
 
@@ -336,7 +336,7 @@ class Boss:
     def build_behavior_tree(self):
     #     #--------------------------------------------------------------------
     #
-        c1 = Condition('기사가 근처에 있는가?', self.is_knight_nearby, 2)
+        c1 = Condition('기사가 근처에 있는가?', self.is_knight_nearby, 3)
         a1 = Action('기사 방향으로 돌기', self.turn_to_knight)
         a3 = Action('검 내려찍기', self.slash_the_sword)
     #
