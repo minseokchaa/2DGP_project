@@ -392,12 +392,18 @@ class Knight:
 
         self.invincible, self.invincible_timer = False,  0
 
-        self.image_Idle,self.image_Run,self.image_Jump = load_image('./using_resource/'+'Knight_Idle.png'), load_image('./using_resource/'+'Knight_Run.png'), load_image('./using_resource/'+'Knight_Jump.png')
-        self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('./using_resource/'+'Knight_Attack 1.png'), load_image('./using_resource/'+'Knight_Attack 2.png'),load_image('./using_resource/'+'Knight_Attack 3.png')
-        self.image_Protect = load_image('./using_resource/'+'Knight_Protect.png')
-        self.image_hp_bar,self.image_stamina_bar = load_image('./using_resource/'+'hp_bar.png'),load_image('./using_resource/'+'stamina_bar.png')
-        self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource/'+'max_hp_bar.png'), load_image('./using_resource/'+'max_stamina_bar.png')
-        self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource/'+'decreasing_hp_bar.png'), load_image('./using_resource/'+'knight_ui.png')
+        self.image_Idle,self.image_Run,self.image_Jump = load_image('./using_resource_image/'+'Knight_Idle.png'), load_image('./using_resource_image/'+'Knight_Run.png'), load_image('./using_resource_image/'+'Knight_Jump.png')
+        self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('./using_resource_image/'+'Knight_Attack 1.png'), load_image('./using_resource_image/'+'Knight_Attack 2.png'),load_image('./using_resource_image/'+'Knight_Attack 3.png')
+        self.image_Protect = load_image('./using_resource_image/'+'Knight_Protect.png')
+        self.image_hp_bar,self.image_stamina_bar = load_image('./using_resource_image/'+'hp_bar.png'),load_image('./using_resource_image/'+'stamina_bar.png')
+        self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource_image/'+'max_hp_bar.png'), load_image('./using_resource_image/'+'max_stamina_bar.png')
+        self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource_image/'+'decreasing_hp_bar.png'), load_image('./using_resource_image/'+'knight_ui.png')
+
+        self.sound_attack1,  self.sound_attack2,  self.sound_attack3 = load_music('./using_resource_sound/'+'attack1.mp3'), load_music('./using_resource_sound/'+'attack2.mp3'),load_music('./using_resource_sound/'+'attack3.mp3')
+        self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_music('./using_resource_sound/'+'get_red_elixir.mp3'), load_music('./using_resource_sound/'+'get_yellow_elixir.mp3')
+        self.sound_running = load_music('./using_resource_sound/'+'running_sound.mp3')
+
+        self.sound_get_red_elixir.set_volume(60)
 
         self.state_machine = StateMachine(self) #소년 객체의 state machine 생성
         self.state_machine.start(Idle)      #초기 상태 -- Idle
@@ -496,10 +502,12 @@ class Knight:
             self.take_damage(others_power)
 
         if group == 'knight:elixir_hp':
+            self.sound_get_red_elixir.play()
             self.hp_max += 150
             self.hp_now += 150
 
         if group == 'knight:elixir_power':
+            self.sound_get_yellow_elixir.play()
             self.power += 200
             self.power_combo = self.power
             self.stamina_now += 20

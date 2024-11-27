@@ -12,7 +12,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 class Bg_Boss_room:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.bg_boss_room = load_image('./using_resource/'+'bg_boss_room.png')
+        self.bg_boss_room = load_image('./using_resource_image/'+'bg_boss_room.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.bg_boss_room.w
@@ -36,7 +36,7 @@ class Bg_Boss_room:
 class Tile_midair:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.tile_midair_swamp = load_image('./using_resource/'+'tile_chapter_0004_tile2.png')
+        self.tile_midair_swamp = load_image('./using_resource_image/'+'tile_chapter_0004_tile2.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.tile_midair_swamp.w

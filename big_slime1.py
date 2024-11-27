@@ -77,9 +77,9 @@ class Big_slime1:
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.timer = 0
-        self.image_Idle = load_image('./using_resource/'+'mon_swamp_Big_Undead3_2_01.png')
-        self.image_hp_bar = load_image('./using_resource/'+'hp_bar.png')
-        self.image_decrease_hp_bar = load_image('./using_resource/'+'decreasing_hp_bar.png')
+        self.image_Idle = load_image('./using_resource_image/'+'mon_swamp_Big_Undead3_2_01.png')
+        self.image_hp_bar = load_image('./using_resource_image/'+'hp_bar.png')
+        self.image_decrease_hp_bar = load_image('./using_resource_image/'+'decreasing_hp_bar.png')
         self.state_machine = StateMachine(self)  # 소년 객체의 state machine 생성
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
 

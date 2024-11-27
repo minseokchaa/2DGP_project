@@ -11,5 +11,5 @@ import play_boss_room
 
 open_canvas(1600,900)
 # game loop
-game_framework.run(start_mode)
+game_framework.run(title_mode)
 close_canvas()

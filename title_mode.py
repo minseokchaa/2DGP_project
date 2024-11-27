@@ -14,10 +14,10 @@ def init():
     global Night_of_Knight_title
     global press_any_key_to_start
     global title_knight
-    title_back_ground = load_image('./using_resource/'+'title_back_ground.png')
-    Night_of_Knight_title = load_image('./using_resource/' + 'Night_of_Knight_title.png')
-    press_any_key_to_start = load_image('./using_resource/' + 'press_any_key_to_start.png')
-    title_knight = load_image('./using_resource/' + 'title_knight.png')
+    title_back_ground = load_image('./using_resource_image/'+'title_back_ground.png')
+    Night_of_Knight_title = load_image('./using_resource_image/' + 'Night_of_Knight_title.png')
+    press_any_key_to_start = load_image('./using_resource_image/' + 'press_any_key_to_start.png')
+    title_knight = load_image('./using_resource_image/' + 'title_knight.png')
 
 def finish():
     global title_back_ground

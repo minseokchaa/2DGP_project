@@ -17,7 +17,7 @@ class Dead_tree1:
     def __init__(self, x=500, y=135, type = 0):
         self.x, self.y, self.i = x, y, 1  # 나무의 기본 위치
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
-        self.db_dead_tree_1 = load_image('./using_resource/'+'ob_dead_tree_1.png')
+        self.db_dead_tree_1 = load_image('./using_resource_image/'+'ob_dead_tree_1.png')
         self.invincible, self.invincible_timer = False, 0
         self.life =5
 
@@ -69,7 +69,7 @@ class Dead_tree1:
                 self.x += 1
 
         if self.invincible_timer == 10:
-            self.db_dead_tree_1 = load_image('./using_resource/'+'ob_dead_tree_1.png')
+            self.db_dead_tree_1 = load_image('./using_resource_image/'+'ob_dead_tree_1.png')
 
         if self.invincible_timer == 29:
             self.invincible = False
@@ -89,7 +89,7 @@ class Dead_tree1:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
-                self.db_dead_tree_1 = load_image('./using_resource/'+'ob_dead_tree_1_hit.png')
+                self.db_dead_tree_1 = load_image('./using_resource_image/'+'ob_dead_tree_1_hit.png')
         pass
 
 class Dead_tree2:
@@ -97,7 +97,7 @@ class Dead_tree2:
         self.x, self.y, self.i = x, y, 1  # 나무의 기본 위치
         self.x, self.y = x, y  # 나무의 기본 위치
         self.type = type  # 1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
-        self.ob_dead_tree_2 = load_image('./using_resource/'+'ob_dead_tree_2.png')
+        self.ob_dead_tree_2 = load_image('./using_resource_image/'+'ob_dead_tree_2.png')
         self.invincible, self.invincible_timer = False, 0
         self.life =5
 
@@ -149,7 +149,7 @@ class Dead_tree2:
                 self.x += 1
 
         if self.invincible_timer == 10:
-            self.ob_dead_tree_2 = load_image('./using_resource/'+'ob_dead_tree_2.png')
+            self.ob_dead_tree_2 = load_image('./using_resource_image/'+'ob_dead_tree_2.png')
 
         if self.invincible_timer == 29:
             self.invincible = False
@@ -169,14 +169,14 @@ class Dead_tree2:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
-                self.ob_dead_tree_2 = load_image('./using_resource/'+'ob_dead_tree_2_hit.png')
+                self.ob_dead_tree_2 = load_image('./using_resource_image/'+'ob_dead_tree_2_hit.png')
         pass
 
 class Alive_tree1:
     def __init__(self, x=500, y=135, type = 0):
         self.x, self.y, self.i = x, y, 1  # 나무의 기본 위치
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
-        self.ob_tree_3 = load_image('./using_resource/'+'ob_tree_3.png')
+        self.ob_tree_3 = load_image('./using_resource_image/'+'ob_tree_3.png')
         self.invincible, self.invincible_timer = False, 0
         self.life =13
 

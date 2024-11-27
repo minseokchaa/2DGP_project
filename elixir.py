@@ -14,7 +14,7 @@ class Elixir_hp:
     def __init__(self, x=500, y=135):
         self.x, self.y = x, y  # 나무의 기본 위치
         self.gravity = 15
-        self.elixir_red = load_image('./using_resource/'+'elixir_red.png')
+        self.elixir_red = load_image('./using_resource_image/'+'elixir_red.png')
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -69,7 +69,7 @@ class Elixir_power:
     def __init__(self, x=500, y=135):
         self.x, self.y = x, y  # 나무의 기본 위치
         self.gravity = 15
-        self.elixir_yellow = load_image('./using_resource/'+'elixir_yellow.png')
+        self.elixir_yellow = load_image('./using_resource_image/'+'elixir_yellow.png')
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()

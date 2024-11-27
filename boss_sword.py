@@ -28,10 +28,10 @@ class Sword:
         # fill here
         if self.face_dir==1:      #1일 때 오른쪽
             print('aa')
-            return self.x - 10, self.y - 200, self.x + 300, self.y
+            return self.x +20, self.y - 200, self.x + 300, self.y
         else:
             print('bb')
-            return self.x - 300, self.y - 200, self.x + 10, self.y
+            return self.x - 300, self.y - 200, self.x -20, self.y
         pass
 
     def handle_collision(self, group, other, power):

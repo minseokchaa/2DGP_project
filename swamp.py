@@ -14,7 +14,7 @@ class Bg_swamp:
     def __init__(self):
 
         self.x = 0
-        self.Back_ground_swamp = load_image('./using_resource/'+'bg_tile_chapter_02_02x2.png')
+        self.Back_ground_swamp = load_image('./using_resource_image/'+'bg_tile_chapter_02_02x2.png')
 
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
@@ -38,7 +38,7 @@ class Bg_swamp:
 class Tile_ground_swamp:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.tile_ground_swamp = load_image('./using_resource/'+'tile_chapter_0000_tile1_.png')
+        self.tile_ground_swamp = load_image('./using_resource_image/'+'tile_chapter_0000_tile1_.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.tile_ground_swamp.w
@@ -62,7 +62,7 @@ class Tile_ground_swamp:
 class Tile_midair_swamp:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.tile_midair_swamp = load_image('./using_resource/'+'tile_swamp.png')
+        self.tile_midair_swamp = load_image('./using_resource_image/'+'tile_swamp.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.tile_midair_swamp.w
@@ -89,7 +89,7 @@ class Tile_midair_swamp:
 class Entrance:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.entrance = load_image('./using_resource/'+'entrance.png')
+        self.entrance = load_image('./using_resource_image/'+'entrance.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.entrance.w
@@ -115,7 +115,7 @@ class Entrance:
 class Filter:
     def __init__(self, x = 0, y = 0):
         self.x, self.y = x, y
-        self.entrance = load_image('./using_resource/'+'title_back_ground.png')
+        self.entrance = load_image('./using_resource_image/'+'title_back_ground.png')
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.w = self.entrance.w

@@ -17,7 +17,7 @@ class Broken_wood1:
         self.x, self.y, self.i = x, y,1  # 나무의 기본 위치
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
 
-        self.ob_Ridges_6 = load_image('./using_resource/'+'ob_Ridges_6.png')
+        self.ob_Ridges_6 = load_image('./using_resource_image/'+'ob_Ridges_6.png')
         self.invincible, self.invincible_timer = False, 0
         self.life =4
 
@@ -69,7 +69,7 @@ class Broken_wood1:
                 self.x +=1
 
         if self.invincible_timer == 10:
-            self.ob_Ridges_6 = load_image('./using_resource/'+'ob_Ridges_6.png')
+            self.ob_Ridges_6 = load_image('./using_resource_image/'+'ob_Ridges_6.png')
 
         if self.invincible_timer == 29:
             self.invincible = False
@@ -88,7 +88,7 @@ class Broken_wood1:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
-                self.ob_Ridges_6 = load_image('./using_resource/'+'ob_Ridges_6_hit.png')
+                self.ob_Ridges_6 = load_image('./using_resource_image/'+'ob_Ridges_6_hit.png')
         pass
 
 class Broken_wood2:
@@ -96,7 +96,7 @@ class Broken_wood2:
         self.x, self.y, self.i = x, y, 1  # 나무의 기본 위치
         self.type = type        #1 = hp 엘릭서, 2 - 공격력 엘릭서, 3- 폭발
 
-        self.ob_Ridges_3 = load_image('./using_resource/'+'ob_Ridges_3.png')
+        self.ob_Ridges_3 = load_image('./using_resource_image/'+'ob_Ridges_3.png')
         self.invincible, self.invincible_timer = False, 0
         self.life =4
 
@@ -146,7 +146,7 @@ class Broken_wood2:
             if 6 <= self.invincible_timer < 10:
                 self.x +=1
         if self.invincible_timer == 10:
-            self.ob_Ridges_3 = load_image('./using_resource/'+'ob_Ridges_3.png')
+            self.ob_Ridges_3 = load_image('./using_resource_image/'+'ob_Ridges_3.png')
 
         if self.invincible_timer == 29:
             self.invincible = False
@@ -165,5 +165,5 @@ class Broken_wood2:
             if not self.invincible:
                 self.life -=1
                 self.invincible = True
-                #self.ob_Ridges_3 = load_image('./using_resource/'+'ob_Ridges_3_hit.png')
+                #self.ob_Ridges_3 = load_image('./using_resource_image/'+'ob_Ridges_3_hit.png')
         pass

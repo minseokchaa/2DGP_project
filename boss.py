@@ -176,16 +176,16 @@ class Boss:
     def __init__(self, x=1000, y=350):
         self.x ,self.y = x,y
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = self.x - 20, self.y - 53, self.x + 25, self.y + 43
-        self.image = load_image('./using_resource/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
+        self.image = load_image('./using_resource_image/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
         self.face_dir = 1       #1=오른쪽으로 이동 0=왼쪽으로 이동
         self.frame_Idle, self.frame_Walk, self.frame_Attack = 0, 0, 0
         self.sword = None
-        self.hp_max, self.hp_now,self.hp_decrease, self.power = 15000, 15000, 15000,300
+        self.hp_max, self.hp_now,self.hp_decrease, self.power = 20000, 20000, 20000,300
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
 
-        self.image_hp_bar= load_image('./using_resource/' + 'hp_bar.png')
-        self.image_max_hp_bar= load_image('./using_resource/' + 'max_hp_bar.png')
-        self.image_decrease_hp_bar = load_image('./using_resource/' + 'decreasing_hp_bar.png')
+        self.image_hp_bar= load_image('./using_resource_image/' + 'hp_bar.png')
+        self.image_max_hp_bar= load_image('./using_resource_image/' + 'max_hp_bar.png')
+        self.image_decrease_hp_bar = load_image('./using_resource_image/' + 'decreasing_hp_bar.png')
 
         self.build_behavior_tree()
 
@@ -217,9 +217,9 @@ class Boss:
     def draw(self):
         self.state_machine.draw()
 
-        self.image_max_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 850, self.hp_max//10, 20)             #(90,90)을 왼쪽 아래로 두고 그리기
-        self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 850, self.hp_decrease//10 , 20)
-        self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 850, self.hp_now//10, 20)
+        self.image_max_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 850, self.hp_max//20, 20)             #(90,90)을 왼쪽 아래로 두고 그리기
+        self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 850, self.hp_decrease//20 , 20)
+        self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 850, self.hp_now//20, 20)
 
 
     def draw_rectangle(self):
