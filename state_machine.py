@@ -69,6 +69,12 @@ def boss_stop(e):         #e가 time out인지 판단
 def boss_attack_end(e):         #e가 time out인지 판단
     return e[0] == 'Boss_attack_end'
 
+def protect_success(e):         #e가 time out인지 판단
+    return e[0] == 'Protect_success'
+
+def defend_is_over(e):         #e가 time out인지 판단
+    return e[0] == 'Defend_is_over'
+
 
 class StateMachine:
     def __init__(self, o):

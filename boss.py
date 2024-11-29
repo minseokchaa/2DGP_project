@@ -98,11 +98,11 @@ class Walk:
                 boss.sound_walk1.play()
                 boss.sound1 = 1
                 boss.sound2 = None
-        if int(boss.frame_Walk) ==1:
+        elif int(boss.frame_Walk) ==1:
             Walk_SPEED_PPS  = 0
         elif int(boss.frame_Walk) ==2:
             Walk_SPEED_PPS = 0
-        if int(boss.frame_Walk) ==6:
+        elif int(boss.frame_Walk) ==6:
             if boss.sound2 == None:
                 boss.sound_walk2.play()
                 boss.sound2 = 1
@@ -160,8 +160,8 @@ class Attack:
             if boss.sword == None:
                 boss.sword = Sword(boss.x, boss.y, boss.power, boss.face_dir)  # Sword 객체 생성
                 game_world_boss_room.add_object(boss.sword, 1)
-
                 add_collision_pair_boss_room('knight:boss_sword', None, boss.sword)
+                boss.sound_hit_ground.play()
 
         if int(boss.frame_Attack) == 12:
             if boss.sword:
@@ -192,7 +192,6 @@ class Boss:
     def __init__(self, x=1000, y=350):
         self.x ,self.y = x,y
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = self.x - 20, self.y - 53, self.x + 25, self.y + 43
-        self.image = load_image('./using_resource_image/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
         self.face_dir = 1       #1=오른쪽으로 이동 0=왼쪽으로 이동
         self.frame_Idle, self.frame_Walk, self.frame_Attack = 0, 0, 0
         self.sword, self.sound1, self.sound2 = None, None, None
@@ -200,14 +199,16 @@ class Boss:
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
         self.method = 0
 
-        self.image_hp_bar= load_image('./using_resource_image/' + 'hp_bar.png')
-        self.image_max_hp_bar= load_image('./using_resource_image/' + 'max_hp_bar.png')
+        self.image = load_image('./using_resource_image/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
+        self.image_hp_bar, self.image_max_hp_bar= load_image('./using_resource_image/' + 'hp_bar.png'), load_image('./using_resource_image/' + 'max_hp_bar.png')
         self.image_decrease_hp_bar = load_image('./using_resource_image/' + 'decreasing_hp_bar.png')
 
         self.sound_attack1, self.sound_attack2 = load_wav('./using_resource_sound/' + 'boss_attack_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_attack_sound2.wav')
         self.sound_walk1, self.sound_walk2 = load_wav('./using_resource_sound/' + 'small_explosion1.wav'), load_wav('./using_resource_sound/' + 'small_explosion2.wav')
+        self.sound_hit_ground = load_wav('./using_resource_sound/' + 'boss_sword_hit_ground.wav')
 
         self.sound_attack1.set_volume(55), self.sound_attack2.set_volume(55), self.sound_walk1.set_volume(20), self.sound_walk2.set_volume(20)
+        self.sound_hit_ground.set_volume(90)
 
         self.build_behavior_tree()
 
@@ -363,7 +364,7 @@ class Boss:
     #
     #
     #
-     #   root = boss_behavior_tree = Selector('보스의 행동트리', chase_knight)
+    #   root = boss_behavior_tree = Selector('보스의 행동트리', chase_knight)
         root = boss_behavior_tree = Selector('보스의 행동트리', sword_attack, chase_knight)
         #root = boss_behavior_tree = Selector('보스의 행동트리', sword_attack, flame_strike, chase_knight)
 

@@ -2,7 +2,7 @@ from xml.sax.saxutils import escape
 from pico2d import *
 import server
 from game_world_boss_room import add_collision_pair_boss_room
-from state_machine import StateMachine, space_down, right_down, left_down, left_up, right_up, start_event, landing, attack_end, a_down, no_stamina, d_down, d_up, falling
+from state_machine import *
 import game_world
 import game_world_boss_room
 import game_framework
@@ -387,6 +387,39 @@ class Protect:
         pass
 
 
+class Defend:
+    @staticmethod
+    def enter(knight,e):
+        pass
+
+    @staticmethod
+    def exit(knight, e):
+        pass
+
+    @staticmethod
+    def do(knight):
+        knight.frame_Defend = (knight.frame_Defend + 3*FRAMES_PER_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
+
+        if knight.face_dir:
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx + 5, sy + 43
+        else:
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 41, sy + 43
+
+        if int(knight.frame_Defend) ==5:
+            knight.state_machine.add_event(('Defend_is_over', 0))
+            knight.frame_Defend=0
+
+        pass
+
+    @staticmethod
+    def draw(knight):
+        if knight.face_dir:
+            knight.image_Defend.clip_draw(int(knight.frame_Defend) * 128, 0, 70, 70, sx, sy, 105, 105)
+        else:
+            knight.image_Defend.clip_composite_draw(int(knight.frame_Defend) * 128, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
+        pass
+
+
 class Knight:
     def __init__(self):
         self.x, self.y = 480, 188
@@ -401,6 +434,7 @@ class Knight:
         self.frame_Run=0
         self.frame_Jump= 0
         self.frame_Attack=0
+        self.frame_Defend = 0
         self.attack_motion, self.attack_count = 1, 0
         self.method = 0
 
@@ -408,7 +442,7 @@ class Knight:
 
         self.image_Idle,self.image_Run,self.image_Jump = load_image('./using_resource_image/'+'Knight_Idle.png'), load_image('./using_resource_image/'+'Knight_Run.png'), load_image('./using_resource_image/'+'Knight_Jump.png')
         self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('./using_resource_image/'+'Knight_Attack 1.png'), load_image('./using_resource_image/'+'Knight_Attack 2.png'),load_image('./using_resource_image/'+'Knight_Attack 3.png')
-        self.image_Protect = load_image('./using_resource_image/'+'Knight_Protect.png')
+        self.image_Protect, self.image_Defend = load_image('./using_resource_image/'+'Knight_Protect.png'), load_image('./using_resource_image/'+'Knight_Defend.png')
         self.image_hp_bar,self.image_stamina_bar = load_image('./using_resource_image/'+'hp_bar.png'),load_image('./using_resource_image/'+'stamina_bar.png')
         self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource_image/'+'max_hp_bar.png'), load_image('./using_resource_image/'+'max_stamina_bar.png')
         self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource_image/'+'decreasing_hp_bar.png'), load_image('./using_resource_image/'+'knight_ui.png')
@@ -434,7 +468,8 @@ class Knight:
                 Attack : {a_down : Attack, attack_end: Idle, right_down: Run, left_down: Run, space_down: Jump, d_down: Protect},
                 Jump : {right_down: Jump_run, left_down: Jump_run, landing: Idle},
                 Jump_run: {right_up: Jump, left_up: Jump, landing: Run},
-                Protect: {right_down: Run, left_down: Run, space_down: Jump, d_up: Idle, no_stamina: Idle}
+                Protect: {right_down: Run, left_down: Run, space_down: Jump, d_up: Idle, no_stamina: Idle, protect_success: Defend},
+                Defend: {defend_is_over:Idle}
             }
         )
 
@@ -520,6 +555,8 @@ class Knight:
 
         if group == 'knight:boss_sword':
             if self.state_machine.current_state() == Protect:
+                self.state_machine.add_event(('Protect_success', 0))
+
                 self.method = random.choice([1,2,3])
                 if self.method == 1:
                     self.sound_block1.play()
