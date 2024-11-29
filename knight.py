@@ -398,7 +398,7 @@ class Defend:
 
     @staticmethod
     def do(knight):
-        knight.frame_Defend = (knight.frame_Defend + 3*FRAMES_PER_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
+        knight.frame_Defend = (knight.frame_Defend + 2.5*FRAMES_PER_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
 
         if knight.face_dir:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx + 5, sy + 43

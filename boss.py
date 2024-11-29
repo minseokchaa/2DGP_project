@@ -5,7 +5,7 @@ import game_framework
 import game_world_boss_room
 from game_world_boss_room import add_collision_pair_boss_room
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
-from state_machine import StateMachine, boss_attack, boss_move, boss_stop, boss_attack_end
+from state_machine import *
 import play_boss_room
 import server
 import random
@@ -23,7 +23,7 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
 FRAMES_IDLE_ACTION = 6.0
 FRAMES_WALK_ACTION = 12.0
-FRAMES_ATTACK_ACTION = 15.0
+FRAMES_ATTACK_ACTION = 16.0
 FRAMES_DEAD_ACTION = 22.0
 
 class Idle:
@@ -148,7 +148,7 @@ class Attack:
     @staticmethod
     def do(boss):
 
-        boss.frame_Attack = (boss.frame_Attack + 0.4*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
+        boss.frame_Attack = (boss.frame_Attack + 0.3*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
 
         if boss.face_dir == 1:
             boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
@@ -156,14 +156,14 @@ class Attack:
             boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
 
 
-        if int(boss.frame_Attack) == 10:
+        if int(boss.frame_Attack) == 9:
             if boss.sword == None:
                 boss.sword = Sword(boss.x, boss.y, boss.power, boss.face_dir)  # Sword 객체 생성
                 game_world_boss_room.add_object(boss.sword, 1)
                 add_collision_pair_boss_room('knight:boss_sword', None, boss.sword)
                 boss.sound_hit_ground.play()
 
-        if int(boss.frame_Attack) == 12:
+        if int(boss.frame_Attack) == 11:
             if boss.sword:
                 game_world_boss_room.remove_object(boss.sword)
                 boss.sword = None
@@ -171,7 +171,7 @@ class Attack:
 
 
 
-        if int(boss.frame_Attack) ==14:
+        if int(boss.frame_Attack) ==15:
             boss.state_machine.add_event(('Boss_attack_end', 0))
             boss.frame_Attack =0
 
@@ -198,6 +198,8 @@ class Boss:
         self.hp_max, self.hp_now,self.hp_decrease, self.power = 28000, 28000, 28000,300
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
         self.method = 0
+        self.hit = False
+        self.hit_timer = 0
 
         self.image = load_image('./using_resource_image/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
         self.image_hp_bar, self.image_max_hp_bar= load_image('./using_resource_image/' + 'hp_bar.png'), load_image('./using_resource_image/' + 'max_hp_bar.png')
@@ -228,6 +230,18 @@ class Boss:
 
 
     def update(self):
+        if self.hit:
+            self.hit_timer += 1
+            if 1 <= self.hit_timer < 6:
+                self.x -= 1
+            if 6 <= self.hit_timer < 10:
+                self.x += 1
+
+        if self.hit_timer == 10:
+            self.image.opacify(1)
+            self.hit = False
+            self.hit_timer = 0
+
 
         self.x = clamp(50, self.x, 1550)
         if self.hp_decrease > self.hp_now:
@@ -262,8 +276,9 @@ class Boss:
 
     def handle_collision(self, group, other,others_power):
         if group == 'sword:boss':
+            self.hit = True
+            self.image.opacify(0.5)
             self.take_damage(others_power)
-
 
 
 
