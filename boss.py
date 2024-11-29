@@ -208,9 +208,10 @@ class Boss:
         self.sound_attack1, self.sound_attack2 = load_wav('./using_resource_sound/' + 'boss_attack_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_attack_sound2.wav')
         self.sound_walk1, self.sound_walk2 = load_wav('./using_resource_sound/' + 'small_explosion1.wav'), load_wav('./using_resource_sound/' + 'small_explosion2.wav')
         self.sound_hit_ground = load_wav('./using_resource_sound/' + 'boss_sword_hit_ground.wav')
+        self.sound_hit1, self.sound_hit2 = load_wav('./using_resource_sound/' + 'boss_hit_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_hit_sound2.wav')
 
         self.sound_attack1.set_volume(55), self.sound_attack2.set_volume(55), self.sound_walk1.set_volume(20), self.sound_walk2.set_volume(20)
-        self.sound_hit_ground.set_volume(90)
+        self.sound_hit_ground.set_volume(90), self.sound_hit1.set_volume(40), self.sound_hit2.set_volume(40)
 
         self.build_behavior_tree()
 
@@ -233,9 +234,9 @@ class Boss:
         if self.hit:
             self.hit_timer += 1
             if 1 <= self.hit_timer < 6:
-                self.x -= 1
-            if 6 <= self.hit_timer < 10:
-                self.x += 1
+                self.x -= 2
+            if 6 <= self.hit_timer <= 10:
+                self.x += 2
 
         if self.hit_timer == 10:
             self.image.opacify(1)
@@ -278,6 +279,13 @@ class Boss:
         if group == 'sword:boss':
             self.hit = True
             self.image.opacify(0.5)
+
+            self.method = random.choice([1, 2])
+            if self.method == 1:
+                self.sound_hit1.play()
+            if self.method == 2:
+                self.sound_hit2.play()
+
             self.take_damage(others_power)
 
 
