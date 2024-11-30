@@ -36,6 +36,7 @@ def handle_events():
 def init():
     global running
     global knight
+    global boss
 
     running = True
 

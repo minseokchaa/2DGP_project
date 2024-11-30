@@ -75,6 +75,9 @@ def protect_success(e):         #e가 time out인지 판단
 def defend_is_over(e):         #e가 time out인지 판단
     return e[0] == 'Defend_is_over'
 
+def boss_is_dead(e):         #e가 time out인지 판단
+    return e[0] == 'Boss_is_dead'
+
 
 class StateMachine:
     def __init__(self, o):

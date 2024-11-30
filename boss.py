@@ -6,7 +6,7 @@ import game_world_boss_room
 from game_world_boss_room import add_collision_pair_boss_room
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from state_machine import *
-import play_boss_room
+import ending_mode
 import server
 import random
 from boss_sword import Sword
@@ -24,7 +24,7 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_IDLE_ACTION = 6.0
 FRAMES_WALK_ACTION = 12.0
 FRAMES_ATTACK_ACTION = 16.0
-FRAMES_DEAD_ACTION = 22.0
+FRAMES_DEAD_ACTION = 48.0
 
 class Idle:
     @staticmethod  # @는 데코레이터라는 기능, 클래스 안에 들어있는 객채하곤 상관이 없는 함수, 모아 놓는 개념?
@@ -148,7 +148,7 @@ class Attack:
     @staticmethod
     def do(boss):
 
-        boss.frame_Attack = (boss.frame_Attack + 0.3*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
+        boss.frame_Attack = (boss.frame_Attack + 0.4*FRAMES_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_ATTACK_ACTION
 
         if boss.face_dir == 1:
             boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
@@ -186,6 +186,37 @@ class Attack:
 
         pass
 
+class Dead:
+    @staticmethod  # @는 데코레이터라는 기능, 클래스 안에 들어있는 객채하곤 상관이 없는 함수, 모아 놓는 개념?
+    def enter(boss, e):
+
+        boss.action_num = 0
+        boss.sound_dead.play()
+        pass
+
+    @staticmethod
+    def exit(boss, e):
+        pass
+
+    @staticmethod
+    def do(boss):
+
+        boss.frame_Dead = (boss.frame_Dead + 0.07*FRAMES_DEAD_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_DEAD_ACTION
+
+        if int(boss.frame_Dead) ==47:
+            game_world_boss_room.remove_object(boss)
+            game_framework.change_mode(ending_mode)
+
+
+    @staticmethod
+    def draw(boss):
+        if boss.face_dir ==1:
+            boss.image.clip_composite_draw(int(boss.frame_Dead) * 288, boss.action_num*160, 288, 160, 0, 'h', boss.x, boss.y, 720, 400)
+        else:
+            boss.image.clip_draw(int(boss.frame_Dead) * 288, boss.action_num * 160, 288, 160, boss.x, boss.y, 720, 400)
+
+        pass
+
 
 class Boss:
 
@@ -193,7 +224,7 @@ class Boss:
         self.x ,self.y = x,y
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = self.x - 20, self.y - 53, self.x + 25, self.y + 43
         self.face_dir = 1       #1=오른쪽으로 이동 0=왼쪽으로 이동
-        self.frame_Idle, self.frame_Walk, self.frame_Attack = 0, 0, 0
+        self.frame_Idle, self.frame_Walk, self.frame_Attack, self.frame_Dead = 0, 0, 0, 0
         self.sword, self.sound1, self.sound2 = None, None, None
         self.hp_max, self.hp_now,self.hp_decrease, self.power = 28000, 28000, 28000,300
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
@@ -207,7 +238,7 @@ class Boss:
 
         self.sound_attack1, self.sound_attack2 = load_wav('./using_resource_sound/' + 'boss_attack_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_attack_sound2.wav')
         self.sound_walk1, self.sound_walk2 = load_wav('./using_resource_sound/' + 'small_explosion1.wav'), load_wav('./using_resource_sound/' + 'small_explosion2.wav')
-        self.sound_hit_ground = load_wav('./using_resource_sound/' + 'boss_sword_hit_ground.wav')
+        self.sound_hit_ground, self.sound_dead = load_wav('./using_resource_sound/' + 'boss_sword_hit_ground.wav'), load_wav('./using_resource_sound/' + 'boss_dead_sound.wav')
         self.sound_hit1, self.sound_hit2 = load_wav('./using_resource_sound/' + 'boss_hit_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_hit_sound2.wav')
 
         self.sound_attack1.set_volume(55), self.sound_attack2.set_volume(55), self.sound_walk1.set_volume(20), self.sound_walk2.set_volume(20)
@@ -219,9 +250,10 @@ class Boss:
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
-                Idle: {boss_move: Walk, boss_attack: Attack},
-                Walk: {boss_stop: Idle, boss_attack: Attack},
-                Attack: {boss_attack_end: Idle}
+                Idle: {boss_move: Walk, boss_attack: Attack, boss_is_dead: Dead},
+                Walk: {boss_stop: Idle, boss_attack: Attack, boss_is_dead: Dead},
+                Attack: {boss_attack_end: Idle, boss_is_dead: Dead},
+                Dead: {}
             }
         )
 
@@ -242,6 +274,9 @@ class Boss:
             self.image.opacify(1)
             self.hit = False
             self.hit_timer = 0
+
+        if self.hp_now < 0:
+            self.state_machine.add_event(('Boss_is_dead', 0))
 
 
         self.x = clamp(50, self.x, 1550)
