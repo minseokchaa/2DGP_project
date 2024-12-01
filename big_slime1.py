@@ -10,7 +10,7 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)    #분속 m/m
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)              #초속 m/s
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)   #초속 pixel/s
 
-TIME_PER_ACTION = 0.05
+TIME_PER_ACTION = 0.7
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
@@ -31,11 +31,8 @@ class Idle:
 
     @staticmethod
     def do(big_slime1):
-        if big_slime1.frame_Idle_timer >= 13:  # idle 애니메이션
-            big_slime1.frame_Idle = (big_slime1.frame_Idle + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-            big_slime1.frame_Idle_timer = 0
-        else:
-            big_slime1.frame_Idle_timer += 1
+        big_slime1.frame_Idle = (big_slime1.frame_Idle + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+
 
         if big_slime1.timer > 200:  # 2초마다 방향전환
             if big_slime1.face_dir == 1:
@@ -102,7 +99,7 @@ class Big_slime1:
 
         if self.hp_now <= 0:
             game_world.remove_collision_object(self)
-            self.i -= 0.03
+            self.i -= 0.01
             self.image_Idle.opacify(self.i)
 
         if self.i < 0:

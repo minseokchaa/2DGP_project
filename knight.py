@@ -516,6 +516,7 @@ class Knight:
             self.stamina_now += 5*game_framework.frame_time
         if self.hp_now < self.hp_max:
             self.hp_now += 0.1
+            self.hp_decrease += 0.1
 
         if self.hp_now < 0:
             self.state_machine.add_event(('Knight_is_dead', 0))
