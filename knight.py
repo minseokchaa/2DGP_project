@@ -449,7 +449,7 @@ class Knight:
 
         self.sound_attack1,  self.sound_attack2,  self.sound_attack3 = load_wav('./using_resource_sound/'+'attack1.wav'), load_wav('./using_resource_sound/'+'attack2.wav'),load_wav('./using_resource_sound/'+'attack3.wav')
         self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_wav('./using_resource_sound/'+'get_red_elixir.wav'), load_wav('./using_resource_sound/'+'get_yellow_elixir.wav')
-        self.sound_running = load_wav('./using_resource_sound/'+'running_sound.wav')
+        self.sound_running, self.sound_hit = load_wav('./using_resource_sound/'+'running_sound.wav'), load_wav('./using_resource_sound/'+'knight_hit.wav')
         self.sound_block1, self.sound_block2, self.sound_block3 = load_wav('./using_resource_sound/'+'knight_block_sword1.wav'), load_wav('./using_resource_sound/'+'knight_block_sword2.wav'),load_wav('./using_resource_sound/'+'knight_block_sword3.wav')
 
 
@@ -543,8 +543,10 @@ class Knight:
 
     def take_damage(self, others_power):
         if not self.invincible and self.state_machine.current_state() != Protect:
-                self.hp_now -= others_power
-                self.invincible = True
+            self.hp_now -= others_power
+            self.invincible = True
+
+            self.sound_hit.play()
         pass
 
 
@@ -555,15 +557,16 @@ class Knight:
 
         if group == 'knight:boss_sword':
             if self.state_machine.current_state() == Protect:
-                self.state_machine.add_event(('Protect_success', 0))
-
-                self.method = random.choice([1,2,3])
+                self.method = random.choice([1, 2, 3])
                 if self.method == 1:
                     self.sound_block1.play()
                 if self.method == 2:
                     self.sound_block2.play()
                 if self.method == 3:
                     self.sound_block3.play()
+                self.state_machine.add_event(('Protect_success', 0))
+
+
             self.take_damage(others_power)
 
 
