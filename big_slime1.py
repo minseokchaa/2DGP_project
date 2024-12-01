@@ -77,6 +77,8 @@ class Big_slime1:
         self.cw = get_canvas_width()
         self.ch = get_canvas_height()
         self.timer = 0
+        self.hit = False
+        self.hit_timer = 0
         self.image_Idle = load_image('./using_resource_image/'+'mon_swamp_Big_Undead3_2_01.png')
         self.image_hp_bar = load_image('./using_resource_image/'+'hp_bar.png')
         self.image_decrease_hp_bar = load_image('./using_resource_image/'+'decreasing_hp_bar.png')
@@ -107,6 +109,18 @@ class Big_slime1:
 
         if self.hp_decrease < self.hp_now:
             self.hp_decrease += 5
+
+        if self.hit:
+            self.hit_timer += 1
+            if 1 <= self.hit_timer < 6:
+                self.x -= 2
+            if 6 <= self.hit_timer <= 10:
+                self.x += 2
+
+        if self.hit_timer == 10:
+            self.image_Idle.opacify(1)
+            self.hit = False
+            self.hit_timer = 0
 
     pass
 
@@ -142,5 +156,8 @@ class Big_slime1:
         if group == 'sword:monster':
             self.hp_now -= power
             self.slime_hit.play()
+            self.hit = True
+            self.image_Idle.opacify(0.5)
+
 
         pass
