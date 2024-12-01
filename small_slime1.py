@@ -69,9 +69,8 @@ class Idle:
 class Small_slime1:
     def __init__(self, x=700, y=187):
         self.x, self.y, self.world = x, y, x
-        self.x_first, self.y_first = x, y     #초기 위치 (700, 167)
+        self. i =1
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y-56, x+47, y+35
-        self.knight_x_location = 480
         self.face_dir , self.speed = random.choice([-1,1]), 1
         self.hp_max, self.hp_now, self.hp_decrease, self.power = 1000, 1000, 1000,200
 
@@ -103,8 +102,12 @@ class Small_slime1:
         self.x +=  int(self.face_dir * RUN_SPEED_PPS * game_framework.frame_time)/4
 
         if self.hp_now <= 0:
+            game_world.remove_collision_object(self)
+            self.i -=0.03
+            self.image_Idle.opacify(self.i)
+
+        if self.i <0:
             game_world.remove_object(self)
-            print('slime is dead')
 
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 5
@@ -152,10 +155,11 @@ class Small_slime1:
     def handle_collision(self, group, other, power):
         # fill here
         if group == 'sword:monster':
-            self.hp_now -= power
-            self.slime_hit.play()
+            if self.hp_now > 0:
+                self.hp_now -= power
+                self.slime_hit.play()
 
-            self.hit = True
-            self.image_Idle.opacify(0.5)
+                self.hit = True
+                self.image_Idle.opacify(0.5)
 
         pass

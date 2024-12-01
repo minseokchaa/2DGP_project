@@ -70,7 +70,7 @@ class Big_slime1:
     def __init__(self, x = 1400, y = 190):
         self.x, self.y = x, y
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y - 56, x + 47, y + 35
-        self.gravity = 0
+        self.i = 1
         self.face_dir, self.move, self.speed = 1, 0, 1
         self.hp_max, self.hp_now, self.hp_decrease,self.power = 1500, 1500, 1500, 300
         self.frame_Idle, self.frame_Idle_timer = 0, 0
@@ -101,8 +101,12 @@ class Big_slime1:
         self.x +=  int(self.face_dir * RUN_SPEED_PPS * game_framework.frame_time)/4
 
         if self.hp_now <= 0:
+            game_world.remove_collision_object(self)
+            self.i -= 0.03
+            self.image_Idle.opacify(self.i)
+
+        if self.i < 0:
             game_world.remove_object(self)
-            print('slime is dead')
 
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 5
@@ -154,10 +158,12 @@ class Big_slime1:
     def handle_collision(self, group, other, power):
         # fill here
         if group == 'sword:monster':
-            self.hp_now -= power
-            self.slime_hit.play()
-            self.hit = True
-            self.image_Idle.opacify(0.5)
+            if self.hp_now > 0:
+                self.hp_now -= power
+                self.slime_hit.play()
+
+                self.hit = True
+                self.image_Idle.opacify(0.5)
 
 
         pass
