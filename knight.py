@@ -419,6 +419,35 @@ class Defend:
             knight.image_Defend.clip_composite_draw(int(knight.frame_Defend) * 128, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
         pass
 
+class Dead:
+    @staticmethod
+    def enter(knight,e):
+        knight.sound_dead.play()
+        knight.move = 0
+        pass
+
+    @staticmethod
+    def exit(knight, e):
+        pass
+
+    @staticmethod
+    def do(knight):
+        knight.frame_Dead = (knight.frame_Dead + 0.7*FRAMES_PER_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 19
+
+        if knight.face_dir:
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx + 5, sy + 43
+        else:
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 41, sy + 43
+
+        pass
+
+    @staticmethod
+    def draw(knight):
+        if knight.face_dir:
+            knight.image_Dead.clip_draw(int(knight.frame_Dead) * 128, 0, 100, 70, sx, sy, 150, 105)
+        else:
+            knight.image_Dead.clip_composite_draw(int(knight.frame_Dead) * 128, 0, 100, 70, 0, 'h', sx, sy, 150, 105)
+        pass
 
 class Knight:
     def __init__(self):
@@ -435,6 +464,7 @@ class Knight:
         self.frame_Jump= 0
         self.frame_Attack=0
         self.frame_Defend = 0
+        self.frame_Dead = 0
         self.attack_motion, self.attack_count = 1, 0
         self.method = 0
 
@@ -443,6 +473,7 @@ class Knight:
         self.image_Idle,self.image_Run,self.image_Jump = load_image('./using_resource_image/'+'Knight_Idle.png'), load_image('./using_resource_image/'+'Knight_Run.png'), load_image('./using_resource_image/'+'Knight_Jump.png')
         self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('./using_resource_image/'+'Knight_Attack 1.png'), load_image('./using_resource_image/'+'Knight_Attack 2.png'),load_image('./using_resource_image/'+'Knight_Attack 3.png')
         self.image_Protect, self.image_Defend = load_image('./using_resource_image/'+'Knight_Protect.png'), load_image('./using_resource_image/'+'Knight_Defend.png')
+        self.image_Dead = load_image('./using_resource_image/'+'Knight_Dead.png')
         self.image_hp_bar,self.image_stamina_bar = load_image('./using_resource_image/'+'hp_bar.png'),load_image('./using_resource_image/'+'stamina_bar.png')
         self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource_image/'+'max_hp_bar.png'), load_image('./using_resource_image/'+'max_stamina_bar.png')
         self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource_image/'+'decreasing_hp_bar.png'), load_image('./using_resource_image/'+'knight_ui.png')
@@ -451,7 +482,7 @@ class Knight:
         self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_wav('./using_resource_sound/'+'get_red_elixir.wav'), load_wav('./using_resource_sound/'+'get_yellow_elixir.wav')
         self.sound_running, self.sound_hit = load_wav('./using_resource_sound/'+'running_sound.wav'), load_wav('./using_resource_sound/'+'knight_hit.wav')
         self.sound_block1, self.sound_block2, self.sound_block3 = load_wav('./using_resource_sound/'+'knight_block_sword1.wav'), load_wav('./using_resource_sound/'+'knight_block_sword2.wav'),load_wav('./using_resource_sound/'+'knight_block_sword3.wav')
-
+        self.sound_dead = load_wav('./using_resource_sound/'+'knight_is_dead.wav')
 
 
         self.sound_get_red_elixir.set_volume(60), self.sound_running.set_volume(40)
@@ -463,13 +494,14 @@ class Knight:
         self.state_machine.start(Idle)      #초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
-                Idle: {right_down: Run, left_down: Run, space_down: Jump, a_down: Attack, d_down: Protect},
-                Run: {right_up: Idle, left_up: Idle, space_down: Jump_run,a_down: Attack, d_down: Protect, falling: Jump_run},
-                Attack : {a_down : Attack, attack_end: Idle, right_down: Run, left_down: Run, space_down: Jump, d_down: Protect},
-                Jump : {right_down: Jump_run, left_down: Jump_run, landing: Idle},
-                Jump_run: {right_up: Jump, left_up: Jump, landing: Run},
-                Protect: {right_down: Run, left_down: Run, space_down: Jump, d_up: Idle, no_stamina: Idle, protect_success: Defend},
-                Defend: {defend_is_over:Idle}
+                Idle: {right_down: Run, left_down: Run, space_down: Jump, a_down: Attack, d_down: Protect,knight_is_dead: Dead},
+                Run: {right_up: Idle, left_up: Idle, space_down: Jump_run,a_down: Attack, d_down: Protect, falling: Jump_run, knight_is_dead: Dead},
+                Attack : {a_down : Attack, attack_end: Idle, right_down: Run, left_down: Run, space_down: Jump, d_down: Protect, knight_is_dead: Dead},
+                Jump : {right_down: Jump_run, left_down: Jump_run, landing: Idle, knight_is_dead: Dead},
+                Jump_run: {right_up: Jump, left_up: Jump, landing: Run, knight_is_dead: Dead},
+                Protect: {right_down: Run, left_down: Run, space_down: Jump, d_up: Idle, no_stamina: Idle, protect_success: Defend,knight_is_dead: Dead},
+                Defend: {defend_is_over:Idle},
+                Dead: {}
             }
         )
 
@@ -481,6 +513,9 @@ class Knight:
             self.stamina_now += 5*game_framework.frame_time
         if self.hp_now < self.hp_max:
             self.hp_now += 0.1
+
+        if self.hp_now < 0:
+            self.state_machine.add_event(('Knight_is_dead', 0))
 
         if self.invincible:
             self.invincible_timer += 1
@@ -545,8 +580,8 @@ class Knight:
         if not self.invincible and self.state_machine.current_state() != Protect:
             self.hp_now -= others_power
             self.invincible = True
-
-            self.sound_hit.play()
+            if self.hp_now > 0:
+                self.sound_hit.play()
         pass
 
 

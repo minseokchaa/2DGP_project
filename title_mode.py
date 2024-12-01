@@ -1,4 +1,5 @@
 from pico2d import *
+
 import game_framework
 import play_mode
 from server import knight
@@ -14,21 +15,27 @@ def init():
     global Night_of_Knight_title
     global press_any_key_to_start
     global title_knight
+    global bgm
     title_back_ground = load_image('./using_resource_image/'+'title_back_ground.png')
     Night_of_Knight_title = load_image('./using_resource_image/' + 'Night_of_Knight_title.png')
     press_any_key_to_start = load_image('./using_resource_image/' + 'press_any_key_to_start.png')
     title_knight = load_image('./using_resource_image/' + 'title_knight.png')
+
+    bgm = load_music('./using_resource_sound/' + 'chiptune-medium-boss-218095.mp3')
+    bgm.play()
 
 def finish():
     global title_back_ground
     global Night_of_Knight_title
     global press_any_key_to_start
     global title_knight
+    global bgm
 
     del title_back_ground
     del Night_of_Knight_title
     del press_any_key_to_start
     del title_knight
+    del bgm
 
 def handle_events():
     events = get_events()
