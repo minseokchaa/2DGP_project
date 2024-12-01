@@ -432,12 +432,15 @@ class Dead:
 
     @staticmethod
     def do(knight):
-        knight.frame_Dead = (knight.frame_Dead + 0.7*FRAMES_PER_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 19
+        knight.frame_Dead = (knight.frame_Dead + FRAMES_PER_ATTACK_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 19
 
         if knight.face_dir:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx + 5, sy + 43
         else:
             knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 41, sy + 43
+
+        if int(knight.frame_Dead) == 17:
+            game_framework.quit()
 
         pass
 
