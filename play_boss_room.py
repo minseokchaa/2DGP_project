@@ -6,7 +6,8 @@ import game_framework
 from game_world_boss_room import add_collision_pair_boss_room, add_collision_pair_for_tile
 from knight import Knight
 from boss_room import Bg_Boss_room, Tile_midair
-from boss import Boss
+from boss import Boss, flame_strike
+from flame_strike import Flame_strike
 
 # Game object class here
 running = True
@@ -55,6 +56,7 @@ def init():
     game_world_boss_room.add_object(boss, 1)
     add_collision_pair_boss_room('sword:boss', None, boss)
 
+
     server.knight = server.knight
     server.knight.x = 360
     game_world_boss_room.add_object(server.knight, 1)
@@ -62,6 +64,7 @@ def init():
     add_collision_pair_boss_room('knight:boss_sword', server.knight, None)
     add_collision_pair_for_tile('knight:tile_ground', server.knight, None)
     add_collision_pair_for_tile('knight:tile_midair', server.knight, None)
+    add_collision_pair_boss_room('knight:monster', server.knight, None)
 
 def finish():
     game_world_boss_room.clear()

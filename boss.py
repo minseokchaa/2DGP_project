@@ -9,6 +9,7 @@ import ending_mode
 import server
 import random
 from boss_sword import Sword
+from flame_strike import Flame_strike
 
 
 PIXEL_PER_METER = (10.0 / 0.12)  # 10 pixel 30 cm
@@ -228,6 +229,12 @@ class flame_strike:
             boss.sound_attack2.play()
 
         boss.action_num = 0
+        boss.frame_Attack = 0
+
+        real_flame_strikes = [Flame_strike(random.randint(100, 1500), 200) for _ in range(4)]
+        for real_flame_strike in real_flame_strikes:
+            game_world_boss_room.add_object(real_flame_strike, 0)
+            add_collision_pair_boss_room('knight:monster', None, real_flame_strike)
         pass
 
     @staticmethod

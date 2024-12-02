@@ -77,6 +77,7 @@ def init():
         game_world.add_object(small_slime1, 1)
         add_collision_pair('knight:monster', None, small_slime1)
         add_collision_pair('sword:monster', None, small_slime1)
+
     big_slime1 = Big_slime1(1400, 220)
     game_world.add_object(big_slime1, 1)
     add_collision_pair('knight:monster', None, big_slime1)

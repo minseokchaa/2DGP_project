@@ -98,6 +98,17 @@ class Big_slime1:
             game_world.remove_collision_object(self)
             self.i -= 0.01
             self.image_Idle.opacify(self.i)
+            if get_canvas_width() / 2 <= server.knight.x <= server.background.w - get_canvas_width() / 2:
+                if self.x > get_canvas_width()/2:
+                    self.face_dir = 1
+                elif self.x < get_canvas_width()/2:
+                    self.face_dir = -1
+            elif get_canvas_width() / 2 > server.knight.x:
+                if self.x > server.knight.x:
+                    self.face_dir = 1
+                elif self.x < server.knight.x:
+                    self.face_dir = -1
+
 
         if self.i < 0:
             game_world.remove_object(self)

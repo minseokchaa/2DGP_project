@@ -11,7 +11,6 @@ class Sword:
 
         pass
     def draw(self):
-        print(self.face_dir)
         pass
 
     def draw_rectangle(self):
