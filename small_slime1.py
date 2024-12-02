@@ -27,7 +27,7 @@ class Idle:
 
     @staticmethod
     def do(small_slime1):
-        small_slime1.frame_Idle = (small_slime1.frame_Idle + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        small_slime1.frame_Idle = (small_slime1.frame_Idle + small_slime1.bounce_speed*FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
 
         if small_slime1.timer > 400:
             if small_slime1.face_dir == 1:
@@ -67,7 +67,7 @@ class Small_slime1:
         self.x, self.y, self.world = x, y, x
         self. i =1
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y-56, x+47, y+35
-        self.face_dir , self.speed = random.choice([-1,1]), 1
+        self.face_dir , self.bounce_speed, self.running_speed = random.choice([-1,1]), 1.3, 5
         self.hp_max, self.hp_now, self.hp_decrease, self.power = 1000, 1000, 1000,200
 
         self.frame_Idle, self.frame_Idle_timer = random.randint(0, 3), 0
@@ -95,9 +95,11 @@ class Small_slime1:
         if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
             self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
-        self.x +=  int(self.face_dir * RUN_SPEED_PPS * game_framework.frame_time)/5
+        self.x +=  int(self.face_dir * RUN_SPEED_PPS * game_framework.frame_time)/self.running_speed
 
         if self.hp_now <= 0:
+            self.bounce_speed = 2
+            self.running_speed = 2
             game_world.remove_collision_object(self)
             self.i -=0.01
             self.image_Idle.opacify(self.i)

@@ -3,6 +3,7 @@ from state_machine import StateMachine, too_far_to_first, right_up, right_down, 
 import game_world
 import server
 import game_framework
+import random
 
 PIXEL_PER_METER = (10.0 / 0.12)                     # 10 pixel 12 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour                  #시속 km/h
@@ -21,17 +22,11 @@ class Idle:
 
     @staticmethod
     def exit(big_slime1, e):
-        if right_up(e) or left_up(e):
-            big_slime1.move = 0
-        elif right_down(e):
-            big_slime1.move =-5
-        elif left_down(e):
-            big_slime1.move = 5
         pass
 
     @staticmethod
     def do(big_slime1):
-        big_slime1.frame_Idle = (big_slime1.frame_Idle + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        big_slime1.frame_Idle = (big_slime1.frame_Idle + big_slime1.bounce_speed *FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
 
 
         if big_slime1.timer > 200:  # 2초마다 방향전환
@@ -68,7 +63,7 @@ class Big_slime1:
         self.x, self.y = x, y
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = x - 47, y - 56, x + 47, y + 35
         self.i = 1
-        self.face_dir, self.move, self.speed = 1, 0, 1
+        self.face_dir , self.bounce_speed, self.running_speed = random.choice([-1,1]), 1.3, 5
         self.hp_max, self.hp_now, self.hp_decrease,self.power = 1500, 1500, 1500, 300
         self.frame_Idle, self.frame_Idle_timer = 0, 0
         self.cw = get_canvas_width()
@@ -95,9 +90,11 @@ class Big_slime1:
         if self.window_left != 0 and self.window_left != int(server.background.w) - self.cw - 1:
             self.x -= int(server.knight.move * RUN_SPEED_PPS * game_framework.frame_time)  # 타일 이동에 맞춰 x 좌표 수정
 
-        self.x +=  int(self.face_dir * RUN_SPEED_PPS * game_framework.frame_time)/4
+        self.x +=  int(self.face_dir * RUN_SPEED_PPS * game_framework.frame_time)/self.running_speed
 
         if self.hp_now <= 0:
+            self.bounce_speed = 2
+            self.running_speed = 2
             game_world.remove_collision_object(self)
             self.i -= 0.01
             self.image_Idle.opacify(self.i)
