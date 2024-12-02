@@ -1,4 +1,3 @@
-from xml.sax.saxutils import escape
 from pico2d import *
 import random
 import game_world
@@ -67,13 +66,13 @@ def init():
     game_world.add_object(server.tile_midair_swamp, 0)
     add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
 
-    server.entrance = Entrance(3000,150)
+    server.entrance = Entrance(500,150)
     game_world.add_object(server.entrance, 0)
 
 
 
 
-    small_slimes1 = [Small_slime1(random.randint(600, 2500), 200) for _ in range(4)]
+    small_slimes1 = [Small_slime1(random.randint(600, 2200), 200) for _ in range(4)]
     for small_slime1 in small_slimes1:
         game_world.add_object(small_slime1, 1)
         add_collision_pair('knight:monster', None, small_slime1)

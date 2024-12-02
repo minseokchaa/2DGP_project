@@ -1,5 +1,5 @@
 from pico2d import *
-from state_machine import StateMachine, too_far_to_first, right_up, right_down, left_down, left_up, arrive_at_first
+from state_machine import StateMachine
 import game_world
 import server
 import random
@@ -8,7 +8,7 @@ import game_framework
 PIXEL_PER_METER = (10.0 / 0.12)                     # 10 pixel 12 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour                  #시속 km/h
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)    #분속 m/m
-RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)              #초속 m/s
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)              #초속 m/s0'
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)   #초속 pixel/s
 
 TIME_PER_ACTION = 0.7
@@ -102,7 +102,21 @@ class Small_slime1:
             self.running_speed = 2
             game_world.remove_collision_object(self)
             self.i -=0.01
+            self.timer = 0
             self.image_Idle.opacify(self.i)
+
+            if get_canvas_width() / 2 <= server.knight.x <= server.background.w - get_canvas_width() / 2:
+                if self.x > get_canvas_width()/2:
+                    self.face_dir = 1
+                elif self.x < get_canvas_width()/2:
+                    self.face_dir = -1
+            elif get_canvas_width() / 2 > server.knight.x:
+                if self.x > server.knight.x:
+                    self.face_dir = 1
+                elif self.x < server.knight.x:
+                    self.face_dir = -1
+
+
 
         if self.i <0:
             game_world.remove_object(self)

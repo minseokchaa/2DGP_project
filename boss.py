@@ -1,4 +1,3 @@
-from xml.sax.saxutils import escape
 
 from pico2d import *
 import game_framework
@@ -24,6 +23,7 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_IDLE_ACTION = 6.0
 FRAMES_WALK_ACTION = 12.0
 FRAMES_ATTACK_ACTION = 16.0
+FRAMES_FLAME_STRIKE_ACTION = 8.0
 FRAMES_DEAD_ACTION = 48.0
 
 class Idle:
@@ -217,6 +217,50 @@ class Dead:
 
         pass
 
+class flame_strike:
+    @staticmethod  # @는 데코레이터라는 기능, 클래스 안에 들어있는 객채하곤 상관이 없는 함수, 모아 놓는 개념?
+    def enter(boss, e):
+        boss.method = random.choice([1, 2])
+
+        if boss.method == 1:
+            boss.sound_attack1.play()
+        if boss.method == 2:
+            boss.sound_attack2.play()
+
+        boss.action_num = 0
+        pass
+
+    @staticmethod
+    def exit(boss, e):
+        pass
+
+    @staticmethod
+    def do(boss):
+
+        boss.frame_flame_strike = (boss.frame_flame_strike + 0.6*FRAMES_FLAME_STRIKE_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_FLAME_STRIKE_ACTION
+
+        if boss.face_dir == 1:
+            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
+        else:
+            boss.get_bb_x1, boss.get_bb_y1, boss.get_bb_x2, boss.get_bb_y2 = boss.x - 62, boss.y - 200, boss.x + 87, boss.y - 23
+
+
+        if int(boss.frame_flame_strike) ==7:
+            boss.state_machine.add_event(('Boss_attack_end', 0))
+            boss.frame_flame_strike =0
+            boss.flame_strike_time=0
+
+
+
+    @staticmethod
+    def draw(boss):
+        if boss.face_dir == 1:
+            boss.image.clip_composite_draw(int(boss.frame_flame_strike) * 288, boss.action_num * 160, 288, 160, 0, 'h', boss.x,boss.y, 720, 400)
+        else:
+            boss.image.clip_draw(int(boss.frame_flame_strike) * 288, boss.action_num * 160, 288, 160, boss.x, boss.y, 720, 400)
+
+        pass
+
 
 class Boss:
 
@@ -224,13 +268,13 @@ class Boss:
         self.x ,self.y = x,y
         self.get_bb_x1, self.get_bb_y1, self.get_bb_x2, self.get_bb_y2 = self.x - 20, self.y - 53, self.x + 25, self.y + 43
         self.face_dir = 1       #1=오른쪽으로 이동 0=왼쪽으로 이동
-        self.frame_Idle, self.frame_Walk, self.frame_Attack, self.frame_Dead = 0, 0, 0, 0
+        self.frame_Idle, self.frame_Walk, self.frame_Attack, self.frame_Dead, self.frame_flame_strike = 0, 0, 0, 0, 0
         self.sword, self.sound1, self.sound2 = None, None, None
-        self.hp_max, self.hp_now,self.hp_decrease, self.power = 28000, 28000, 28000,300
+        self.hp_max, self.hp_now,self.hp_decrease, self.power = 28000, 28000, 28000,500
         self.action_num = 4     #0=dead, 1 = hit, 2 = attack, 3 = walk, 4 = idle
         self.method = 0
-        self.hit = False
-        self.hit_timer = 0
+        self.hit, self.hit_timer = False, 0
+        self.flame_strike_time = 0
 
         self.image = load_image('./using_resource_image/' + 'demon_slime_FREE_v1.0_288x160_spritesheet.png')
         self.image_hp_bar, self.image_max_hp_bar= load_image('./using_resource_image/' + 'hp_bar.png'), load_image('./using_resource_image/' + 'max_hp_bar.png')
@@ -250,9 +294,10 @@ class Boss:
         self.state_machine.start(Idle)  # 초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
-                Idle: {boss_move: Walk, boss_attack: Attack, boss_is_dead: Dead},
-                Walk: {boss_stop: Idle, boss_attack: Attack, boss_is_dead: Dead},
+                Idle: {boss_move: Walk, boss_attack: Attack, boss_is_dead: Dead, boss_flame_strike: flame_strike},
+                Walk: {boss_stop: Idle, boss_attack: Attack, boss_is_dead: Dead, boss_flame_strike: flame_strike},
                 Attack: {boss_attack_end: Idle, boss_is_dead: Dead},
+                flame_strike: {boss_attack_end: Idle, boss_is_dead: Dead},
                 Dead: {}
             }
         )
@@ -275,11 +320,14 @@ class Boss:
             self.hit = False
             self.hit_timer = 0
 
-        if self.hp_now < 0:
+        if self.hp_now <= 0:
             self.state_machine.add_event(('Boss_is_dead', 0))
 
 
         self.x = clamp(50, self.x, 1550)
+
+        self.flame_strike_time +=1
+
         if self.hp_decrease > self.hp_now:
             self.hp_decrease -= 20
 
@@ -325,19 +373,9 @@ class Boss:
 
 
 
-
-    def set_target_location(self, x=None, y=None):
-        if not x or not y:
-            raise ValueError('Location should be given')
-        self. tx, self.ty = x, y
-        return BehaviorTree.SUCCESS
-        pass
-
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
-
-
 
     def move_slightly_to(self, tx):
         distance = Walk_SPEED_PPS * game_framework.frame_time
@@ -352,8 +390,6 @@ class Boss:
         else:
             self.x += distance * (self.face_dir)
             self.state_machine.add_event(('Boss_knight_diff_x', 0))
-
-
 
     def find_direction(self, tx):
         diff = tx - self.x              #face_dir =1 => 오른쪽 공격, tx가 self.x보다 작으면 =>face_dir =-1 => 왼쪽 공격
@@ -392,39 +428,49 @@ class Boss:
         else:
             return BehaviorTree.RUNNING
 
+    def is_hp_under_half(self):
+        if self.hp_now < self.hp_max/2:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def check_flame_strike(self):
+        if self.flame_strike_time > 700:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def make_flame_strike(self):
+        self.state_machine.add_event(('Boss_flame_strike', 0))
+        return BehaviorTree.SUCCESS
+
+
     def build_behavior_tree(self):
-    #     #--------------------------------------------------------------------
+         #--------------------------------------------------------------------
     #
         c1 = Condition('기사가 근처에 있는가?', self.is_knight_nearby, 3)
         a1 = Action('기사 방향으로 돌기', self.turn_to_knight)
         a3 = Action('검 내려찍기', self.slash_the_sword)
-    #
-    #     # --------------------------------------------------------------------
-    #
-    #     c2 = Condition('나의 체력이 절반 이하인가?', self.is_mine_more_then_knight, lambda:self.hp_now)
-    #
-    #     c3 = Condition('마지막 불기둥을 사용한지 일정시간이 지났나?', self.is_mine_less_then_knight, lambda:self.ball_count, lambda:play_boss_room.knight.ball_count)
-    #
-    #     a2 = Action('불기둥 생성', self.move_to)
-    #
-    #     # --------------------------------------------------------------------
+
+        # --------------------------------------------------------------------
+
+        c2 = Condition('나의 체력이 절반 이하인가?', self.is_hp_under_half)
+        c3 = Condition('마지막 불기둥을 사용한지 일정시간이 지났나?', self.check_flame_strike)
+        a2 = Action('불기둥 생성', self.make_flame_strike)
+
+        # --------------------------------------------------------------------
         c4 = Condition('공격 중이 아닌가?', self.is_attacking_now)
         a4 = Action('기사의 x위치 추적', self.move_to_knight)
-    #
-    #
-    #     #----------------------------------------------------------------------
+        #----------------------------------------------------------------------
         sword_attack = Sequence('검 공격', c1, a1, a3)
-    #
-    #     flame_strike = Sequence('불기둥 공격', c2, c3, a2)
+
+        flame_strike = Sequence('불기둥 공격', c2, c3, a2)
 
         chase_knight = Sequence('이동', c4, a4)
-    #
-    #
-    #
-    #
+
     #   root = boss_behavior_tree = Selector('보스의 행동트리', chase_knight)
         root = boss_behavior_tree = Selector('보스의 행동트리', sword_attack, chase_knight)
-        #root = boss_behavior_tree = Selector('보스의 행동트리', sword_attack, flame_strike, chase_knight)
+        root = boss_behavior_tree = Selector('보스의 행동트리', flame_strike, sword_attack, chase_knight)
 
         self.bt = BehaviorTree(root)
 

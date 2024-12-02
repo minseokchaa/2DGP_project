@@ -1,10 +1,7 @@
-from xml.sax.saxutils import escape
 from pico2d import *
-import random
 import game_world_boss_room
 import server
 import game_framework
-import play_mode
 
 from game_world_boss_room import add_collision_pair_boss_room, add_collision_pair_for_tile
 from knight import Knight

@@ -1,5 +1,5 @@
 from pico2d import *
-from state_machine import StateMachine, too_far_to_first, right_up, right_down, left_down, left_up, arrive_at_first
+from state_machine import StateMachine
 import game_world
 import server
 import game_framework

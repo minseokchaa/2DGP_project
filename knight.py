@@ -458,7 +458,7 @@ class Knight:
         self.get_bb_x1, self.get_bb_y1,self.get_bb_x2,self.get_bb_y2 = self.x - 20, self.y-53, self.x+25, self.y+43
         self.gravity, self.sword = 0, None
         self.face_dir, self.move, self.speed = 1, 0, RUN_SPEED_PPS
-        self.hp_max, self.stamina_max, self.power = 1000, 100, 200
+        self.hp_max, self.stamina_max, self.power = 1000, 100, 2000
         self.power_combo = self.power
         self.hp_now, self.stamina_now = 1000, 100
         self.hp_decrease = 1000
@@ -612,6 +612,7 @@ class Knight:
         if group == 'knight:elixir_hp':
             self.sound_get_red_elixir.play()
             self.hp_max += 150
+            self.hp_decrease += 150
             self.hp_now += 150
 
         if group == 'knight:elixir_power':
