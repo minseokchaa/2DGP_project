@@ -7,14 +7,17 @@ class Flame_strike:
     image = None
 
     def __init__(self, x ,power):
-        global logo_start_time
+        global start_time
 
         self.x, self.Power = x, power
         self.y, self.disappear, self.i = 900, False, 1
         self.image = load_image('./using_resource_image/' + 'flame_strike.png')
         self.image1 = load_image('./using_resource_image/' + 'flame_strike.png')
+        self.sound = load_wav('./using_resource_sound/' + 'flamestrike.wav')
+        self.sound.set_volume(80)
+        self.sound.play()
         self.image1.opacify(0.2)
-        logo_start_time = get_time()
+        start_time = get_time()
         self.width = 100
         self.time = 0
 
@@ -28,15 +31,15 @@ class Flame_strike:
         draw_rectangle(*self.get_bb())  # *을 써줌으로서 패키지를 뜯는다.
 
     def update(self):
-        global logo_start_time
+        global start_time
         self.time +=1
 
         if self.time %10 < 5:
-            self.width+=1
+            self.width+=2
         else:
-            self.width -= 1
+            self.width -= 2
 
-        if get_time() - logo_start_time >= 2.0:
+        if get_time() - start_time >= 2.0:
             self.disappear =True
 
 

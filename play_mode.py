@@ -66,7 +66,7 @@ def init():
     game_world.add_object(server.tile_midair_swamp, 0)
     add_collision_pair_for_tile('knight:tile_midair', None, server.tile_midair_swamp)
 
-    server.entrance = Entrance(500,150)
+    server.entrance = Entrance(3000,150)
     game_world.add_object(server.entrance, 0)
 
 

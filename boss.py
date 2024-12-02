@@ -10,6 +10,7 @@ import server
 import random
 from boss_sword import Sword
 from flame_strike import Flame_strike
+from crater import Crater
 
 
 PIXEL_PER_METER = (10.0 / 0.12)  # 10 pixel 30 cm
@@ -231,10 +232,9 @@ class flame_strike:
         boss.action_num = 0
         boss.frame_Attack = 0
 
-        real_flame_strikes = [Flame_strike(random.randint(100, 1500), 200) for _ in range(4)]
-        for real_flame_strike in real_flame_strikes:
-            game_world_boss_room.add_object(real_flame_strike, 0)
-            add_collision_pair_boss_room('knight:monster', None, real_flame_strike)
+        craters = [Crater(random.randint(100, 1500), 300) for _ in range(4)]
+        for crater in craters:
+            game_world_boss_room.add_object(crater, 1)
         pass
 
     @staticmethod
@@ -442,7 +442,7 @@ class Boss:
             return BehaviorTree.FAIL
 
     def check_flame_strike(self):
-        if self.flame_strike_time > 700:
+        if self.flame_strike_time > 500:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
