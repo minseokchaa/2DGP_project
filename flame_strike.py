@@ -14,7 +14,7 @@ class Flame_strike:
         self.image = load_image('./using_resource_image/' + 'flame_strike.png')
         self.image1 = load_image('./using_resource_image/' + 'flame_strike.png')
         self.sound = load_wav('./using_resource_sound/' + 'flamestrike.wav')
-        self.sound.set_volume(80)
+        self.sound.set_volume(40)
         self.sound.play()
         self.image1.opacify(0.2)
         start_time = get_time()

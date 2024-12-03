@@ -292,8 +292,8 @@ class Boss:
         self.sound_hit_ground, self.sound_dead = load_wav('./using_resource_sound/' + 'boss_sword_hit_ground.wav'), load_wav('./using_resource_sound/' + 'boss_dead_sound.wav')
         self.sound_hit1, self.sound_hit2 = load_wav('./using_resource_sound/' + 'boss_hit_sound1.wav'), load_wav('./using_resource_sound/' + 'boss_hit_sound2.wav')
 
-        self.sound_attack1.set_volume(55), self.sound_attack2.set_volume(55), self.sound_walk1.set_volume(20), self.sound_walk2.set_volume(20)
-        self.sound_hit_ground.set_volume(90), self.sound_hit1.set_volume(40), self.sound_hit2.set_volume(40)
+        self.sound_attack1.set_volume(40), self.sound_attack2.set_volume(40), self.sound_walk1.set_volume(10), self.sound_walk2.set_volume(10)
+        self.sound_hit_ground.set_volume(60), self.sound_hit1.set_volume(25), self.sound_hit2.set_volume(25)
 
         self.build_behavior_tree()
 
@@ -318,9 +318,9 @@ class Boss:
         if self.hit:
             self.hit_timer += 1
             if 1 <= self.hit_timer < 6:
-                self.x -= 2
+                self.x -= 3
             if 6 <= self.hit_timer <= 10:
-                self.x += 2
+                self.x += 3
 
         if self.hit_timer == 10:
             self.image.opacify(1)
@@ -454,7 +454,7 @@ class Boss:
 
     def build_behavior_tree(self):
          #--------------------------------------------------------------------
-    #
+
         c1 = Condition('기사가 근처에 있는가?', self.is_knight_nearby, 3)
         a1 = Action('기사 방향으로 돌기', self.turn_to_knight)
         a3 = Action('검 내려찍기', self.slash_the_sword)

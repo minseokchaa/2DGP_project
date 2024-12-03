@@ -84,6 +84,12 @@ def knight_is_dead(e):         #e가 time out인지 판단
 def boss_flame_strike(e):         #e가 time out인지 판단
     return e[0] == 'Boss_flame_strike'
 
+def hurt(e):         #e가 time out인지 판단
+    return e[0] == 'Hurt'
+
+def hurt_is_over(e):         #e가 time out인지 판단
+    return e[0] == 'Hurt_is_over'
+
 
 class StateMachine:
     def __init__(self, o):

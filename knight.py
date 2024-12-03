@@ -23,6 +23,7 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ATTACK_ACTION = 4
 FRAMES_PER_IDLE_ACTION = 4
 FRAMES_PER_RUN_ACTION = 7
+FRAMES_PER_HURT_ACTION = 2
 
 
 # 상태를 클래스를 통해서 정의함
@@ -419,6 +420,37 @@ class Defend:
             knight.image_Defend.clip_composite_draw(int(knight.frame_Defend) * 128, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
         pass
 
+class Hurt:
+    @staticmethod
+    def enter(knight,e):
+        pass
+
+    @staticmethod
+    def exit(knight, e):
+        pass
+
+    @staticmethod
+    def do(knight):
+        knight.frame_Hurt = (knight.frame_Hurt + 5*FRAMES_PER_HURT_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
+
+        if knight.face_dir:
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 41, sy - 53, sx + 5, sy + 43
+        else:
+            knight.get_bb_x1, knight.get_bb_y1, knight.get_bb_x2, knight.get_bb_y2 = sx - 5, sy - 53, sx + 41, sy + 43
+        if int(knight.frame_Hurt) ==2:
+            knight.state_machine.add_event(('Hurt_is_over', 0))
+            knight.frame_Hurt=0
+
+        pass
+
+    @staticmethod
+    def draw(knight):
+        if knight.face_dir:
+            knight.image_Hurt.clip_draw(int(knight.frame_Hurt) * 128, 0, 70, 70, sx, sy, 105, 105)
+        else:
+            knight.image_Hurt.clip_composite_draw(int(knight.frame_Hurt) * 128, 0, 70, 70, 0, 'h', sx, sy, 105, 105)
+        pass
+
 class Dead:
     @staticmethod
     def enter(knight,e):
@@ -460,13 +492,15 @@ class Knight:
         self.face_dir, self.move, self.speed = 1, 0, RUN_SPEED_PPS
         self.hp_max, self.stamina_max, self.power = 1000, 100, 200
         self.power_combo = self.power
-        self.hp_now, self.stamina_now = 1000, 100
-        self.hp_decrease = 1000
+        self.ui_x, self.ui_y = 90, 90
+        self.hp_now, self.stamina_now = self.hp_max, self.stamina_max
+        self.hp_decrease = self.hp_max
         self.frame_Idle= 0
         self.frame_Run=0
         self.frame_Jump= 0
         self.frame_Attack=0
         self.frame_Defend = 0
+        self.frame_Hurt = 0
         self.frame_Dead = 0
         self.attack_motion, self.attack_count = 1, 0
         self.method = 0
@@ -476,7 +510,7 @@ class Knight:
         self.image_Idle,self.image_Run,self.image_Jump = load_image('./using_resource_image/'+'Knight_Idle.png'), load_image('./using_resource_image/'+'Knight_Run.png'), load_image('./using_resource_image/'+'Knight_Jump.png')
         self.image_Attack1,self.image_Attack2,self.image_Attack3 = load_image('./using_resource_image/'+'Knight_Attack 1.png'), load_image('./using_resource_image/'+'Knight_Attack 2.png'),load_image('./using_resource_image/'+'Knight_Attack 3.png')
         self.image_Protect, self.image_Defend = load_image('./using_resource_image/'+'Knight_Protect.png'), load_image('./using_resource_image/'+'Knight_Defend.png')
-        self.image_Dead = load_image('./using_resource_image/'+'Knight_Dead.png')
+        self.image_Dead, self.image_Hurt = load_image('./using_resource_image/'+'Knight_Dead.png'), load_image('./using_resource_image/'+'Knight_Hurt.png')
         self.image_hp_bar,self.image_stamina_bar = load_image('./using_resource_image/'+'hp_bar.png'),load_image('./using_resource_image/'+'stamina_bar.png')
         self.image_max_hp_bar, self.image_max_stamina_bar = load_image('./using_resource_image/'+'max_hp_bar.png'), load_image('./using_resource_image/'+'max_stamina_bar.png')
         self.image_decrease_hp_bar,self.image_ui = load_image('./using_resource_image/'+'decreasing_hp_bar.png'), load_image('./using_resource_image/'+'knight_ui.png')
@@ -490,6 +524,7 @@ class Knight:
 
         self.sound_get_red_elixir.set_volume(60), self.sound_running.set_volume(40)
         self.sound_attack1.set_volume(20),self.sound_attack2.set_volume(70),self.sound_attack3.set_volume(70),
+        self.sound_block1.set_volume(80), self.sound_block2.set_volume(80), self.sound_block3.set_volume(80)
 
 
 
@@ -497,13 +532,14 @@ class Knight:
         self.state_machine.start(Idle)      #초기 상태 -- Idle
         self.state_machine.set_transitions(
             {
-                Idle: {right_down: Run, left_down: Run, space_down: Jump, a_down: Attack, d_down: Protect,knight_is_dead: Dead},
-                Run: {right_up: Idle, left_up: Idle, space_down: Jump_run,a_down: Attack, d_down: Protect, falling: Jump_run, knight_is_dead: Dead},
-                Attack : {a_down : Attack, attack_end: Idle, right_down: Run, left_down: Run, space_down: Jump, d_down: Protect, knight_is_dead: Dead},
-                Jump : {right_down: Jump_run, left_down: Jump_run, landing: Idle, knight_is_dead: Dead},
-                Jump_run: {right_up: Jump, left_up: Jump, landing: Run, knight_is_dead: Dead},
+                Idle: {right_down: Run, left_down: Run, space_down: Jump, a_down: Attack, d_down: Protect,knight_is_dead: Dead, hurt: Hurt},
+                Run: {right_up: Idle, left_up: Idle, space_down: Jump_run,a_down: Attack, d_down: Protect, falling: Jump_run, knight_is_dead: Dead, hurt: Hurt},
+                Attack : {a_down : Attack, attack_end: Idle, right_down: Run, left_down: Run, space_down: Jump, d_down: Protect, knight_is_dead: Dead, hurt: Hurt},
+                Jump : {right_down: Jump_run, left_down: Jump_run, landing: Idle, knight_is_dead: Dead, hurt: Hurt},
+                Jump_run: {right_up: Jump, left_up: Jump, landing: Run, knight_is_dead: Dead, hurt: Hurt},
                 Protect: {right_down: Run, left_down: Run, space_down: Jump, d_up: Idle, no_stamina: Idle, protect_success: Defend,knight_is_dead: Dead},
                 Defend: {defend_is_over:Idle},
+                Hurt:{hurt_is_over: Idle},
                 Dead: {}
             }
         )
@@ -523,6 +559,14 @@ class Knight:
 
         if self.invincible:
             self.invincible_timer += 1
+            if 1 <= self.invincible_timer <= 5:
+                self.ui_x -= 2
+                self.ui_y -=2
+            if 6 <= self.invincible_timer <= 10:
+                self.ui_x += 2
+                self.ui_y +=2
+
+
 
         if self.invincible_timer == 180:
             self.invincible = False
@@ -556,15 +600,15 @@ class Knight:
         if self.invincible_timer % 10 <= 5:
             self.state_machine.draw()
 
-        self.image_max_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_max//2, 20)             #(90,90)을 왼쪽 아래로 두고 그리기
-        self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_decrease//2 , 20)
-        self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 90, self.hp_now//2, 20)
+        self.image_max_hp_bar.clip_draw_to_origin(0, 0, 50, 50, self.ui_x, self.ui_y, self.hp_max//2, 20)             #(90,90)을 왼쪽 아래로 두고 그리기
+        self.image_decrease_hp_bar.clip_draw_to_origin(0, 0, 50, 50, self.ui_x, self.ui_y, self.hp_decrease//2 , 20)
+        self.image_hp_bar.clip_draw_to_origin(0, 0, 50, 50, self.ui_x, self.ui_y, self.hp_now//2, 20)
 
 
-        self.image_max_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_max*3, 20)      #(90,50)을 왼쪽 아래로 두고 그리기
-        self.image_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, 90, 50, self.stamina_now*3, 20)
+        self.image_max_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, self.ui_x,  self.ui_y-40, self.stamina_max*3, 20)      #(90,50)을 왼쪽 아래로 두고 그리기
+        self.image_stamina_bar.clip_draw_to_origin(0, 0, 50, 50, self.ui_x,  self.ui_y-40, self.stamina_now*3, 20)
 
-        self.image_ui.clip_draw_to_origin(0, 0, 130, 80, 0, 40, 130, 80)
+        self.image_ui.clip_draw_to_origin(0, 0, 130, 80, self.ui_x-90,  self.ui_y-50, 130, 80)
 
 
 
@@ -606,6 +650,7 @@ class Knight:
                 self.state_machine.add_event(('Protect_success', 0))
 
 
+            self.state_machine.add_event(('Hurt', 0))
             self.take_damage(others_power)
 
 
@@ -617,7 +662,7 @@ class Knight:
 
         if group == 'knight:elixir_power':
             self.sound_get_yellow_elixir.play()
-            self.power += 200
+            self.power += 100
             self.power_combo = self.power
             self.stamina_now += 20
             self.stamina_max += 20
