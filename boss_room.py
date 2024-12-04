@@ -18,8 +18,8 @@ class Bg_Boss_room:
         self.w = self.bg_boss_room.w
         self.h = self.bg_boss_room.h
 
-        self.bgm = load_music('./using_resource_sound/' + '80s-video-game-battle-chiptune-216255.mp3')
-        self.bgm.set_volume(45)
+        self.bgm = load_music('./using_resource_sound/' + 'chiptune-medium-boss-218095.mp3')
+        self.bgm.set_volume(80)
         self.bgm.repeat_play()
 
 

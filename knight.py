@@ -36,6 +36,8 @@ class Idle:
         elif left_up(e):
             knight.face_dir = 0
             knight.move = 0
+        elif landing(e):
+            knight.sound_land.play()
         pass
 
     @staticmethod
@@ -73,6 +75,8 @@ class Run:
         elif left_down(e) or right_up(e):
             knight.face_dir = 0
             knight.move = -1
+        elif landing(e):
+            knight.sound_land.play()
         pass
 
     @staticmethod
@@ -145,6 +149,7 @@ class Jump_run:
             knight.move = -1
         if space_down(e):
             knight.gravity = 28
+            knight.sound_jump.play()
         pass
 
     @staticmethod
@@ -182,6 +187,7 @@ class Jump:
             knight.face_dir = 0
         if space_down(e):
             knight.gravity = 28
+            knight.sound_jump.play()
 
         knight.move = 0
         pass
@@ -519,12 +525,13 @@ class Knight:
         self.sound_get_red_elixir, self.sound_get_yellow_elixir = load_wav('./using_resource_sound/'+'get_red_elixir.wav'), load_wav('./using_resource_sound/'+'get_yellow_elixir.wav')
         self.sound_running, self.sound_hit = load_wav('./using_resource_sound/'+'running_sound.wav'), load_wav('./using_resource_sound/'+'knight_hit.wav')
         self.sound_block1, self.sound_block2, self.sound_block3 = load_wav('./using_resource_sound/'+'knight_block_sword1.wav'), load_wav('./using_resource_sound/'+'knight_block_sword2.wav'),load_wav('./using_resource_sound/'+'knight_block_sword3.wav')
-        self.sound_dead = load_wav('./using_resource_sound/'+'knight_is_dead.wav')
+        self.sound_dead, self.sound_land, self.sound_jump = load_wav('./using_resource_sound/'+'knight_is_dead.wav'), load_wav('./using_resource_sound/'+'landing.wav'), load_wav('./using_resource_sound/'+'jumping.wav')
 
 
         self.sound_get_red_elixir.set_volume(60), self.sound_running.set_volume(40)
         self.sound_attack1.set_volume(20),self.sound_attack2.set_volume(70),self.sound_attack3.set_volume(70),
         self.sound_block1.set_volume(80), self.sound_block2.set_volume(80), self.sound_block3.set_volume(80)
+        self.sound_land.set_volume(70), self.sound_jump.set_volume(60)
 
 
 

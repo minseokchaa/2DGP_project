@@ -191,9 +191,10 @@ class Attack:
 class Dead:
     @staticmethod  # @는 데코레이터라는 기능, 클래스 안에 들어있는 객채하곤 상관이 없는 함수, 모아 놓는 개념?
     def enter(boss, e):
-
+        global  Walk_SPEED_PPS
         boss.action_num = 0
         boss.sound_dead.play()
+        Walk_SPEED_PPS = 0
         pass
 
     @staticmethod
@@ -317,12 +318,12 @@ class Boss:
     def update(self):
         if self.hit:
             self.hit_timer += 1
-            if 1 <= self.hit_timer < 6:
-                self.x -= 3
-            if 6 <= self.hit_timer <= 10:
-                self.x += 3
+            if 1 <= self.hit_timer <= 9:
+                self.x -= 2
+            if 10 <= self.hit_timer <= 18:
+                self.x += 2
 
-        if self.hit_timer == 10:
+        if self.hit_timer == 18:
             self.image.opacify(1)
             self.hit = False
             self.hit_timer = 0
